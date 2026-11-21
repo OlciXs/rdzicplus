@@ -10,7 +10,7 @@
    ===================================================================== */
 import { DEFAULT_PARAMS } from "../params.js";
 import { kontekstSprawy } from "./kontekst.js";
-import { WARIANTY, WNIOSKI, POLA } from "./rejestr.js";
+import { WARIANTY, WNIOSKI, POLA, SKLADANIE } from "./rejestr.js";
 
 const ROLE = { matka: "matki", ojciec: "ojca", inny: "innego członka rodziny" };
 const ETAPY = { ciaza: "w ciąży", po_porodzie: "po porodzie", przyjecie: "przy przyjęciu dziecka" };
@@ -61,6 +61,9 @@ export function ocenWariant(wariant, k) {
     wymiar: wartosc(wariant.wymiar, k),
     wysokosc: wartosc(wariant.wysokosc, k),
     adresat: wartosc(wariant.adresat, k),
+    // Prosta nazwa dokumentu dla rodzica + czy w ogóle coś się składa (patrz SKLADANIE w rejestr.js).
+    dokument: wartosc(SKLADANIE[wariant.id]?.dokument, k),
+    skladanie: wartosc(SKLADANIE[wariant.id]?.skladanie, k) ?? "wniosek",
     formularz: wariant.formularz ?? null,
     termin: wartosc(wariant.termin, k),
     dokumenty: wariant.dokumenty ?? [],
@@ -86,8 +89,13 @@ export function przegladWnioskow(profil, { dzis, params = DEFAULT_PARAMS } = {})
   const wnioski = WNIOSKI.map((wniosek) => {
     const warianty = WARIANTY.filter((v) => v.wniosek === wniosek.id).map((v) => ocenWariant(v, k));
     const licz = (s) => warianty.filter((v) => v.status === s).length;
+    // Nazwy dokumentów, które trzeba złożyć (tylko warianty, które przysługują i wymagają złożenia).
+    const doZlozenia = [...new Set(
+      warianty.filter((v) => v.status === "dostepny" && v.skladanie === "wniosek" && v.dokument).map((v) => v.dokument),
+    )];
     return {
       ...wniosek,
+      doZlozenia,
       dostepne: licz("dostepny"),
       brakDanych: licz("brak_danych"),
       niedostepne: licz("niedostepny"),

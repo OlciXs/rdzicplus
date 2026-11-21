@@ -150,7 +150,7 @@ export const WNIOSKI = [
   { id: "rehabilitacyjne", nazwa: "Świadczenie rehabilitacyjne", opis: "Po wyczerpaniu okresu zasiłkowego, gdy leczenie rokuje powrót do pracy." },
   { id: "przed_porodem_po_utracie_pracy", nazwa: "Zasiłek po utracie pracy w ciąży", opis: "Upadłość, likwidacja lub śmierć pracodawcy w czasie ciąży." },
   { id: "macierzynski", nazwa: "Zasiłek macierzyński (urlop macierzyński)", opis: "Dla matki po porodzie, także przed porodem, przy porodzie mnogim, po stracie dziecka, za granicą." },
-  { id: "wysokosc", nazwa: "Wysokość zasiłku macierzyńskiego", opis: "Wariant 81,5% albo 100% + 70%, wyrównanie, podwyższenie do świadczenia rodzicielskiego." },
+  { id: "wysokosc", nazwa: "Wysokość zasiłku macierzyńskiego – dodatkowe wnioski i oświadczenia", opis: "To nie osobny zasiłek: wniosek o 81,5% zamiast 100% + 70% oraz oświadczenia o podwyższeniu do świadczenia rodzicielskiego (składasz je razem z wnioskiem o zasiłek)." },
   { id: "przejecie", nazwa: "Przejęcie urlopu macierzyńskiego", opis: "Ojciec albo inny członek rodziny przejmuje urlop matki (rezygnacja, szpital, orzeczenie, zgon, porzucenie, matka nieubezpieczona)." },
   { id: "uzupelniajacy", nazwa: "Uzupełniający urlop macierzyński", opis: "Wcześniak albo dziecko w szpitalu po porodzie – do 8 lub 15 tygodni." },
   { id: "ojcowski", nazwa: "Urlop ojcowski", opis: "2 tygodnie wyłącznie dla ojca, do 12. miesiąca życia dziecka." },
@@ -847,3 +847,84 @@ export const WARIANTY = [
 
 export const wariantById = (id) => WARIANTY.find((v) => v.id === id);
 export const wniosekById = (id) => WNIOSKI.find((x) => x.id === id);
+
+/* =====================================================================
+   CO DOKŁADNIE SKŁADASZ – prosta nazwa dokumentu dla rodzica (bez paragrafów).
+   Klucz = id wariantu. Pola mogą być tekstem albo funkcją (k) → tekst.
+     dokument  – nazwa tego, co fizycznie składasz,
+     skladanie – "wniosek" (składasz dokument), "automatycznie" (nic nie składasz),
+                 "dolacz" (oświadczenie/załącznik do głównego wniosku).
+   Pole `formularz` w wariancie zostaje jako szczegół formalny (z paragrafami).
+   Warianty typu „informacja” nie mają dokumentu.
+   ===================================================================== */
+const ZAM_NIEPRAC = (k) =>
+  ["dg", "wspolpraca"].includes(k.tytul)
+    ? "ZAM (albo Z-3b) – wniosek o zasiłek macierzyński do ZUS, najwygodniej przez eZUS"
+    : k.tytul === "zlecenie"
+      ? "Wniosek o zasiłek macierzyński – składasz u zleceniodawcy (przekazuje go do ZUS)"
+      : "ZAM – wniosek o zasiłek macierzyński do ZUS";
+// Pracownik składa wniosek o urlop u pracodawcy, pozostali – wniosek o zasiłek (ZAM) do ZUS.
+const PRAC_ALBO_ZAM = (wniosekPracownika) => (k) =>
+  k.pracownik === true ? wniosekPracownika
+    : k.pracownik === false ? ZAM_NIEPRAC(k)
+      : `${wniosekPracownika} (pracownik) albo ZAM do ZUS (pozostali)`;
+
+export const SKLADANIE = {
+  // zasiłek chorobowy w ciąży
+  W35: { dokument: "Nic nie składasz – e-ZLA z kodem B trafia do pracodawcy automatycznie", skladanie: "automatycznie" },
+  W34: {
+    dokument: (k) =>
+      k.pracownik === true
+        ? "Nic nie składasz – e-ZLA z kodem B trafia do ZUS i pracodawcy, zaświadczenie Z-3 wystawia pracodawca"
+        : "Działalność: Z-3b (przez eZUS). Zlecenie u małego płatnika: ZAS-53. Oba do ZUS",
+    skladanie: (k) => (k.pracownik === true ? "automatycznie" : "wniosek"),
+  },
+  W36: { dokument: "Nic nie składasz – wystarczy kod B na e-ZLA", skladanie: "automatycznie" },
+  W46: { dokument: "Karta wypadku w drodze do/z pracy – dołączasz do zwolnienia lekarskiego", skladanie: "dolacz" },
+  W47: { dokument: "Wniosek o zasiłek chorobowy + oświadczenie o okolicznościach po ustaniu ubezpieczenia", skladanie: "wniosek" },
+  W36b: { dokument: "Pisemna prośba do lekarza, żeby nie wpisywał kodu B", skladanie: "wniosek" },
+  W37: { dokument: "ZAS-14A – wniosek o świadczenie rehabilitacyjne (do ZUS)", skladanie: "wniosek" },
+  W38: { dokument: "Wniosek o zasiłek do dnia porodu (do ZUS) + dokumenty potwierdzające utratę pracy", skladanie: "wniosek" },
+
+  // macierzyński
+  W1: { dokument: PRAC_ALBO_ZAM("Wniosek o urlop macierzyński (do pracodawcy)"), skladanie: "wniosek" },
+  W2: { dokument: "Wniosek o część urlopu macierzyńskiego przed porodem + zaświadczenie lekarskie o terminie porodu", skladanie: "wniosek" },
+  W3: { dokument: PRAC_ALBO_ZAM("Wniosek o urlop macierzyński (podajesz liczbę dzieci)"), skladanie: "wniosek" },
+  W10: { dokument: "Wniosek o zasiłek macierzyński (ZAM albo przez pracodawcę) + odpis aktu urodzenia / zgonu", skladanie: "wniosek" },
+  W15: { dokument: PRAC_ALBO_ZAM("Wniosek o urlop macierzyński + dokumenty zagraniczne"), skladanie: "wniosek" },
+  W39: { dokument: "ZAM – wniosek o zasiłek macierzyński do ZUS + dokumenty o utracie pracy (upadłość, likwidacja, śmierć pracodawcy)", skladanie: "wniosek" },
+  W40: { dokument: "ZAM – wniosek o zasiłek macierzyński do ZUS + prawomocny wyrok sądu", skladanie: "wniosek" },
+
+  // wysokość (dodatki do wniosku o zasiłek)
+  W41: { dokument: "Pisemny wniosek o 81,5% za cały okres – złóż do 21 dni po porodzie", skladanie: "wniosek" },
+  W44: { dokument: "Oświadczenie o podwyższeniu zasiłku do kwoty świadczenia rodzicielskiego", skladanie: "dolacz" },
+  W16: { dokument: "Oświadczenie o innych tytułach ubezpieczenia + wskazanie płatnika podwyższenia", skladanie: "dolacz" },
+
+  // przejęcie urlopu
+  W5: { dokument: "Wniosek o rezygnację z reszty urlopu macierzyńskiego (Ty) i wniosek ojca o pozostałą część urlopu", skladanie: "wniosek" },
+  W22: { dokument: (k) => (k.pracownik === false ? ZAM_NIEPRAC(k) : "Wniosek o udzielenie pozostałej części urlopu macierzyńskiego"), skladanie: "wniosek" },
+  W6: { dokument: "Wniosek o część urlopu macierzyńskiego + orzeczenie o niezdolności matki do samodzielnej egzystencji", skladanie: "wniosek" },
+  W7: { dokument: "Wniosek o część urlopu macierzyńskiego na czas pobytu matki w szpitalu + zaświadczenie ze szpitala", skladanie: "wniosek" },
+  W8: { dokument: "Wniosek o część urlopu macierzyńskiego (zgon albo porzucenie dziecka przez matkę)", skladanie: "wniosek" },
+  W9: { dokument: "Wniosek o urlop macierzyński (matka bez ubezpieczenia)", skladanie: "wniosek" },
+  W9b: { dokument: "Wniosek o urlop + oświadczenie o dacie pobierania zasiłku przez matkę", skladanie: "wniosek" },
+
+  // pozostałe urlopy
+  W4: { dokument: "Wniosek o uzupełniający urlop macierzyński (z terminem końca urlopu macierzyńskiego) + zaświadczenie ze szpitala", skladanie: "wniosek" },
+  W21: { dokument: PRAC_ALBO_ZAM("Wniosek o urlop ojcowski (do pracodawcy)"), skladanie: "wniosek" },
+  W25: { dokument: PRAC_ALBO_ZAM("Wniosek o urlop rodzicielski (do pracodawcy)"), skladanie: "wniosek" },
+  W12: { dokument: "Wniosek o łączenie urlopu rodzicielskiego z pracą (do pracodawcy)", skladanie: "wniosek" },
+  W28: { dokument: PRAC_ALBO_ZAM("Wniosek o urlop na warunkach urlopu macierzyńskiego (do pracodawcy)"), skladanie: "wniosek" },
+  W11: { dokument: "Wniosek o urlop wychowawczy (do pracodawcy)", skladanie: "wniosek" },
+
+  // zasiłki
+  W17: {
+    dokument: (k) =>
+      k.pracownik === true
+        ? "Z-15A (opieka nad dzieckiem) albo Z-15B (opieka nad innym członkiem rodziny) – u pracodawcy"
+        : "Wniosek o zasiłek opiekuńczy do ZUS (przez eZUS)",
+    skladanie: "wniosek",
+  },
+  W45: { dokument: "Z-12 – wniosek o zasiłek pogrzebowy (do ZUS) + rachunki za pogrzeb", skladanie: "wniosek" },
+  W19: { dokument: "Wniosek o świadczenie rodzicielskie (w gminie / ośrodku pomocy społecznej)", skladanie: "wniosek" },
+};

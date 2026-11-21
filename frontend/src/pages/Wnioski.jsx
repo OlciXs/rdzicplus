@@ -36,13 +36,17 @@ function Pola({ lista }) {
   );
 }
 
+// Wariant, przy którym nic nie składasz (np. e-ZLA leci automatycznie) – inna etykieta niż „Przysługuje”.
+const AUTOMAT = { label: "Przysługuje – nic nie składasz", badge: "b-ok", kolor: "var(--color-navy)" };
+
 function Wariant({ v }) {
-  const st = STATUS[v.status];
+  const automat = v.status === "dostepny" && v.skladanie === "automatycznie";
+  const st = automat ? AUTOMAT : STATUS[v.status];
   return (
     <section className="result-card" style={{ borderLeftColor: st.kolor }} aria-labelledby={`w-${v.id}`}>
       <h3 className="result-title" id={`w-${v.id}`}>
         <span className={`badge ${st.badge}`}>{st.label}</span>{" "}
-        {v.nazwa} <span className="note">({v.id})</span>
+        {v.nazwa}
       </h3>
 
       {v.pewnosc === "do_potwierdzenia" && (
@@ -66,13 +70,31 @@ function Wariant({ v }) {
       )}
 
       {(v.status === "dostepny" || v.status === "brak_danych") && (
-        <dl className="data-list">
-          {v.wymiar && <div><dt>Ile</dt><dd>{v.wymiar}</dd></div>}
-          {v.wysokosc && <div><dt>Wysokość</dt><dd>{v.wysokosc}</dd></div>}
-          {v.adresat && <div><dt>Gdzie złożyć</dt><dd>{v.adresat}</dd></div>}
-          {v.formularz && <div><dt>Wniosek</dt><dd>{v.formularz}</dd></div>}
-          {v.termin && <div><dt>Termin</dt><dd>{v.termin}</dd></div>}
-        </dl>
+        automat ? (
+          <p className="alert-inline">
+            <span className="badge b-ok">Automatycznie</span> {v.dokument}
+          </p>
+        ) : (
+          <dl className="data-list">
+            {v.dokument && (
+              <div>
+                <dt>{v.skladanie === "dolacz" ? "📎 Dołączasz do wniosku" : "📄 Co składasz"}</dt>
+                <dd><b>{v.dokument}</b></dd>
+              </div>
+            )}
+            {v.adresat && <div><dt>🏢 Komu</dt><dd>{v.adresat}</dd></div>}
+            {v.termin && <div><dt>⏰ Do kiedy</dt><dd>{v.termin}</dd></div>}
+            {v.wymiar && <div><dt>Ile</dt><dd>{v.wymiar}</dd></div>}
+            {v.wysokosc && <div><dt>Wysokość</dt><dd>{v.wysokosc}</dd></div>}
+          </dl>
+        )
+      )}
+
+      {(v.status === "dostepny" || v.status === "brak_danych") && v.formularz && !automat && (
+        <details>
+          <summary className="note">Szczegóły formalne (druki, przepisy)</summary>
+          <p className="note">{v.formularz}</p>
+        </details>
       )}
 
       {v.status === "dostepny" && v.dokumenty?.length > 0 && (
@@ -175,6 +197,12 @@ export default function Wnioski() {
                   <span className="calc-tile-body">
                     <span className="calc-tile-title">{w.nazwa}</span>
                     <span className="calc-tile-desc">{w.opis}</span>
+                    {w.doZlozenia.length > 0 && (
+                      <span className="calc-tile-desc">
+                        <b>Do złożenia:</b> {w.doZlozenia.slice(0, 2).map((d) => d.split(" + ")[0]).join("; ")}
+                        {w.doZlozenia.length > 2 && ` i jeszcze ${w.doZlozenia.length - 2}`}
+                      </span>
+                    )}
                     <span className="calc-tile-desc">
                       {w.dostepne > 0 && <span className="badge b-ok">{w.dostepne} przysługuje</span>}{" "}
                       {w.brakDanych > 0 && <span className="badge b-warn">{w.brakDanych} brak danych</span>}{" "}
@@ -205,7 +233,7 @@ export default function Wnioski() {
                 <summary>Nie dotyczy Twojej sytuacji ({wniosek.warianty.filter((v) => v.status === "nie_dotyczy").length})</summary>
                 <ul className="pts">
                   {wniosek.warianty.filter((v) => v.status === "nie_dotyczy").map((v) => (
-                    <li key={v.id}>{v.nazwa} ({v.id}) – {v.powody?.[0]}</li>
+                    <li key={v.id}>{v.nazwa} – {v.powody?.[0]}</li>
                   ))}
                 </ul>
               </details>
