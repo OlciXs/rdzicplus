@@ -1,0 +1,32 @@
+{
+  "mobywatelProfiles": [
+    {
+      "id": "mob-bozena",
+      "imie": "Bożena",
+      "nazwisko": "Nowak",
+      "pesel": "91041748260"
+    },
+    {
+      "id": "mob-marzena",
+      "imie": "Marzena",
+      "nazwisko": "Wiśniewska",
+      "pesel": "87090371522"
+    },
+    {
+      "id": "mob-katarzyna",
+      "imie": "Katarzyna",
+      "nazwisko": "Zielińska",
+      "pesel": "94122530846"
+    }
+  ],
+  "users": [
+    {
+      "id": "3491c880-bee0-479e-906d-de3e7ffe9791",
+      "pesel": "87090371522",
+      "imie": "Marzena",
+      "nazwisko": "Wiśniewska",
+      "createdAt": "2026-11-21T13:58:06.311Z",
+      "lastLoginAt": "2026-11-21T13:58:06.311Z"
+    }
+  ]
+}
