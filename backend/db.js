@@ -14,7 +14,7 @@ const SEED = {
   mobywatelProfiles: [
     { id: "mob-bozena", imie: "Bożena", nazwisko: "Nowak", pesel: "91041748260" },
     { id: "mob-marzena", imie: "Marzena", nazwisko: "Wiśniewska", pesel: "87090371522" },
-    { id: "mob-katarzyna", imie: "Katarzyna", nazwisko: "Zielińska", pesel: "94122530846" },
+    { id: "mob-mariusz", imie: "Mariusz", nazwisko: "Zieliński", pesel: "94122530836" },
   ],
   // Użytkownicy aplikacji - tworzą się sami przy pierwszym logowaniu
   users: [],

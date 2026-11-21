@@ -26,7 +26,42 @@
       "imie": "Marzena",
       "nazwisko": "Wiśniewska",
       "createdAt": "2026-11-21T13:58:06.311Z",
-      "lastLoginAt": "2026-11-21T13:58:06.311Z"
+      "lastLoginAt": "2026-11-21T16:29:22.512Z",
+      "profile": {
+        "ubezpieczony": {
+          "imie": "Marzena",
+          "nazwisko": "Wiśniewska",
+          "peselMasked": "*******1522",
+          "dataUrodzenia": "1987-09-03",
+          "adres": "",
+          "rachunek": "",
+          "statusUbezpieczenia": "",
+          "podstawaWymiaru": "",
+          "plec": "K"
+        },
+        "platnik": {
+          "nazwa": "",
+          "adres": "",
+          "nip": "",
+          "regon": ""
+        },
+        "drugiRodzic": {
+          "imie": "",
+          "nazwisko": "",
+          "pesel": "",
+          "podstawaWymiaru": ""
+        },
+        "dziecko": {
+          "imie": "",
+          "nazwisko": "",
+          "pesel": "",
+          "dataUrodzenia": "",
+          "miejsceUrodzenia": "",
+          "liczbaDzieci": "",
+          "zaZyciem": false
+        }
+      },
+      "profileUpdatedAt": null
     },
     {
       "id": "b0cb48cf-1ef8-4a18-8a0a-3e3723b134dd",
@@ -34,20 +69,12 @@
       "imie": "Bożena",
       "nazwisko": "Nowak",
       "createdAt": "2026-11-21T15:23:43.653Z",
-      "lastLoginAt": "2026-11-21T15:26:52.721Z"
-    },
-    {
-      "id": "cbc2c19c-52ca-4376-8474-fd7b26d9a545",
-      "pesel": "94122530836",
-      "imie": "Mariusz",
-      "nazwisko": "Zieliński",
-      "createdAt": "2026-11-21T15:29:32.308Z",
-      "lastLoginAt": "2026-11-21T15:29:32.308Z",
+      "lastLoginAt": "2026-11-21T16:02:01.823Z",
       "profile": {
         "ubezpieczony": {
-          "imie": "Mariusz",
-          "nazwisko": "Zieliński",
-          "peselMasked": "*******0836",
+          "imie": "Bożena",
+          "nazwisko": "Nowak",
+          "peselMasked": "*******8260",
           "dataUrodzenia": "",
           "adres": "",
           "rachunek": "",
@@ -77,6 +104,49 @@
         }
       },
       "profileUpdatedAt": null
+    },
+    {
+      "id": "cbc2c19c-52ca-4376-8474-fd7b26d9a545",
+      "pesel": "94122530836",
+      "imie": "Mariusz",
+      "nazwisko": "Zieliński",
+      "createdAt": "2026-11-21T15:29:32.308Z",
+      "lastLoginAt": "2026-11-21T16:29:33.012Z",
+      "profile": {
+        "ubezpieczony": {
+          "imie": "Mariusz",
+          "nazwisko": "Zieliński",
+          "peselMasked": "*******0836",
+          "dataUrodzenia": "1994-12-25",
+          "adres": "ul. Słoneczna 12/4, 00-001 Warszawa",
+          "rachunek": "PL61109010140000071219812874",
+          "statusUbezpieczenia": "pracownik",
+          "podstawaWymiaru": "4000",
+          "plec": "M"
+        },
+        "platnik": {
+          "nazwa": "Pracodawca Testowy Sp. z o.o.",
+          "adres": "ul. Przemysłowa 8, 00-002 Warszawa",
+          "nip": "1234567890",
+          "regon": "123456789"
+        },
+        "drugiRodzic": {
+          "imie": "Marzena",
+          "nazwisko": "Zielińska",
+          "pesel": "87090371522",
+          "podstawaWymiaru": "3000"
+        },
+        "dziecko": {
+          "imie": "Jan",
+          "nazwisko": "Zieliński",
+          "pesel": "",
+          "dataUrodzenia": "2026-11-20",
+          "miejsceUrodzenia": "Warszawa",
+          "liczbaDzieci": "1",
+          "zaZyciem": false
+        }
+      },
+      "profileUpdatedAt": "2026-11-21T17:09:22.689Z"
     }
   ]
 }
