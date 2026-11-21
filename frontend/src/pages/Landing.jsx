@@ -9,22 +9,33 @@ export default function Landing() {
     <div className="app">
       <header className="landing-top">
         <Link to="/" className="brand brand-link">
-          <span className="brand-mark" aria-hidden="true">R+</span>
+          <span className="brand-mark" aria-hidden="true">RP</span>
           <span className="brand-name">RodzicPlus</span>
         </Link>
         <nav className="landing-nav">
           <Link className="nav-link" to="/kalkulatory">Kalkulatory</Link>
-          {user ? (
-            <Link className="btn btn-primary" to="/panel">Mój panel</Link>
-          ) : (
-            <Link className="btn btn-outline" to="/logowanie">Zaloguj się</Link>
-          )}
+          <details className="menu">
+            <summary className="menu-button" aria-label="Menu aplikacji">
+              Menu <span aria-hidden="true">⌄</span>
+            </summary>
+            <div className="menu-list">
+              {user ? (
+                <>
+                  <Link to="/panel">Mój panel</Link>
+                  <Link to="/profil">Moje dane</Link>
+                </>
+              ) : (
+                <Link to="/logowanie">Zaloguj się</Link>
+              )}
+              <Link to="/kalkulatory">Wszystkie kalkulatory</Link>
+            </div>
+          </details>
         </nav>
       </header>
 
       <main className="landing">
         <section className="landing-hero">
-          <p className="eyebrow">ZUS · HackNation 2026</p>
+          <p className="eyebrow">Wsparcie po narodzinach dziecka</p>
           <h1>Załatw papiery po narodzinach dziecka razem z nami.</h1>
           <p className="lead">
             RodzicPlus mówi Ci wprost: czy dostaniesz pieniądze z ZUS, ile dostaniesz, jak długo
@@ -81,8 +92,7 @@ export default function Landing() {
 
       <footer className="site-footer">
         <p className="note">
-          Materiał poglądowy (prototyp konkursowy). Kalkulacje nie stanowią decyzji ZUS.{" "}
-          <Link to="/admin">Panel administratora</Link>
+          Materiał poglądowy. Kalkulacje nie stanowią decyzji ZUS.
         </p>
       </footer>
     </div>

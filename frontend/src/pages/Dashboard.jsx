@@ -69,15 +69,7 @@ export default function Dashboard() {
 
   return (
     <div className="app">
-      <AppHeader
-        actions={
-          <>
-            <Link className="btn btn-outline" to="/profil">Moje dane</Link>
-            <Link className="btn btn-primary" to="/kalkulatory">Kalkulatory świadczeń</Link>
-            <button className="btn btn-outline" onClick={logout}>Wyloguj</button>
-          </>
-        }
-      />
+      <AppHeader />
 
       <main className="container">
         <h1>Cześć, {user.imie}! 👋</h1>
