@@ -36,13 +36,61 @@ function Pola({ lista }) {
   );
 }
 
-function Wariant({ v }) {
-  const st = STATUS[v.status];
+// Wariant, przy którym nic nie składasz (np. e-ZLA leci automatycznie) – inna etykieta niż „Przysługuje”.
+const AUTOMAT = { label: "Przysługuje – nic nie składasz", badge: "b-ok", kolor: "var(--color-navy)" };
+
+const parseDate = (value) => {
+  if (!value) return null;
+  const date = new Date(`${String(value).slice(0, 10)}T12:00:00`);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+const addDays = (date, days) => date ? new Date(date.getTime() + days * 86400000) : null;
+const fmtDate = (date) => date ? date.toLocaleDateString("pl-PL") : "";
+
+function deadlineForVariant(v, profile) {
+  const dziecko = profile?.dziecko ?? {};
+  const firstChild = Array.isArray(dziecko.dzieci) && dziecko.dzieci.length ? dziecko.dzieci[0] : dziecko;
+  const birth = parseDate(firstChild?.dataUrodzenia);
+  const due = parseDate(dziecko.przewidywanaDataPorodu);
+  const adoption = parseDate(dziecko.dataPrzyjecia);
+  const leaveEnd = parseDate(profile?.urlopy?.terminKoncaMacierzynskiego);
+
+  if (v.id === "W41" && birth) return addDays(birth, 21);
+  if (v.id === "W2" && due) return addDays(addDays(due, -42), -14);
+  if (v.id === "W4" && leaveEnd) return addDays(leaveEnd, -21);
+  if (v.id === "W21" && birth) {
+    const end = new Date(birth);
+    end.setMonth(end.getMonth() + 12);
+    end.setDate(end.getDate() - 1);
+    return end;
+  }
+  if (v.id === "W25" && birth) return new Date(birth.getFullYear() + 6, 11, 31);
+  if (v.id === "W28" && adoption) return addDays(adoption, 7);
+  if (v.id === "W45") {
+    const funeral = parseDate(dziecko.dataZgonu) ?? birth;
+    return addDays(funeral, 365);
+  }
+  return null;
+}
+
+function Wariant({ v, profile }) {
+  const automat = v.status === "dostepny" && v.skladanie === "automatycznie";
+  const st = automat ? AUTOMAT : STATUS[v.status];
+  const deadline = deadlineForVariant(v, profile);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const remaining = deadline ? Math.ceil((deadline.getTime() - now.getTime()) / 86400000) : null;
+  const drukujPodsumowanie = (event) => {
+    const karta = event.currentTarget.closest(".result-card");
+    if (karta) karta.classList.add("drukuj-wynik");
+    window.print();
+    if (karta) karta.classList.remove("drukuj-wynik");
+  };
   return (
     <section className="result-card" style={{ borderLeftColor: st.kolor }} aria-labelledby={`w-${v.id}`}>
       <h3 className="result-title" id={`w-${v.id}`}>
         <span className={`badge ${st.badge}`}>{st.label}</span>{" "}
-        {v.nazwa} <span className="note">({v.id})</span>
+        {v.nazwa}
       </h3>
 
       {v.pewnosc === "do_potwierdzenia" && (
@@ -66,13 +114,48 @@ function Wariant({ v }) {
       )}
 
       {(v.status === "dostepny" || v.status === "brak_danych") && (
-        <dl className="data-list">
-          {v.wymiar && <div><dt>Ile</dt><dd>{v.wymiar}</dd></div>}
-          {v.wysokosc && <div><dt>Wysokość</dt><dd>{v.wysokosc}</dd></div>}
-          {v.adresat && <div><dt>Gdzie złożyć</dt><dd>{v.adresat}</dd></div>}
-          {v.formularz && <div><dt>Wniosek</dt><dd>{v.formularz}</dd></div>}
-          {v.termin && <div><dt>Termin</dt><dd>{v.termin}</dd></div>}
-        </dl>
+        automat ? (
+          <p className="alert-inline">
+            <span className="badge b-ok">Automatycznie</span> {v.dokument}
+          </p>
+        ) : (
+          <dl className="data-list">
+            {v.dokument && (
+              <div>
+                <dt>{v.skladanie === "dolacz" ? "📎 Dołączasz do wniosku" : "📄 Co składasz"}</dt>
+                <dd><b>{v.dokument}</b></dd>
+              </div>
+            )}
+            {v.adresat && <div><dt>🏢 Komu</dt><dd>{v.adresat}</dd></div>}
+            {v.termin && <div><dt>⏰ Do kiedy</dt><dd>{v.termin}</dd></div>}
+            {deadline && (
+              <div>
+                <dt>📅 Konkretny termin</dt>
+                <dd>
+                  <b>{fmtDate(deadline)}</b>
+                  {remaining !== null && (
+                    <span className={remaining < 0 ? "deadline-overdue" : remaining <= 7 ? "deadline-soon" : "deadline-ok"}>
+                      {" "}– {remaining < 0
+                        ? `termin minął ${Math.abs(remaining)} ${Math.abs(remaining) === 1 ? "dzień" : "dni"} temu`
+                        : remaining === 0
+                          ? "ostatni dzień"
+                          : `pozostało ${remaining} ${remaining === 1 ? "dzień" : "dni"}`}
+                    </span>
+                  )}
+                </dd>
+              </div>
+            )}
+            {v.wymiar && <div><dt>Ile</dt><dd>{v.wymiar}</dd></div>}
+            {v.wysokosc && <div><dt>Wysokość</dt><dd>{v.wysokosc}</dd></div>}
+          </dl>
+        )
+      )}
+
+      {(v.status === "dostepny" || v.status === "brak_danych") && v.formularz && !automat && (
+        <details>
+          <summary className="note">Szczegóły formalne (druki, przepisy)</summary>
+          <p className="note">{v.formularz}</p>
+        </details>
       )}
 
       {v.status === "dostepny" && v.dokumenty?.length > 0 && (
@@ -90,10 +173,18 @@ function Wariant({ v }) {
       )}
 
       {(v.status === "dostepny" || v.status === "brak_danych") && maDruk(v.id) && (
-        <p>
+        <p className="result-action">
           <Link className="btn btn-outline" to={`/wnioski/druk?v=${v.id}`}>
             🖨️ Przygotuj wniosek do druku
           </Link>
+        </p>
+      )}
+
+      {(v.status === "dostepny" || v.status === "brak_danych") && !maDruk(v.id) && (
+        <p className="result-action no-print">
+          <button type="button" className="btn btn-outline" onClick={drukujPodsumowanie}>
+            🖨️ Drukuj podsumowanie wniosku
+          </button>
         </p>
       )}
 
@@ -175,6 +266,12 @@ export default function Wnioski() {
                   <span className="calc-tile-body">
                     <span className="calc-tile-title">{w.nazwa}</span>
                     <span className="calc-tile-desc">{w.opis}</span>
+                    {w.doZlozenia.length > 0 && (
+                      <span className="calc-tile-desc">
+                        <b>Do złożenia:</b> {w.doZlozenia.slice(0, 2).map((d) => d.split(" + ")[0]).join("; ")}
+                        {w.doZlozenia.length > 2 && ` i jeszcze ${w.doZlozenia.length - 2}`}
+                      </span>
+                    )}
                     <span className="calc-tile-desc">
                       {w.dostepne > 0 && <span className="badge b-ok">{w.dostepne} przysługuje</span>}{" "}
                       {w.brakDanych > 0 && <span className="badge b-warn">{w.brakDanych} brak danych</span>}{" "}
@@ -198,14 +295,14 @@ export default function Wnioski() {
               {wniosek.warianty
                 .filter((v) => v.status !== "nie_dotyczy")
                 .sort((a, b) => ["dostepny", "brak_danych", "niedostepny", "informacja"].indexOf(a.status) - ["dostepny", "brak_danych", "niedostepny", "informacja"].indexOf(b.status))
-                .map((v) => <Wariant key={v.id} v={v} />)}
+                .map((v) => <Wariant key={v.id} v={v} profile={profile} />)}
             </div>
             {wniosek.warianty.some((v) => v.status === "nie_dotyczy") && (
               <details className="result-card">
                 <summary>Nie dotyczy Twojej sytuacji ({wniosek.warianty.filter((v) => v.status === "nie_dotyczy").length})</summary>
                 <ul className="pts">
                   {wniosek.warianty.filter((v) => v.status === "nie_dotyczy").map((v) => (
-                    <li key={v.id}>{v.nazwa} ({v.id}) – {v.powody?.[0]}</li>
+                    <li key={v.id}>{v.nazwa} – {v.powody?.[0]}</li>
                   ))}
                 </ul>
               </details>

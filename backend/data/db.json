@@ -26,7 +26,7 @@
       "imie": "Marzena",
       "nazwisko": "Wiśniewska",
       "createdAt": "2026-11-21T13:58:06.311Z",
-      "lastLoginAt": "2026-11-21T21:44:20.227Z",
+      "lastLoginAt": "2026-11-21T23:02:10.334Z",
       "profile": {
         "ubezpieczony": {
           "imie": "Marzena",
@@ -56,7 +56,7 @@
           "zapewnionoInnaPrace": ""
         },
         "sytuacja": {
-          "etap": "ciaza",
+          "etap": "po_porodzie",
           "rola": "matka",
           "typPrzyjecia": ""
         },
@@ -82,28 +82,44 @@
           "brak": true
         },
         "dziecko": {
-          "imie": "",
-          "nazwisko": "",
+          "imie": "Julia",
+          "nazwisko": "Wiśniewska",
           "pesel": "",
-          "dataUrodzenia": "",
-          "miejsceUrodzenia": "",
-          "liczbaDzieci": "3",
-          "przewidywanaDataPorodu": "2026-11-22",
-          "martwe": "",
-          "zmarlo": "",
+          "dataUrodzenia": "2026-11-20",
+          "miejsceUrodzenia": "Szpital Uniwersytecki nr 2 im. Jana Pawła II w Krakowie",
+          "liczbaDzieci": "2",
+          "przewidywanaDataPorodu": "2026-11-20",
+          "martwe": "nie",
+          "zmarlo": "nie",
           "dataZgonu": "",
-          "liczbaZyjacych": "",
-          "zaGranica": "",
+          "liczbaZyjacych": "2",
+          "zaGranica": "nie",
           "kraj": "",
-          "pobytWSzpitalu": "",
+          "pobytWSzpitalu": "nie",
           "tydzienCiazy": "",
           "masaUrodzenia": "",
           "szpitalOd": "",
           "szpitalDo": "",
           "dataPrzyjecia": "",
           "odroczonySzkolny": "",
-          "niepelnosprawne": "",
-          "zaZyciem": false
+          "niepelnosprawne": "nie",
+          "zaZyciem": false,
+          "dzieci": [
+            {
+              "imie": "Julia",
+              "nazwisko": "Wiśniewska",
+              "pesel": "26212000012",
+              "dataUrodzenia": "2026-11-20",
+              "miejsceUrodzenia": "Szpital Uniwersytecki nr 2 im. Jana Pawła II w Krakowie"
+            },
+            {
+              "imie": "Lena",
+              "nazwisko": "Wiśniewska",
+              "pesel": "26212000029",
+              "dataUrodzenia": "2026-11-20",
+              "miejsceUrodzenia": "Szpital Uniwersytecki nr 2 im. Jana Pawła II w Krakowie"
+            }
+          ]
         },
         "zdrowie": {
           "zwolnienie": "brak",
@@ -118,7 +134,7 @@
         "urlopy": {
           "urlopPrzedPorodemOd": "2026-11-10",
           "zamiarPelnyWymiar": "tak",
-          "macierzynskiWykorzystanoTyg": "",
+          "macierzynskiWykorzystanoTyg": "0",
           "matkaRezygnuje": "",
           "planUzupelniajacy": "",
           "terminKoncaMacierzynskiego": "",
@@ -135,12 +151,12 @@
           "wymiarPracyPrzyLaczeniu": "",
           "planWychowawczy": "",
           "wychowawczyWykorzystanoMies": "",
-          "potrzebaOpieki": "",
+          "potrzebaOpieki": "brak",
           "domownikMozeOpiekowac": "",
           "opiekunczyDniWRoku": ""
         }
       },
-      "profileUpdatedAt": "2026-11-21T21:44:53.223Z"
+      "profileUpdatedAt": "2026-11-21T22:57:31.213Z"
     },
     {
       "id": "b0cb48cf-1ef8-4a18-8a0a-3e3723b134dd",
@@ -270,7 +286,7 @@
       "imie": "Mariusz",
       "nazwisko": "Zieliński",
       "createdAt": "2026-11-21T15:29:32.308Z",
-      "lastLoginAt": "2026-11-21T21:33:08.224Z",
+      "lastLoginAt": "2026-11-21T22:17:44.618Z",
       "profile": {
         "ubezpieczony": {
           "imie": "Mariusz",
@@ -300,7 +316,7 @@
           "zapewnionoInnaPrace": ""
         },
         "sytuacja": {
-          "etap": "ciaza",
+          "etap": "po_porodzie",
           "rola": "ojciec",
           "typPrzyjecia": ""
         },
@@ -384,7 +400,7 @@
           "opiekunczyDniWRoku": ""
         }
       },
-      "profileUpdatedAt": "2026-11-21T21:34:50.475Z"
+      "profileUpdatedAt": "2026-11-21T22:19:10.935Z"
     }
   ]
 }

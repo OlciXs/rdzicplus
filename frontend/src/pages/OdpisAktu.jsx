@@ -20,7 +20,7 @@ const ODBIOR = [
 ];
 const nazwa = (lista, v) => lista.find(([k]) => k === v)?.[1].split(" – ")[0] ?? v;
 
-const PUSTY = { imie: "", nazwisko: "", dataUrodzenia: "", miejsceUrodzenia: "", rodzaj: "skrocony", odbior: "elektronicznie" };
+const PUSTY = { dzieckoIndex: "0", imie: "", nazwisko: "", dataUrodzenia: "", miejsceUrodzenia: "", rodzaj: "skrocony", odbior: "elektronicznie" };
 
 export default function OdpisAktu() {
   const { profile } = useProfile();
@@ -39,12 +39,13 @@ export default function OdpisAktu() {
   useEffect(() => {
     if (!profile || prefilled) return;
     const d = profile.dziecko ?? {};
+    const pierwsze = Array.isArray(d.dzieci) && d.dzieci.length ? d.dzieci[0] : d;
     setForm((f) => ({
       ...f,
-      imie: d.imie || f.imie,
-      nazwisko: d.nazwisko || f.nazwisko,
-      dataUrodzenia: d.dataUrodzenia || f.dataUrodzenia,
-      miejsceUrodzenia: d.miejsceUrodzenia || f.miejsceUrodzenia,
+      imie: pierwsze.imie || f.imie,
+      nazwisko: pierwsze.nazwisko || f.nazwisko,
+      dataUrodzenia: pierwsze.dataUrodzenia || d.dataUrodzenia || f.dataUrodzenia,
+      miejsceUrodzenia: pierwsze.miejsceUrodzenia || d.miejsceUrodzenia || f.miejsceUrodzenia,
     }));
     setPrefilled(true);
   }, [profile, prefilled]);
@@ -100,6 +101,23 @@ export default function OdpisAktu() {
     </label>
   );
 
+  const dzieciProfilu = profile?.dziecko?.dzieci?.length
+    ? profile.dziecko.dzieci
+    : (profile?.dziecko ? [profile.dziecko] : []);
+
+  const wybierzDziecko = (e) => {
+    const index = Number(e.target.value) || 0;
+    const d = dzieciProfilu[index];
+    setForm((f) => ({
+      ...f,
+      dzieckoIndex: String(index),
+      imie: d?.imie ?? "",
+      nazwisko: d?.nazwisko ?? "",
+      dataUrodzenia: d?.dataUrodzenia ?? profile?.dziecko?.dataUrodzenia ?? "",
+      miejsceUrodzenia: d?.miejsceUrodzenia ?? profile?.dziecko?.miejsceUrodzenia ?? "",
+    }));
+  };
+
   return (
     <div className="app">
       <AppHeader />
@@ -124,6 +142,16 @@ export default function OdpisAktu() {
             <h2 className="calc-group-title">Dane dziecka</h2>
             <p className="group-hint">{prefilled && profile?.dziecko?.imie ? "Podstawiliśmy dane z „Moje dane”." : "Uzupełnij dane dziecka z aktu urodzenia."}</p>
             <div className="calc-grid">
+              {dzieciProfilu.length > 1 && (
+                <label className="field field-wide">
+                  <span className="field-label">Dla którego dziecka złożysz odpis?</span>
+                  <select className="input" value={form.dzieckoIndex} onChange={wybierzDziecko}>
+                    {dzieciProfilu.map((d, i) => (
+                      <option key={i} value={i}>{i + 1}. {[d.imie, d.nazwisko].filter(Boolean).join(" ") || `Dziecko ${i + 1}`}</option>
+                    ))}
+                  </select>
+                </label>
+              )}
               {pole("imie", "Imię")}
               {pole("nazwisko", "Nazwisko")}
               {pole("dataUrodzenia", "Data urodzenia", { type: "date" })}

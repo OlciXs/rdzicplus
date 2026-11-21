@@ -19,6 +19,9 @@ export default function Dashboard() {
   const { profile } = useProfile();
 
   const dziecko = profile?.dziecko ?? {};
+  const dzieci = Array.isArray(dziecko.dzieci) && dziecko.dzieci.length
+    ? dziecko.dzieci
+    : [(dziecko)];
   const maDaneDziecka = [
     dziecko.imie,
     dziecko.nazwisko,
@@ -27,8 +30,8 @@ export default function Dashboard() {
     dziecko.przewidywanaDataPorodu,
     dziecko.dataPrzyjecia,
   ].some((value) => value !== "" && value !== null && value !== undefined);
-  const maskedChildPesel = dziecko.pesel
-    ? `${"*".repeat(Math.max(0, String(dziecko.pesel).length - 4))}${String(dziecko.pesel).slice(-4)}`
+  const maskedChildPesel = (pesel) => pesel
+    ? `${"*".repeat(Math.max(0, String(pesel).length - 4))}${String(pesel).slice(-4)}`
     : "";
 
   const filled = profile
@@ -71,13 +74,15 @@ export default function Dashboard() {
               <Link className="text-link" to="/profil?krok=dziecko">Edytuj</Link>
             </div>
             <dl className="data-list">
-              {(dziecko.imie || dziecko.nazwisko) && (
-                <div>
-                  <dt>Imię i nazwisko</dt>
-                  <dd>{dziecko.imie} {dziecko.nazwisko}</dd>
+              {dzieci.map((d, i) => (
+                <div key={i}>
+                  <dt>{dzieci.length > 1 ? `Dziecko ${i + 1}` : "Imię i nazwisko"}</dt>
+                  <dd>{[d.imie, d.nazwisko].filter(Boolean).join(" ") || "-"}</dd>
                 </div>
+              ))}
+              {dzieci.some((d) => d.pesel) && (
+                <div><dt>PESEL-e dzieci</dt><dd>{dzieci.map((d, i) => d.pesel ? `${dzieci.length > 1 ? `#${i + 1} ` : ""}${maskedChildPesel(d.pesel)}` : null).filter(Boolean).join(", ")}</dd></div>
               )}
-              {maskedChildPesel && <div><dt>PESEL</dt><dd>{maskedChildPesel}</dd></div>}
               {dziecko.dataUrodzenia && (
                 <div><dt>Data urodzenia</dt><dd>{new Date(dziecko.dataUrodzenia).toLocaleDateString("pl-PL")}</dd></div>
               )}
@@ -143,6 +148,33 @@ export default function Dashboard() {
           <span className="calc-cta-body">
             <span className="calc-cta-title">Odpis aktu urodzenia</span>
             <span className="calc-cta-desc">Wniosek z danymi dziecka z „Moje dane” (symulacja usługi gov.pl).</span>
+          </span>
+          <span className="calc-cta-arrow" aria-hidden="true">→</span>
+        </Link>
+
+        <Link className="calc-cta" to="/kalendarz">
+          <span className="calc-cta-icon" aria-hidden="true">📅</span>
+          <span className="calc-cta-body">
+            <span className="calc-cta-title">Kalendarz terminów</span>
+            <span className="calc-cta-desc">Ostateczne terminy wniosków i przypomnienia tydzień wcześniej.</span>
+          </span>
+          <span className="calc-cta-arrow" aria-hidden="true">→</span>
+        </Link>
+
+        <Link className="calc-cta" to="/wsparcie">
+          <span className="calc-cta-icon" aria-hidden="true">🤝</span>
+          <span className="calc-cta-body">
+            <span className="calc-cta-title">Wsparcie w sytuacjach szczególnych</span>
+            <span className="calc-cta-desc">Hospicja i fundacje dla wcześniaków oraz rodzin po stracie dziecka.</span>
+          </span>
+          <span className="calc-cta-arrow" aria-hidden="true">→</span>
+        </Link>
+
+        <Link className="calc-cta" to="/informacje">
+          <span className="calc-cta-icon" aria-hidden="true">ℹ️</span>
+          <span className="calc-cta-body">
+            <span className="calc-cta-title">Informacje urzędowe i przekierowania</span>
+            <span className="calc-cta-desc">ZUS, gov.pl, Ministerstwo Rodziny i Państwowa Inspekcja Pracy.</span>
           </span>
           <span className="calc-cta-arrow" aria-hidden="true">→</span>
         </Link>

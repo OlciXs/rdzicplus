@@ -143,6 +143,8 @@ h2 { font-size: 1.1rem; margin: 0 0 8px; color: var(--color-navy); }
 .info-card-heading h2 { margin: 0; }
 .text-link { color: var(--color-navy); font-weight: 600; text-decoration: none; }
 .text-link:hover { text-decoration: underline; }
+.official-page .result-stack { margin-bottom: 24px; }
+.official-page .info-card { margin-top: 8px; }
 
 
 /* pasek górny – akcje */
@@ -209,6 +211,79 @@ h2 { font-size: 1.1rem; margin: 0 0 8px; color: var(--color-navy); }
   text-decoration: none;
 }
 .login-without-account strong { color: var(--color-primary); }
+
+/* Kalendarz terminów */
+.calendar-toolbar {
+  display: grid; grid-template-columns: 48px 1fr 48px;
+  align-items: center; gap: 10px; margin-bottom: 12px;
+}
+.calendar-toolbar h2 { margin: 0; text-align: center; text-transform: capitalize; }
+.calendar-toolbar .btn { min-height: 44px; padding: 6px 10px; font-size: 1.4rem; }
+.calendar-grid {
+  display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));
+  border-top: 1px solid var(--color-border);
+  border-left: 1px solid var(--color-border);
+  overflow: hidden; border-radius: 8px;
+}
+.calendar-weekday {
+  min-height: 36px; display: grid; place-items: center;
+  background: #edf4f1; color: var(--color-muted);
+  font-size: 0.78rem; font-weight: 700;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+.calendar-day {
+  min-height: 84px; padding: 6px;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  display: grid; align-content: start; gap: 4px;
+  background: var(--color-surface);
+}
+.calendar-empty { background: #f8faf9; }
+.calendar-day-number { font-size: 0.82rem; color: var(--color-muted); }
+.calendar-dot {
+  display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; border-radius: 5px; padding: 2px 4px;
+  font-size: 0.68rem; font-weight: 700;
+}
+.calendar-dot.deadline { background: var(--color-danger-soft); color: var(--color-danger); }
+.calendar-dot.reminder { background: #fff4d6; color: #805b00; }
+.calendar-event {
+  display: grid; grid-template-columns: 1fr auto; gap: 16px;
+  align-items: start; background: var(--color-surface);
+  border: 1px solid var(--color-border); border-left: 5px solid var(--color-primary);
+  border-radius: var(--radius); padding: 18px; margin-bottom: 14px;
+}
+.calendar-event.is-completed { opacity: 0.58; }
+.calendar-event h3 { margin: 8px 0 10px; color: var(--color-navy); }
+.calendar-event .hint { margin-bottom: 0; }
+
+/* Stałe odstępy wszystkich kart i kafelków - bez zlewania się bloków. */
+.container > .info-card,
+.container > .calc-cta,
+.container > .calendar-event,
+.container > .result-stack,
+.container > .calc-list,
+.container > .hero,
+.container > section {
+  margin-bottom: 16px;
+}
+.container > .calc-cta:last-child,
+.container > section:last-child,
+.container > .info-card:last-child,
+.container > .calendar-event:last-child {
+  margin-bottom: 0;
+}
+.calc-list { gap: 16px; }
+.result-stack { gap: 14px; }
+
+@media (max-width: 620px) {
+  .calendar-day { min-height: 64px; padding: 4px; }
+  .calendar-weekday { font-size: 0.68rem; }
+  .calendar-dot { font-size: 0; width: 9px; height: 9px; padding: 0; border-radius: 50%; }
+  .calendar-event { grid-template-columns: 1fr; }
+  .calendar-event .btn { width: 100%; }
+}
 
 /* =====================================================================
    KALKULATORY
@@ -313,6 +388,8 @@ h2 { font-size: 1.1rem; margin: 0 0 8px; color: var(--color-navy); }
   font-size: 0.92rem; cursor: pointer; line-height: 1.4;
 }
 .check input { width: 22px; height: 22px; margin: 0; accent-color: var(--color-primary); flex-shrink: 0; }
+.dziecko-card { border: 1px solid var(--color-border); border-radius: var(--radius-sm); margin: 12px 0 0; padding: 14px; }
+.dziecko-card legend { padding: 0 6px; font-weight: 700; color: var(--color-navy); }
 
 /* tabela */
 .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -341,6 +418,22 @@ h2 { font-size: 1.1rem; margin: 0 0 8px; color: var(--color-navy); }
 .result-title { font-size: 1rem; color: var(--color-navy); margin: 0 0 12px; }
 .result-card p { margin: 0 0 10px; }
 .result-card p:last-child { margin-bottom: 0; }
+.result-action {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  clear: both;
+  margin-top: 14px !important;
+}
+.result-action .btn {
+  width: fit-content;
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+}
+.deadline-ok { color: var(--color-primary); font-weight: 700; }
+.deadline-soon { color: #805b00; font-weight: 700; }
+.deadline-overdue { color: var(--color-danger); font-weight: 700; }
 
 /* lista punktowana */
 .pts { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
@@ -545,4 +638,8 @@ a.pager-chip { text-decoration: none; }
   body, .app { background: #fff !important; }
   .container.druk-page { max-width: none; padding: 0; }
   .druk-kartka { border: 0; border-radius: 0; padding: 0; font-size: 12pt; }
+  body:has(.drukuj-wynik) > .app > main > :not(.result-stack),
+  body:has(.drukuj-wynik) .result-stack .result-card:not(.drukuj-wynik) { display: none !important; }
+  body:has(.drukuj-wynik) .container { max-width: none; padding: 0; }
+  body:has(.drukuj-wynik) .drukuj-wynik { border: 0; padding: 0; }
 }

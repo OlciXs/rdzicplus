@@ -53,9 +53,9 @@ describe("spójność rejestru z bazą wiedzy", () => {
   });
 
   it("liczba wariantów zgodna z deklaracją w bazie wiedzy (B-13)", () => {
-    // Rejestr scala część wariantów z dokumentacji (np. W23/W24 rozbite na W6–W9),
-    // ale nie może ich MIEĆ MNIEJ niż dokumentacja bez świadomej decyzji.
-    expect(WARIANTY.length).toBeGreaterThanOrEqual(dokWarianty.size + 16);
+    // Rejestr scala część wariantów z dokumentacji (np. W23/W24 rozbite na W6–W9).
+    // W3 celowo nie tworzy osobnego wniosku – poród mnogi jest obsłużony przez W1.
+    expect(WARIANTY.length).toBeGreaterThanOrEqual(39);
   });
 
   it("warianty przyjęte na wychowanie mają komplet pól dziecka", () => {

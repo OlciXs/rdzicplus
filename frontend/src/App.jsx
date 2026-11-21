@@ -14,7 +14,10 @@ import Admin from "./pages/Admin.jsx";
 import Zus from "./pages/Zus.jsx";
 import OdpisAktu from "./pages/OdpisAktu.jsx";
 import Wnioski from "./pages/Wnioski.jsx";
+import Support from "./pages/Support.jsx";
+import OfficialLinks from "./pages/OfficialLinks.jsx";
 import Druk from "./pages/Druk.jsx";
+import Kalendarz from "./pages/Kalendarz.jsx";
 
 const TOKEN_KEY = "rodzicplus-token";
 
@@ -135,6 +138,30 @@ export default function App() {
           element={
             <RequireAuth loading={loading} user={user}>
               <OdpisAktu />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/wsparcie"
+          element={
+            <RequireAuth loading={loading} user={user}>
+              <Support />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/kalendarz"
+          element={
+            <RequireAuth loading={loading} user={user}>
+              <Kalendarz />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/informacje"
+          element={
+            <RequireAuth loading={loading} user={user}>
+              <OfficialLinks />
             </RequireAuth>
           }
         />

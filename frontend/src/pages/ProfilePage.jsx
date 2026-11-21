@@ -214,16 +214,6 @@ const STEPS = [
           { name: "przewidywanaDataPorodu", label: "Przewidywana data porodu", type: "date", if: (c) => c.etap === "ciaza", hint: "Z karty ciąży lub od lekarza prowadzącego." },
           { name: "liczbaDzieci", label: "Liczba dzieci z jednego porodu", type: "number", min: 1, max: 10, if: (c) => c.etap !== "przyjecie",
             hint: "1 = pojedynczy poród, 2 = bliźnięta itd. Wpływa na długość urlopu." },
-          // Dane z aktu urodzenia. Przed porodem zwykle ich nie znamy, ale można je
-          // przygotować zawczasu — dlatego są widoczne też w ciąży, tylko opcjonalne.
-          { name: "imie", label: "Imię dziecka", optional: (c) => c.etap === "ciaza", if: (c) => !!c.etap,
-            hint: (c) => (c.etap === "ciaza" ? "Możesz uzupełnić, gdy już znasz imię (albo zostawić na później)." : undefined) },
-          { name: "nazwisko", label: "Nazwisko dziecka", optional: (c) => c.etap === "ciaza", if: (c) => !!c.etap },
-          { name: "pesel", label: "PESEL dziecka (jeśli nadany)", inputMode: "numeric", kind: "pesel", optional: (c) => c.etap === "ciaza", if: (c) => !!c.etap },
-          { name: "dataUrodzenia", label: "Data urodzenia", type: "date", max: "today",
-            optional: (c) => c.etap === "ciaza", if: (c) => c.etap && c.etap !== "ciaza" },
-          { name: "miejsceUrodzenia", label: "Miejsce urodzenia", optional: (c) => c.etap === "ciaza",
-            if: (c) => c.etap === "po_porodzie" || c.etap === "ciaza" },
           yn("martwe", "Czy dziecko urodziło się martwe?", { if: (c) => c.etap === "po_porodzie" }),
           yn("zmarlo", "Czy dziecko zmarło po urodzeniu?", { if: (c) => c.etap === "po_porodzie" && c.d.martwe === "nie" }),
           { name: "dataZgonu", label: "Data zgonu dziecka", type: "date", if: (c) => tak(c.d.zmarlo) },
@@ -433,6 +423,18 @@ const KLUCZOWE = [
 const normalize = (p) => {
   const out = {};
   for (const k of ["ubezpieczony", "sytuacja", "platnik", "drugiRodzic", "dziecko", "zdrowie", "urlopy"]) out[k] = { ...(p?.[k] ?? {}) };
+  const d = out.dziecko;
+  if (!Array.isArray(d.dzieci)) d.dzieci = [];
+  if (!d.liczbaDzieci && d.dzieci.length > 0) d.liczbaDzieci = String(d.dzieci.length);
+  if (!d.dzieci.length && (d.imie || d.nazwisko || d.pesel || d.dataUrodzenia || d.miejsceUrodzenia)) {
+    d.dzieci = [{
+      imie: d.imie ?? "",
+      nazwisko: d.nazwisko ?? "",
+      pesel: d.pesel ?? "",
+      dataUrodzenia: d.dataUrodzenia ?? "",
+      miejsceUrodzenia: d.miejsceUrodzenia ?? "",
+    }];
+  }
   if (!out.sytuacja.rola) {
     if (out.ubezpieczony.plec === "K") out.sytuacja.rola = "matka";
     if (out.ubezpieczony.plec === "M") out.sytuacja.rola = "ojciec";
@@ -509,6 +511,60 @@ function Field({ sec, f, form, c, errors, set }) {
   );
 }
 
+function DzieciFields({ form, setDziecko, c }) {
+  if (!["po_porodzie", "przyjecie"].includes(c.etap)) return null;
+  const count = c.etap === "przyjecie" ? 1 : Math.min(10, Math.max(1, Number(form.dziecko.liczbaDzieci) || 1));
+  const dzieci = Array.from({ length: count }, (_, i) => form.dziecko.dzieci?.[i] ?? {});
+
+  const update = (index, name, value) => {
+    setDziecko((d) => {
+      const next = Array.from({ length: count }, (_, i) => ({ ...(d.dzieci?.[i] ?? {}) }));
+      next[index] = { ...next[index], [name]: value };
+      const sync = index === 0 ? { [name]: value } : {};
+      return { ...d, dzieci: next, ...sync };
+    });
+  };
+
+  return (
+    <section className="calc-group" aria-label="Dane poszczególnych dzieci">
+      <h3 className="calc-group-title">{count === 1 ? "Dane dziecka" : `Dane wszystkich dzieci (${count})`}</h3>
+      {dzieci.map((dziecko, index) => (
+        <fieldset key={index} className="dziecko-card">
+          <legend>{count === 1 ? "Dziecko" : `Dziecko ${index + 1}`}</legend>
+          <div className="calc-grid">
+            <label className="field">
+              <span className="field-label">Imię</span>
+              <input className="input" value={toStr(dziecko.imie)} onChange={(e) => update(index, "imie", e.target.value)} />
+            </label>
+            <label className="field">
+              <span className="field-label">Nazwisko</span>
+              <input className="input" value={toStr(dziecko.nazwisko)} onChange={(e) => update(index, "nazwisko", e.target.value)} />
+            </label>
+            {c.etap === "po_porodzie" && (
+              <>
+                <label className="field">
+                  <span className="field-label">PESEL dziecka (jeśli nadany)</span>
+                  <input className="input" inputMode="numeric" value={toStr(dziecko.pesel)} onChange={(e) => update(index, "pesel", e.target.value)} />
+                </label>
+                <label className="field">
+                  <span className="field-label">Data urodzenia</span>
+                  <input className="input" type="date" max={todayISO()} value={toStr(dziecko.dataUrodzenia)} onChange={(e) => update(index, "dataUrodzenia", e.target.value)} />
+                </label>
+              </>
+            )}
+            {c.etap === "po_porodzie" && (
+              <label className="field field-wide">
+                <span className="field-label">Miejsce urodzenia</span>
+                <input className="input" value={toStr(dziecko.miejsceUrodzenia)} onChange={(e) => update(index, "miejsceUrodzenia", e.target.value)} />
+              </label>
+            )}
+          </div>
+        </fieldset>
+      ))}
+    </section>
+  );
+}
+
 /* ---------- strona ---------- */
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -525,12 +581,25 @@ export default function ProfilePage() {
   }, [profile, form]);
 
   const set = (section, name, value) => {
-    setForm((f) => ({ ...f, [section]: { ...f[section], [name]: value } }));
+    setForm((f) => {
+      const nextSection = { ...f[section], [name]: value };
+      if (section === "dziecko" && name === "liczbaDzieci") {
+        const count = Math.min(10, Math.max(1, Number(value) || 1));
+        const dzieci = Array.from({ length: count }, (_, i) => ({ ...(f.dziecko.dzieci?.[i] ?? {}) }));
+        nextSection.dzieci = dzieci;
+      }
+      return { ...f, [section]: nextSection };
+    });
     setErrors((e) => {
       const next = { ...e };
       delete next[`${section}.${name}`];
       return next;
     });
+    setStatus("idle");
+  };
+
+  const setDziecko = (updater) => {
+    setForm((f) => ({ ...f, dziecko: typeof updater === "function" ? updater(f.dziecko) : updater }));
     setStatus("idle");
   };
 
@@ -641,6 +710,8 @@ export default function ProfilePage() {
           )}
 
           {!step.summary && sections.length === 0 && <p className="field-hint">{step.emptyNote ?? "Ten etap nie dotyczy Twojej sytuacji. Przejdź dalej."}</p>}
+
+          {step.id === "dziecko" && <DzieciFields form={form} setDziecko={setDziecko} c={c} />}
 
           {sections.map((sec, i) => (
             <section key={`${sec.data}-${i}`} className="calc-group" aria-labelledby={`h-${step.id}-${i}`}>

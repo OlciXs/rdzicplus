@@ -66,6 +66,8 @@ export function kontekstSprawy(profil = {}, { dzis, params = DEFAULT_PARAMS } = 
   const pl = profil.platnik ?? {};
   const o = profil.drugiRodzic ?? {};
   const d = profil.dziecko ?? {};
+  const pierwszeDziecko = Array.isArray(d.dzieci) && d.dzieci.length ? d.dzieci[0] : d;
+  const daneDziecka = { ...d, ...pierwszeDziecko };
   const z = profil.zdrowie ?? {};
   const ur = profil.urlopy ?? {};
   const today = toDate(dzis) ?? new Date();
@@ -79,9 +81,9 @@ export function kontekstSprawy(profil = {}, { dzis, params = DEFAULT_PARAMS } = 
   const dniUbezpieczenia = ubezpieczenieOd ? dni(ubezpieczenieOd, today) : null;
 
   const etap = s.etap || null;
-  const dataUrodzenia = toDate(d.dataUrodzenia);
-  const pdp = toDate(d.przewidywanaDataPorodu);
-  const dataPrzyjecia = toDate(d.dataPrzyjecia);
+  const dataUrodzenia = toDate(daneDziecka.dataUrodzenia);
+  const pdp = toDate(daneDziecka.przewidywanaDataPorodu);
+  const dataPrzyjecia = toDate(daneDziecka.dataPrzyjecia);
   // Dzień powstania prawa do zasiłku macierzyńskiego: poród albo przyjęcie dziecka.
   const dzienZdarzenia = etap === "przyjecie" ? dataPrzyjecia : dataUrodzenia ?? pdp;
 
