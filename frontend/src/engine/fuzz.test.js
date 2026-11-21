@@ -5,7 +5,7 @@ import { describe, it, expect } from "vitest";
 import {
   WNIOSKI, POLA, ocenWniosek, przegladWnioskow,
   podstawaWymiaru, chorobowyWCiazy, zasilekMacierzynski, laczenieZPraca, obojeRodzice, adopcja,
-  DEFAULT_PARAMS,
+  DEFAULT_PARAMS, przygotujDruk, DRUKI,
 } from "./index.js";
 
 // --- generator liczb pseudolosowych (mulberry32) ---
@@ -150,6 +150,26 @@ describe("fuzz: warianty wniosków na 3000 losowych profilach", () => {
       if (p.sytuacja.rola === "ojciec" && ch.status === "dostepny") bledy.push(`#${i} ojciec + chorobowy w ciąży`);
     }
     expect(bledy).toEqual([]);
+  });
+});
+
+describe("fuzz: wnioski do druku na 1000 losowych profilach", () => {
+  const profile = Array.from({ length: 1000 }, losowyProfil);
+  it("każdy druk się generuje, bez NaN/undefined w piśmie, daty w polach poprawne albo puste", () => {
+    const bledy = [];
+    profile.forEach((p, i) => {
+      for (const id of DRUKI) {
+        let d;
+        try { d = przygotujDruk(p, id, { dzis: "2026-11-21" }); } catch (e) { bledy.push(`#${i} ${id}: ${e.message}`); continue; }
+        const tekst = JSON.stringify([d.tytul, d.naglowek, d.tresc, d.zalaczniki, d.ostrzezenia, d.brakujace]);
+        if (ZLE_TEKSTY.test(tekst)) bledy.push(`#${i} ${id}: ${tekst.match(ZLE_TEKSTY)[0]}`);
+        for (const pole of d.pola) {
+          if (pole.typ === "date" && pole.wartosc !== "" && !/^\d{4}-\d{2}-\d{2}$/.test(pole.wartosc)) bledy.push(`#${i} ${id}.${pole.id} = ${pole.wartosc}`);
+          if (pole.typ === "number" && pole.wartosc !== "" && !(Number(pole.wartosc) >= 0)) bledy.push(`#${i} ${id}.${pole.id} = ${pole.wartosc}`);
+        }
+      }
+    });
+    expect(bledy.slice(0, 10)).toEqual([]);
   });
 });
 
