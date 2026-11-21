@@ -3,9 +3,8 @@ import { CFG, num, zl, tyg, fmtD } from "./config.js";
 import { zasilekMacierzynski } from "../engine/index.js";
 import {
   Badge, Field, NumberInput, DateInput, Select, Check, Section,
-  ResultTable, Bullets,
-} from "./ui.jsx";
-import { useProfileDefaults } from "./useProfileDefaults.js";
+  ResultTable, Bullets, ProfilInfo } from "./ui.jsx";
+import { useProfileDefaults, opisPodstawienia } from "./useProfileDefaults.js";
 
 export default function CalcMacierzynski() {
   const [s, set] = useState({
@@ -25,7 +24,7 @@ export default function CalcMacierzynski() {
     hosp: "0",
   });
   const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
-  useProfileDefaults(set, "macierzynski");
+  const profilDane = useProfileDefaults(set, "macierzynski");
 
   const n = num(s.dzieci);
   const porod = s.porod ? new Date(s.porod) : null;
@@ -101,6 +100,10 @@ export default function CalcMacierzynski() {
 
   return (
     <div className="calc">
+      <ProfilInfo
+        zalogowany={!!profilDane.profile}
+        pola={opisPodstawienia(profilDane.podstawione ?? [], s)}
+      />
       <div className="calc-cols">
         <div>
           <Section title="Dziecko i poród">

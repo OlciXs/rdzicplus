@@ -3,9 +3,8 @@ import { CFG, num, zl } from "./config.js";
 import { adopcja } from "../engine/index.js";
 import {
   Badge, Field, NumberInput, DateInput, Select, Check, Section,
-  ResultTable, Bullets,
-} from "./ui.jsx";
-import { useProfileDefaults } from "./useProfileDefaults.js";
+  ResultTable, Bullets, ProfilInfo } from "./ui.jsx";
+import { useProfileDefaults, opisPodstawienia } from "./useProfileDefaults.js";
 
 export default function CalcAdopcja() {
   const [s, set] = useState({
@@ -20,7 +19,7 @@ export default function CalcAdopcja() {
     ojcowski: false,
   });
   const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
-  useProfileDefaults(set, "adopcja");
+  const profilDane = useProfileDefaults(set, "adopcja");
 
   const n = num(s.dzieci);
   const odroczenie = s.odroczenie;
@@ -48,6 +47,10 @@ export default function CalcAdopcja() {
 
   return (
     <div className="calc">
+      <ProfilInfo
+        zalogowany={!!profilDane.profile}
+        pola={opisPodstawienia(profilDane.podstawione ?? [], s)}
+      />
       <div className="calc-cols">
         <div>
           <Section title="Sytuacja">

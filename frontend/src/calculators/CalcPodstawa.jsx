@@ -3,17 +3,17 @@ import { useAuth } from "../auth.js";
 import { CFG, num, zl } from "./config.js";
 import { podstawaWymiaru } from "../engine/index.js";
 import {
-  Badge, Field, NumberInput, Select, Section, ResultTable, Bullets,
-} from "./ui.jsx";
-import { useProfileDefaults } from "./useProfileDefaults.js";
+  Badge, Field, NumberInput, Select, Section, ResultTable, Bullets, ProfilInfo } from "./ui.jsx";
+import { useProfileDefaults, opisPodstawienia } from "./useProfileDefaults.js";
 
 const defaultMonths = () => Array.from({ length: 12 }, () => "5000");
 
 export default function CalcPodstawa() {
-  const [s, set] = useState({ status: "pracownik", ileMies: "12", kwartalne: "0", roczna: "0" });
+  const [s, set] = useState({ status: "pracownik", wymiarEtatu: "1", ileMies: "12", kwartalne: "0", roczna: "0" });
   const [months, setMonths] = useState(defaultMonths);
   const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
-  const { profile, save } = useProfileDefaults(set, "podstawa");
+  const profilDane = useProfileDefaults(set, "podstawa");
+  const { profile, save } = profilDane;
   const { user } = useAuth();
   const [saveMsg, setSaveMsg] = useState("");
   const setMonth = (i) => (v) => setMonths((prev) => prev.map((m, j) => (j === i ? v : m)));
@@ -24,11 +24,17 @@ export default function CalcPodstawa() {
     ileMies: num(s.ileMies),
     premieKwartalne: num(s.kwartalne),
     premiaRoczna: num(s.roczna),
+    // B-17: minimum podstawy (art. 45 ust. 1 u.z.) jest proporcjonalne do etatu.
+    wymiarEtatu: num(s.wymiarEtatu) || 1,
   }, CFG);
 
   if (!r.ok) {
     return (
       <div className="calc">
+      <ProfilInfo
+        zalogowany={!!profile}
+        pola={opisPodstawienia(profilDane.podstawione ?? [], s)}
+      />
         <div className="calc-cols">
           <div>
             <Section title="Status i okres">
@@ -81,6 +87,16 @@ export default function CalcPodstawa() {
                 { value: "niepracownik", label: "Nie-pracownik (zlecenie, działalność)" },
               ]} />
             </Field>
+            {s.status === "pracownik" && (
+              <Field label="Wymiar etatu" hint="Minimum podstawy (4 147,10 zł) liczymy proporcjonalnie do etatu — art. 45 ust. 1 u.z.">
+                <Select value={s.wymiarEtatu} onChange={set_("wymiarEtatu")} options={[
+                  { value: "1", label: "Pełny etat" },
+                  { value: "0.75", label: "3/4 etatu" },
+                  { value: "0.5", label: "1/2 etatu" },
+                  { value: "0.25", label: "1/4 etatu" },
+                ]} />
+              </Field>
+            )}
             <Field label="Liczba pełnych miesięcy ubezpieczenia (jeśli < 12)">
               <NumberInput value={s.ileMies} onChange={set_("ileMies")} min="1" max="12" />
             </Field>
