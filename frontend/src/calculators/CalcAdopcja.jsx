@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { CFG, num, zl, zasilek, tygodnieMac, tygodnieRodz } from "./config.js";
+import { CFG, num, zl } from "./config.js";
+import { adopcja } from "../engine/index.js";
 import {
   Badge, Field, NumberInput, DateInput, Select, Check, Section,
   ResultTable, Bullets,
@@ -20,28 +21,28 @@ export default function CalcAdopcja() {
   const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
 
   const n = num(s.dzieci);
-  const ur = s.ur ? new Date(s.ur) : null;
-  const przyj = s.przyj ? new Date(s.przyj) : null;
   const odroczenie = s.odroczenie;
   const zaZ = s.zaZyciem;
-  const wz81 = s.wniosek81;
-  const podstawa = num(s.podstawa);
 
-  const limitLat = s.tryb === "przysposobienie" ? 14 : odroczenie ? 10 : 7;
-  const wiek = przyj && ur ? (przyj - ur) / (365.25 * 86400000) : null;
-  const brakPrawa = wiek !== null && wiek > limitLat;
-
-  const tygMacierzy = tygodnieMac(n);
-  const pool = tygodnieRodz(n, zaZ, true);
-
-  const stMac = wz81 ? CFG.stSredniowany : CFG.stMacierzynski;
-  const stRodz = wz81 ? CFG.stSredniowany : CFG.stRodzicielski;
-  const kMac = zasilek(podstawa, stMac, tygMacierzy * 7);
-  // Jeden rodzic nie może wykorzystać 9 tygodni zarezerwowanych dla drugiego rodzica.
-  const tygRodzWlasne = Math.max(0, pool - CFG.wyliczneRodzicielskie);
-  const kRodz = zasilek(podstawa, stRodz, tygRodzWlasne * 7);
-  const kOjc = zasilek(podstawa, CFG.stMacierzynski, CFG.tygodnieOjcowski * 7);
-  const razem = kMac + kRodz + (s.ojcowski ? kOjc : 0);
+  // Wszystkie obliczenia: src/engine/adopcja.js
+  const r = adopcja({
+    tryb: s.tryb,
+    dzieci: n,
+    dataUrodzenia: s.ur,
+    dataPrzyjecia: s.przyj,
+    odroczenie,
+    zaZyciem: zaZ,
+    podstawa: num(s.podstawa),
+    wniosek815: s.wniosek81,
+    ojcowski: s.ojcowski,
+  }, CFG);
+  const { limitLat, wiek, brakPrawa, stMac, stRodz, razem } = r;
+  const tygMacierzy = r.tygMacierzynski;
+  const pool = r.pula;
+  const tygRodzWlasne = r.tygRodzicielskiWlasne;
+  const kMac = r.kwotaMacierzynski;
+  const kRodz = r.kwotaRodzicielski;
+  const kOjc = r.kwotaOjcowski;
 
   return (
     <div className="calc">
@@ -139,7 +140,7 @@ export default function CalcAdopcja() {
         <section className="result-card">
           <h3 className="result-title">3. Urlop rodzicielski</h3>
           <Bullets items={[
-            <>Wymiar: <b>{pool} tygodni</b>{zaZ ? " („Za życiem”)" : ""}; po {CFG.wyliczneRodzicielskie} tyg. wyłącznych na rodzica; max {CFG.maxCzesci} części{ur ? `; do 31.12.${ur.getFullYear() + CFG.limitRokZycia}` : ""} (koniec roku kal., w którym dziecko kończy {CFG.limitRokZycia} lat).</>,
+            <>Wymiar: <b>{pool} tygodni</b>{zaZ ? " („Za życiem”)" : ""}; po {CFG.wyliczneRodzicielskie} tyg. wyłącznych na rodzica; max {CFG.maxCzesci} części{r.rodzicielskiDoRoku ? `; do 31.12.${r.rodzicielskiDoRoku}` : ""} (koniec roku kal., w którym dziecko kończy {CFG.limitRokZycia} lat).</>,
             <>Dokumenty: jak wyżej + oświadczenie drugiego rodzica; „Za życiem” – kopia zaświadczenia (RWN § 15 ust. 2 pkt 3).</>,
           ]} />
         </section>

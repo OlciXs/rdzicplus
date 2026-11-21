@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CFG, num, zl } from "./config.js";
+import { ktoWyplaca } from "../engine/index.js";
 import {
   Badge, Field, NumberInput, Select, Check, Section, Bullets, List,
 } from "./ui.jsx";
@@ -96,18 +97,20 @@ export default function CalcDokumenty() {
 
   const status = s.status;
   const etap = s.etap;
-  const duzy = num(s.liczba) > 20;
+  // Kto wypłaca: src/engine/platnik.js (próg z parametrów)
+  const { kto } = ktoWyplaca({ status, liczbaUbezpieczonych: num(s.liczba) }, CFG);
+  const duzy = kto === "PLATNIK";
   const DG = status === "dg";
   const zlec = status === "zlecenie";
 
   const platnik =
     status === "pracownik"
       ? duzy
-        ? { tone: "ok", badge: "PŁATNIK SKŁADEK", text: "Twój pracodawca sam wypłaca zasiłki (zgłasza > 20 ubezpieczonych)." }
+        ? { tone: "ok", badge: "PŁATNIK SKŁADEK", text: `Twój pracodawca sam wypłaca zasiłki (zgłasza > ${CFG.progPlatnika} ubezpieczonych).` }
         : { tone: "ok", badge: "ZUS", text: "Pracodawca przekazuje wnioski i Z-3 do ZUS w 7 dni – zasiłek wypłaca ZUS (w 30 dni od wyjaśnienia okoliczności)." }
       : zlec
         ? duzy
-          ? { tone: "ok", badge: "PŁATNIK SKŁADEK", text: "Płatnik zleceniodawcy sam wypłaca zasiłki (zgłasza > 20 ubezpieczonych); w razie braku uprawnień – Z-3a do ZUS." }
+          ? { tone: "ok", badge: "PŁATNIK SKŁADEK", text: `Płatnik zleceniodawcy sam wypłaca zasiłki (zgłasza > ${CFG.progPlatnika} ubezpieczonych); w razie braku uprawnień – Z-3a do ZUS.` }
           : { tone: "ok", badge: "ZUS", text: "Zleceniodawca nie jest uprawniony do wypłaty – składasz wniosek do ZUS (płatnik przekazuje Z-3a)." }
         : { tone: "ok", badge: "ZUS", text: "Przedsiębiorczyni zawsze składa wnioski bezpośrednio do ZUS (eZUS); Z-3b zlikwidowany od 24.10.2026 – ZUS pobiera dane sam." };
 

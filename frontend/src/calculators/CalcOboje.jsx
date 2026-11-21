@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { CFG, num, zl, zasilek, tygodnieRodz } from "./config.js";
+import { CFG, num, zl } from "./config.js";
+import { obojeRodzice } from "../engine/index.js";
 import {
   Badge, Field, NumberInput, DateInput, Select, Check, Section,
   ResultTable, Bullets, List,
@@ -21,37 +22,33 @@ export default function CalcOboje() {
   });
   const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
 
-  const n = num(s.dzieci) >= 2 ? 2 : 1;
   const zaZ = s.zaZyciem;
   const wz81 = s.wniosek81;
-  const pool = tygodnieRodz(n, zaZ, false);
   const tM = num(s.tM);
   const tO = num(s.tO);
   const cM = num(s.cM);
   const cO = num(s.cO);
-  const pM = num(s.pM);
-  const pO = num(s.pO);
-  const ur = s.ur ? new Date(s.ur) : null;
-  const stRodz = wz81 ? CFG.stSredniowany : CFG.stRodzicielski;
 
-  const err = [];
-  const warn = [];
-  // Niewykorzystanie wyłącznych 9 tygodni jest dozwolone – to strata, nie błąd planu.
-  if (tM < CFG.wyliczneRodzicielskie)
-    warn.push(`Matka ma mniej niż ${CFG.wyliczneRodzicielskie} tygodni – traci ${CFG.wyliczneRodzicielskie - Math.max(0, tM)} tyg. wyłącznych (nieprzenoszalne na ojca).`);
-  if (tO < CFG.wyliczneRodzicielskie)
-    warn.push(`Ojciec ma mniej niż ${CFG.wyliczneRodzicielskie} tygodni – traci ${CFG.wyliczneRodzicielskie - Math.max(0, tO)} tyg. wyłącznych (nieprzenoszalne na matkę).`);
-  if (tM + tO > pool)
-    err.push(`Łącznie ${tM + tO} tyg. przekracza pulę ${pool} tyg. – do zwymiarowania na nowo.`);
-  if (cM > CFG.maxCzesci || cO > CFG.maxCzesci)
-    err.push(`Urlop rodzicielski można dzielić na maksymalnie ${CFG.maxCzesci} części (liczba części = liczba wniosków).`);
-  if (ur) warn.push(`Do wykorzystania do 31.12.${ur.getFullYear() + CFG.limitRokZycia} (koniec roku kalendarzowego, w którym dziecko kończy ${CFG.limitRokZycia} lat).`);
-
-  // Wariant 81,5%: 9 tygodni zarezerwowanych dla drugiego rodzica (ojca) jest zawsze
-  // płatne 70% (UZ art. 31 ust. 3f); reszta jego tygodni pochodzi z puli matki (81,5%).
-  const tOWyl = wz81 ? Math.min(Math.max(0, tO), CFG.wyliczneRodzicielskie) : 0;
-  const kM = zasilek(pM, stRodz, tM * 7);
-  const kO = zasilek(pO, CFG.stRodzicielski, tOWyl * 7) + zasilek(pO, stRodz, (tO - tOWyl) * 7);
+  // Wszystkie obliczenia i walidacja planu: src/engine/oboje.js
+  const r = obojeRodzice({
+    dzieci: num(s.dzieci),
+    zaZyciem: zaZ,
+    dataUrodzenia: s.ur,
+    tygodnieMatka: tM,
+    czesciMatka: cM,
+    tygodnieOjciec: tO,
+    czesciOjciec: cO,
+    wniosek815: wz81,
+    podstawaMatki: num(s.pM),
+    podstawaOjca: num(s.pO),
+  }, CFG);
+  const pool = r.pula;
+  const stRodz = r.stRodz;
+  const err = r.bledy;
+  const warn = r.ostrzezenia;
+  const tOWyl = r.tygodnieOjca70;
+  const kM = r.kwotaMatka;
+  const kO = r.kwotaOjciec;
 
   return (
     <div className="calc">
