@@ -405,8 +405,6 @@ const SZABLONY = {
     },
   },
 };
-SZABLONY.W3 = SZABLONY.W1;
-
 /** Warianty, dla których jest druk. */
 export const DRUKI = Object.keys(SZABLONY);
 export const maDruk = (wariantId) => Object.hasOwn(SZABLONY, wariantId);

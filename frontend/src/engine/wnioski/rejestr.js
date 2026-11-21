@@ -339,19 +339,6 @@ export const WARIANTY = [
     podstawa: "art. 180 § 2 k.p.",
   },
   {
-    id: "W3", wniosek: "macierzynski", nazwa: "Poród mnogi – dłuższy urlop macierzyński",
-    kto: ["matka"], etapy: ["ciaza", "po_porodzie"],
-    warunki: (k) => [ubezpieczonyWDniuPorodu(k), w("Przy jednym porodzie urodziło się więcej niż jedno dziecko", k.liczbaDzieci === null ? null : k.liczbaDzieci > 1, ["dziecko.liczbaDzieci"])],
-    wymiar: (k) => (k.liczbaDzieci > 1 ? `${tygodnieMac(k.liczbaDzieci, k.P)} tygodni` : "31 / 33 / 35 / 37 tygodni (2 / 3 / 4 / 5+ dzieci)"),
-    wysokosc: () => "100%",
-    adresat: ADRES_URLOPU,
-    formularz: "Jak urlop macierzyński – podajesz liczbę dzieci",
-    termin: "—",
-    dokumenty: [AKT],
-    potrzebnePola: [...BAZA, ...DZIECKO, "dziecko.liczbaDzieci"],
-    podstawa: "art. 180 § 1 pkt 2–5 k.p.",
-  },
-  {
     id: "W10", wniosek: "macierzynski", nazwa: "Urlop macierzyński po urodzeniu martwego dziecka lub zgonie dziecka",
     kto: ["matka"], etapy: ["po_porodzie"],
     warunki: (k) => [ubezpieczonyWDniuPorodu(k), w("Dziecko urodziło się martwe albo zmarło", k.martwe === true || k.zmarlo === true ? true : k.martwe === null ? null : false, ["dziecko.martwe", "dziecko.zmarlo"])],
@@ -859,7 +846,7 @@ export const wniosekById = (id) => WNIOSKI.find((x) => x.id === id);
    ===================================================================== */
 const ZAM_NIEPRAC = (k) =>
   ["dg", "wspolpraca"].includes(k.tytul)
-    ? "ZAM (albo Z-3b) – wniosek o zasiłek macierzyński do ZUS, najwygodniej przez eZUS"
+    ? "ZAM – wniosek o zasiłek macierzyński do ZUS, najwygodniej przez eZUS"
     : k.tytul === "zlecenie"
       ? "Wniosek o zasiłek macierzyński – składasz u zleceniodawcy (przekazuje go do ZUS)"
       : "ZAM – wniosek o zasiłek macierzyński do ZUS";
@@ -876,7 +863,7 @@ export const SKLADANIE = {
     dokument: (k) =>
       k.pracownik === true
         ? "Nic nie składasz – e-ZLA z kodem B trafia do ZUS i pracodawcy, zaświadczenie Z-3 wystawia pracodawca"
-        : "Działalność: Z-3b (przez eZUS). Zlecenie u małego płatnika: ZAS-53. Oba do ZUS",
+        : "Działalność: ZAM przez eZUS. Zlecenie u małego płatnika: ZAS-53. Oba do ZUS",
     skladanie: (k) => (k.pracownik === true ? "automatycznie" : "wniosek"),
   },
   W36: { dokument: "Nic nie składasz – wystarczy kod B na e-ZLA", skladanie: "automatycznie" },

@@ -341,6 +341,19 @@ h2 { font-size: 1.1rem; margin: 0 0 8px; color: var(--color-navy); }
 .result-title { font-size: 1rem; color: var(--color-navy); margin: 0 0 12px; }
 .result-card p { margin: 0 0 10px; }
 .result-card p:last-child { margin-bottom: 0; }
+.result-action {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  clear: both;
+  margin-top: 14px !important;
+}
+.result-action .btn {
+  width: fit-content;
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+}
 
 /* lista punktowana */
 .pts { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
@@ -545,4 +558,8 @@ a.pager-chip { text-decoration: none; }
   body, .app { background: #fff !important; }
   .container.druk-page { max-width: none; padding: 0; }
   .druk-kartka { border: 0; border-radius: 0; padding: 0; font-size: 12pt; }
+  body:has(.drukuj-wynik) > .app > main > :not(.result-stack),
+  body:has(.drukuj-wynik) .result-stack .result-card:not(.drukuj-wynik) { display: none !important; }
+  body:has(.drukuj-wynik) .container { max-width: none; padding: 0; }
+  body:has(.drukuj-wynik) .drukuj-wynik { border: 0; padding: 0; }
 }
