@@ -12,6 +12,8 @@
      GET  /api/zus/wnioski         – status wniosków w PUE/eZUS
      GET  /api/usc/odpisy          – złożone wnioski o odpis aktu urodzenia
      POST /api/usc/odpisy          – nowy wniosek o odpis aktu urodzenia
+     POST /api/wnioski/wyslij      – wysyłka wniosku z „Wniosek do druku” (do pracodawcy albo ZAM do PUE/eZUS);
+                                     wysłane wracają w GET /api/zus/wnioski ze statusem zależnym od czasu
    ===================================================================== */
 import crypto from "node:crypto";
 
@@ -133,6 +135,35 @@ const odpisy = new Map(); // userId -> [wniosek]
 const RODZAJE_ODPISU = ["skrocony", "zupelny", "wielojezyczny"];
 const ODBIOR = ["elektronicznie", "usc"];
 
+/* ---------- Wysyłka wniosku z „Wniosek do druku” (symulacja) ----------
+   Pismo do pracodawcy („pracodawca”) albo dane do ZAM w PUE/eZUS („zam”).
+   Status przesuwa się z upływem czasu od wysłania – żeby na demo było widać obieg
+   bez ręcznego „klikania za urząd”. W pamięci (po restarcie znikają), jak odpisy. */
+const wyslane = new Map(); // userId -> [wniosek]
+const TRYBY = ["pracodawca", "zam"];
+const ETAPY_S = [20, 60]; // sekundy: doręczenie, rozpatrzenie
+const fmtPl = (iso) => (iso ? `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}` : "");
+
+export function statusWyslanego(w, teraz = Date.now()) {
+  const s = (teraz - Date.parse(w.zlozono)) / 1000;
+  if (w.tryb === "zam") {
+    if (s < ETAPY_S[0]) return { etap: 1, status: `Wysłany do ZUS – UPO ${w.upo}` };
+    if (s < ETAPY_S[1]) return { etap: 2, status: "Zarejestrowany w ZUS – sprawdzamy dokumenty" };
+    return { etap: 3, status: "W rozpatrzeniu – ZUS wypłaca zasiłek w ciągu 30 dni od otrzymania kompletu dokumentów" };
+  }
+  if (s < ETAPY_S[0]) return { etap: 1, status: "Wysłany do pracodawcy" };
+  if (s < ETAPY_S[1]) return { etap: 2, status: "Doręczony – czeka na dział kadr" };
+  return {
+    etap: 3,
+    status: w.wariantId === "W12"
+      ? "Przyjęty – pracodawca zgodził się na pracę w trakcie urlopu"
+      : `Przyjęty przez pracodawcę${w.od ? ` – urlop od ${fmtPl(w.od)}` : ""}`,
+  };
+}
+
+const tekst = (v, max) => (typeof v === "string" ? v.trim().slice(0, max) : "");
+const listaTekstow = (v, ile, max) => (Array.isArray(v) ? v.filter((x) => typeof x === "string").slice(0, ile).map((x) => x.slice(0, max)) : null);
+
 export function registerZusMockRoutes(app, requireAuth) {
   app.get("/api/zus/dane", requireAuth, (req, res) => {
     const o = osoba(req.user);
@@ -165,7 +196,55 @@ export function registerZusMockRoutes(app, requireAuth) {
   });
 
   app.get("/api/zus/wnioski", requireAuth, (req, res) => {
-    res.json({ symulacja: true, wnioski: osoba(req.user).wnioski });
+    const teraz = Date.now();
+    const moje = (wyslane.get(req.user.id) ?? []).map((w) => ({ ...w, ...statusWyslanego(w, teraz) }));
+    res.json({ symulacja: true, wnioski: [...moje, ...osoba(req.user).wnioski] });
+  });
+
+  app.post("/api/wnioski/wyslij", requireAuth, (req, res) => {
+    const b = req.body ?? {};
+    const wariantId = /^W\d{1,2}b?$/.test(b.wariantId ?? "") ? b.wariantId : null;
+    const tryb = TRYBY.includes(b.tryb) ? b.tryb : null;
+    const tytul = tekst(b.tytul, 200);
+    const tresc = listaTekstow(b.tresc, 20, 2000);
+    const zalaczniki = listaTekstow(b.zalaczniki ?? [], 20, 500);
+    const od = b.od ? isoDate(b.od) : null;
+    const doDnia = b.do ? isoDate(b.do) : null;
+
+    const errors = {};
+    if (!wariantId) errors.wariantId = "Nieznany wariant wniosku.";
+    if (!tryb) errors.tryb = "Wybierz, dokąd wysłać wniosek.";
+    if (!tytul) errors.tytul = "Brak tytułu wniosku.";
+    if (!tresc?.length) errors.tresc = "Wniosek jest pusty.";
+    if (b.od && !od) errors.od = "Niepoprawna data rozpoczęcia.";
+    if (b.do && !doDnia) errors.do = "Niepoprawna data zakończenia.";
+    if (od && doDnia && doDnia < od) errors.do = "Data zakończenia jest przed datą rozpoczęcia.";
+    if (b.potwierdzenie !== true) errors.potwierdzenie = "Potwierdź, że dane we wniosku są zgodne z prawdą.";
+    if (Object.keys(errors).length) return res.status(400).json({ error: "Nie można wysłać wniosku.", errors });
+
+    const lista = wyslane.get(req.user.id) ?? [];
+    if (lista.length >= 30) return res.status(429).json({ error: "Za dużo wniosków w symulacji – zrestartuj demo." });
+
+    const teraz = new Date();
+    // Adresat z pisma („Moje dane”), a gdy pusty – płatnik z symulowanych danych ZUS.
+    const adresat = tekst(b.adresat, 200).replace(/^…+$/, "");
+    const pracodawca = adresat || osoba(req.user).platnik?.nazwa?.replace(/ \(dane fikcyjne\)$/, "");
+    const wniosek = {
+      numer: `${tryb === "zam" ? "ZUS-ZAM" : "WN"}-${teraz.getFullYear()}-${crypto.randomInt(100000, 1000000)}`,
+      ...(tryb === "zam" ? { upo: `UPO/${teraz.toISOString().slice(0, 10).replaceAll("-", "")}/${crypto.randomInt(10000000, 100000000)}` } : {}),
+      wariantId,
+      tryb,
+      typ: tytul,
+      zlozono: teraz.toISOString(),
+      kto: tryb === "zam" ? "ZUS (PUE/eZUS)" : `Pracodawca${pracodawca ? `: ${pracodawca}` : ""}`,
+      od,
+      do: doDnia,
+      tresc,
+      zalaczniki,
+      wyslane: true,
+    };
+    wyslane.set(req.user.id, [wniosek, ...lista]);
+    res.status(201).json({ symulacja: true, wniosek: { ...wniosek, ...statusWyslanego(wniosek, teraz.getTime()) } });
   });
 
   app.get("/api/usc/odpisy", requireAuth, (req, res) => {

@@ -48,6 +48,16 @@ export default function Zus() {
       .catch((err) => setError(err.message));
   }, []);
 
+  // Wnioski wysłane z „Wniosek do druku” zmieniają status w czasie (symulacja) – odświeżenie bez przeładowania strony.
+  const [odswiezanie, setOdswiezanie] = useState(false);
+  const odswiezWnioski = () => {
+    setOdswiezanie(true);
+    api("/api/zus/wnioski")
+      .then((w) => setWnioski(w.wnioski))
+      .catch((err) => setError(err.message))
+      .finally(() => setOdswiezanie(false));
+  };
+
   // Domyślna data zaświadczenia: data urodzenia dziecka z „Moje dane”, inaczej dziś.
   useEffect(() => {
     if (!naDzien && profile) setNaDzien(profile.dziecko?.dataUrodzenia || dzis());
@@ -262,12 +272,26 @@ export default function Zus() {
                     <thead><tr><th>Wniosek</th><th>Złożono</th><th>Rozpatruje</th><th>Status</th></tr></thead>
                     <tbody>
                       {wnioski.map((w, i) => (
-                        <tr key={i}><td>{w.typ}</td><td>{fmt(w.zlozono)}</td><td>{w.kto}</td><td>{w.status}</td></tr>
+                        <tr key={w.numer ?? i}>
+                          <td>
+                            {w.typ}
+                            {w.numer && <><br /><span className="note">nr {w.numer}{w.upo ? ` · ${w.upo}` : ""} · wysłany z RodzicPlus</span></>}
+                          </td>
+                          <td>{fmt(w.zlozono)}</td>
+                          <td>{w.kto}</td>
+                          <td>{w.etap && <span className={`badge ${w.etap === 3 ? "b-ok" : "b-warn"}`}>{w.etap}/3</span>} {w.status}</td>
+                        </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
               )}
+              <p>
+                <button type="button" className="btn btn-outline" onClick={odswiezWnioski} disabled={odswiezanie}>
+                  {odswiezanie ? "Odświeżanie…" : "Odśwież statusy"}
+                </button>{" "}
+                <Link to="/wnioski">Złóż nowy wniosek</Link>
+              </p>
               <p className="note">
                 Wzory wniosków o zasiłki: <a href="https://www.zus.pl/wzory-formularzy/zasilki" target="_blank" rel="noreferrer">zus.pl – formularze</a>.
               </p>
