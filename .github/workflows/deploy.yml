@@ -1,0 +1,68 @@
+name: Build and Deploy Docker Compose to GCE
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  REGION: europe-central2
+  REPOSITORY: app-images
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Build and push backend image
+        run: |
+          IMAGE_URI="${{ env.REGION }}-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/${{ env.REPOSITORY }}/backend"
+          docker build -t "${IMAGE_URI}:latest" -t "${IMAGE_URI}:${{ github.sha }}" ./backend
+          docker push "${IMAGE_URI}:latest"
+          docker push "${IMAGE_URI}:${{ github.sha }}"
+
+      - name: Build and push frontend image
+        run: |
+          IMAGE_URI="${{ env.REGION }}-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/${{ env.REPOSITORY }}/frontend"
+          docker build -t "${IMAGE_URI}:latest" -t "${IMAGE_URI}:${{ github.sha }}" ./frontend
+          docker push "${IMAGE_URI}:latest"
+          docker push "${IMAGE_URI}:${{ github.sha }}"
+
+      - name: Copy docker-compose.yml to VM
+        run: |
+          gcloud compute scp docker-compose.yml ${{ secrets.GCE_INSTANCE }}:/tmp/docker-compose.yml \
+            --zone=${{ secrets.GCE_ZONE }} \
+            --tunnel-through-iap
+
+      - name: Pull and restart on VM
+        run: |
+          gcloud compute ssh ${{ secrets.GCE_INSTANCE }} \
+            --zone=${{ secrets.GCE_ZONE }} \
+            --tunnel-through-iap \
+            --command="
+              sudo mkdir -p /opt/app &&
+              sudo mv /tmp/docker-compose.yml /opt/app/docker-compose.yml &&
+              sudo docker compose -f /opt/app/docker-compose.yml pull &&
+              sudo docker compose -f /opt/app/docker-compose.yml up -d --remove-orphans &&
+              sudo docker image prune -f
+            "

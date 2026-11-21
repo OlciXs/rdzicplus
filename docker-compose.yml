@@ -1,0 +1,39 @@
+services:
+  backend:
+    image: europe-central2-docker.pkg.dev/${PROJECT_ID}/app-images/backend:latest
+    build:
+      context: ./backend
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+    ports:
+      - "3001:3001"
+    volumes:
+      - backend-data:/app/data
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3001/api/hello').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    restart: unless-stopped
+
+  frontend:
+    image: europe-central2-docker.pkg.dev/${PROJECT_ID}/app-images/frontend:latest
+    build:
+      context: ./frontend
+    environment:
+      API_PROXY_TARGET: http://backend:3001
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "8080:4173"
+    restart: unless-stopped
+
+volumes:
+  backend-data:
