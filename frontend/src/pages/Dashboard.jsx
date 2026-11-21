@@ -18,6 +18,19 @@ export default function Dashboard() {
   const { user } = useAuth();
   const { profile } = useProfile();
 
+  const dziecko = profile?.dziecko ?? {};
+  const maDaneDziecka = [
+    dziecko.imie,
+    dziecko.nazwisko,
+    dziecko.pesel,
+    dziecko.dataUrodzenia,
+    dziecko.przewidywanaDataPorodu,
+    dziecko.dataPrzyjecia,
+  ].some((value) => value !== "" && value !== null && value !== undefined);
+  const maskedChildPesel = dziecko.pesel
+    ? `${"*".repeat(Math.max(0, String(dziecko.pesel).length - 4))}${String(dziecko.pesel).slice(-4)}`
+    : "";
+
   const filled = profile
     ? KEY_FIELDS.filter(([s, f]) => {
         const v = profile[s][f];
@@ -33,6 +46,50 @@ export default function Dashboard() {
       <main className="container">
         <h1>Cześć, {user.imie}! 👋</h1>
         <p className="lead">Co chcesz teraz sprawdzić?</p>
+
+        <section className="info-card" aria-label="Twoje dane">
+          <div className="info-card-heading">
+            <h2>Twoje dane z mObywatela</h2>
+            <Link className="text-link" to="/profil">Edytuj</Link>
+          </div>
+          <dl className="data-list">
+            <div><dt>Imię i nazwisko</dt><dd>{user.imie} {user.nazwisko}</dd></div>
+            <div><dt>PESEL</dt><dd>{user.peselMasked}</dd></div>
+            {profile?.ubezpieczony?.adres && (
+              <div><dt>Adres zamieszkania</dt><dd>{profile.ubezpieczony.adres}</dd></div>
+            )}
+            {profile?.ubezpieczony?.rachunek && (
+              <div><dt>Rachunek bankowy</dt><dd>{profile.ubezpieczony.rachunek}</dd></div>
+            )}
+          </dl>
+        </section>
+
+        {maDaneDziecka && (
+          <section className="info-card" aria-label="Dane dziecka">
+            <div className="info-card-heading">
+              <h2>Dane dziecka</h2>
+              <Link className="text-link" to="/profil?krok=dziecko">Edytuj</Link>
+            </div>
+            <dl className="data-list">
+              {(dziecko.imie || dziecko.nazwisko) && (
+                <div>
+                  <dt>Imię i nazwisko</dt>
+                  <dd>{dziecko.imie} {dziecko.nazwisko}</dd>
+                </div>
+              )}
+              {maskedChildPesel && <div><dt>PESEL</dt><dd>{maskedChildPesel}</dd></div>}
+              {dziecko.dataUrodzenia && (
+                <div><dt>Data urodzenia</dt><dd>{new Date(dziecko.dataUrodzenia).toLocaleDateString("pl-PL")}</dd></div>
+              )}
+              {!dziecko.dataUrodzenia && dziecko.przewidywanaDataPorodu && (
+                <div><dt>Przewidywana data porodu</dt><dd>{new Date(dziecko.przewidywanaDataPorodu).toLocaleDateString("pl-PL")}</dd></div>
+              )}
+              {dziecko.dataPrzyjecia && (
+                <div><dt>Data przyjęcia na wychowanie</dt><dd>{new Date(dziecko.dataPrzyjecia).toLocaleDateString("pl-PL")}</dd></div>
+              )}
+            </dl>
+          </section>
+        )}
 
         <Link className="calc-cta" to="/wnioski">
           <span className="calc-cta-icon" aria-hidden="true">🗂️</span>
@@ -89,14 +146,6 @@ export default function Dashboard() {
           </span>
           <span className="calc-cta-arrow" aria-hidden="true">→</span>
         </Link>
-
-        <section className="info-card" aria-label="Twoje dane">
-          <h2>Twoje dane z mObywatela</h2>
-          <dl className="data-list">
-            <div><dt>Imię i nazwisko</dt><dd>{user.imie} {user.nazwisko}</dd></div>
-            <div><dt>PESEL</dt><dd>{user.peselMasked}</dd></div>
-          </dl>
-        </section>
       </main>
     </div>
   );

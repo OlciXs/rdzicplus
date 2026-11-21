@@ -26,7 +26,7 @@
       "imie": "Marzena",
       "nazwisko": "Wiśniewska",
       "createdAt": "2026-11-21T13:58:06.311Z",
-      "lastLoginAt": "2026-11-21T19:23:44.817Z",
+      "lastLoginAt": "2026-11-21T21:30:32.513Z",
       "profile": {
         "ubezpieczony": {
           "imie": "Marzena",
@@ -38,15 +38,15 @@
           "rachunek": "PL12345678901234567890123456",
           "statusUbezpieczenia": "dg",
           "podstawaWymiaru": 4877.11,
-          "ubezpieczenieOd": "",
-          "ulgaWyczekiwania": "",
+          "ubezpieczenieOd": "2026-11-19",
+          "ulgaWyczekiwania": "absolwent",
           "wymiarEtatu": "",
           "zmianaWymiaru12m": "",
           "zatrudnionyOd": "",
           "pracaZaGranica": "",
           "pracaTymczasowa": "",
-          "zaleglosci": "",
-          "wiecejNizJedenTytul": "",
+          "zaleglosci": "nie",
+          "wiecejNizJedenTytul": "nie",
           "emeryturaRenta": "nie",
           "zasilekBezrobotnych": "nie",
           "rolnik": "nie",
@@ -140,7 +140,7 @@
           "opiekunczyDniWRoku": ""
         }
       },
-      "profileUpdatedAt": "2026-11-21T19:46:37.010Z"
+      "profileUpdatedAt": "2026-11-21T21:31:34.361Z"
     },
     {
       "id": "b0cb48cf-1ef8-4a18-8a0a-3e3723b134dd",
@@ -270,7 +270,7 @@
       "imie": "Mariusz",
       "nazwisko": "Zieliński",
       "createdAt": "2026-11-21T15:29:32.308Z",
-      "lastLoginAt": "2026-11-21T18:51:19.859Z",
+      "lastLoginAt": "2026-11-21T21:33:08.224Z",
       "profile": {
         "ubezpieczony": {
           "imie": "Mariusz",
@@ -282,7 +282,7 @@
           "rachunek": "PL61109010140000071219812874",
           "statusUbezpieczenia": "pracownik",
           "podstawaWymiaru": "4000",
-          "ubezpieczenieOd": "",
+          "ubezpieczenieOd": "2026-11-16",
           "ulgaWyczekiwania": "",
           "wymiarEtatu": "",
           "zmianaWymiaru12m": "",
@@ -384,7 +384,7 @@
           "opiekunczyDniWRoku": ""
         }
       },
-      "profileUpdatedAt": "2026-11-21T18:32:26.184Z"
+      "profileUpdatedAt": "2026-11-21T21:34:50.475Z"
     }
   ]
 }
