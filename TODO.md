@@ -6,23 +6,28 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 
 ---
 
-## Stan projektu (sobota 21.11, 16:25)
+## Stan projektu (sobota 21.11, 16:50)
 
-**Działa** (sprawdzone lokalnie w przeglądarce i przez API):
-- logowanie mObywatelem (symulacja): kod → wybór jednej z 3 fikcyjnych osób → sesja z tokenem, PESEL maskowany na froncie
+> **🔴 Serwer leżał po PR #2 (deploy #10 czerwony).** Przy merge'u „formularz” do `backend/server.js` trafiły nierozwiązane znaczniki konfliktu (`<<<<<<< HEAD` … `>>>>>>>`), więc backend nie startował (`SyntaxError`), healthcheck padał, a `docker compose up` na serwerze kończył się błędem. Odtworzone lokalnie w Dockerze. **Naprawione przez Claude (bez commita):** zostały obie części, czyli profil Oli i parametry admina; backend w Dockerze znów jest `healthy`. Po commicie i pushu deploy powinien przejść, więc warto zerknąć w Actions.
+> **Żeby się nie powtórzyło:** po rozwiązaniu konfliktu `git grep -n "<<<<<<<"` przed commitem, a w deployu krok z testami (niżej).
+
+**Działa** (sprawdzone lokalnie w przeglądarce, przez API i w Dockerze):
+- logowanie mObywatelem (symulacja): kod → wybór jednej z 3 fikcyjnych osób (Bożena, Marzena, Mariusz) → sesja z tokenem, PESEL maskowany na froncie
+- **„Moje dane” `/profil`** (Ola, PR #2): dane ubezpieczonego, płatnika, drugiego rodzica i dziecka zapisane raz (`GET/PUT /api/profile`); kalkulatory same podstawiają je w pola (`useProfileDefaults.js`), a kalkulator f) zapisuje wyliczoną podstawę do profilu
+- **Poprawione w profilu (Claude, bez commita):** backend nie zapisywał płci, więc zalogowany ojciec (Mariusz) był traktowany jak matka i jego podstawa trafiała w pole „matka”. Teraz płeć i data urodzenia są wyliczane z PESEL-u (`backend/db.js`), więc u Mariusza jego 6 000 zł trafia do „ojciec”, a 4 500 zł partnerki do „matka”. Data urodzenia z mObywatela przestała być pusta (używa jej limit 14 dni po 50. r.ż.)
 - dashboard z listą spraw po porodzie (checkboxy), wylogowanie, sesja przetrwa odświeżenie strony
 - **routing + 7 kalkulatorów a–g** (Montarex23, „Kalkulatory oraz routing”): strona powitalna `/`, lista `/kalkulatory`, osobny adres dla każdego kalkulatora, strona 404, `/panel` tylko dla zalogowanych. Adresy w README
 - RWD na telefonie (375 px, bez poziomego scrolla, także strony kalkulatorów), build produkcyjny frontendu
 - „baza” w pliku `backend/data/db.json` (Ola, `backend/db.js`), schowana za obiektem `db`
 - Docker (`docker-compose.yml`, Dockerfile dla obu części) + GitHub Actions z deployem na Google Cloud (Enard)
 
-**Deploy działa** (Enard): uruchomienia #6, #7 i #8 (z silnikiem i panelem admina, PR #1) w GitHub Actions przeszły na zielono. Do README brakuje linku do demo online.
+**Deploy** (Enard): #6–#9 zielone, **#10 (PR #2) czerwony** – przyczyna i poprawka wyżej. Do README brakuje linku do demo online.
 
 **Docker lokalnie** (sprawdzone 16:20): `docker compose up --build` z README działa (po poprawce `PROJECT_ID`, niżej). Strony, proxy `/api`, logowanie, panel admina, zapis parametrów przetrwa restart backendu (wolumen), własne `ADMIN_PASSWORD` przekazuje się do kontenera.
 
 **Zrobione (Claude, PR #1, na `main`):** silnik obliczeń `frontend/src/engine/` (wszystkie wyliczenia przeniesione z komponentów, wyniki bez zmian), 50 testów (`npm test`), panel admina `/admin` z zapisem parametrów w backendzie (`/api/params`). Opis w README.
 
-**Jeszcze nie ma:** uploadu PDF / przykładowych spraw, planera osi czasu, generatora wniosków, wspólnego profilu sprawy (każdy kalkulator osobno pyta o podstawę), symulacji e-ZLA / zadłużenia / PUE.
+**Jeszcze nie ma:** uploadu PDF / przykładowych spraw („Sprawdź mój przypadek”), jednego podsumowania „co mi przysługuje”, planera osi czasu, generatora wniosków, symulacji e-ZLA / zadłużenia / PUE.
 
 ### Poprawione w kalkulatorach (21.11, 16:00, przez Claude; commit `fix-calc`, sprawdzone w przeglądarce)
 - [x] **c) Łączenie z pracą: zły wzór wydłużenia.** Było `urlop + urlop × etat` (½ etatu → 61,5 tyg.), jest `urlop ÷ (1 − etat)` zgodnie z KP art. 182¹f (½ etatu → 82 tyg., ¼ etatu → 54,67 tyg., „Za życiem” → 130 tyg.)
@@ -34,7 +39,8 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 - [x] **RWD:** na telefonie tabele wyników rozpychały strony kalkulatorów do ~500 px. Poprawione w `themes.css` (`minmax(0, 1fr)`), teraz tabela przewija się w swojej karcie
 
 ### Znane braki w kalkulatorach (do zrobienia)
-- [ ] Każdy kalkulator każe osobno wpisać „podstawę wymiaru”. Wynik kalkulatora f) powinien przechodzić do pozostałych (wspólny profil sprawy, §3.6 pliku z danymi)
+- [x] ~~Każdy kalkulator każe osobno wpisać „podstawę wymiaru”~~ – rozwiązane profilem „Moje dane” (Ola): podstawa z kalkulatora f) zapisuje się do profilu i trafia do pozostałych (dla zalogowanych)
+- [ ] Profil działa tylko dla zalogowanych. Dla niezalogowanego (np. jury bez logowania) kalkulatory nadal pytają osobno, więc warto pokazać to w filmie z logowaniem
 - [ ] b) Macierzyński: brak podwyższenia do 1 000 zł (świadczenie rodzicielskie) i brak kwot urlopu rodzicielskiego miesiąc po miesiącu
 - [ ] f) Podstawa: minimum 4 147,09 zł stosowane bez względu na wymiar etatu (powinno być proporcjonalne); miesiące < 50% czasu pracy trzeba wyłączać ręcznie
 - [ ] e) Adopcja: urlop „na warunkach macierzyńskiego” nie kończy się, gdy dziecko osiąga 7/10/14 lat; wartość 62 tyg. dla „Za życiem” jest niepotwierdzona (sekcja 12, pkt 5)
@@ -43,14 +49,16 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 - [ ] Zaokrąglenia: kwoty liczone na liczbach zmiennoprzecinkowych, bez zaokrąglania stawki dziennej do grosza (sekcja 12, pkt 1)
 - [ ] `npm audit` we frontendzie: 2 umiarkowane podatności (esbuild – tylko serwer deweloperski; react-router). Poprawka wymaga podbicia wersji (`npm audit fix --force`), więc lepiej po oddaniu albo na spokojnie
 
-**Lekcja z dzisiaj:** commit „Build and deploy” przypadkiem cofnął logowanie Oli w `server.js` (naprawione w `5b3ce25`). **Przed każdym pushem: `git pull`**, a przy konflikcie nie wybierać „swojej wersji” w ciemno.
+**Lekcje z dzisiaj:** (1) commit „Build and deploy” przypadkiem cofnął logowanie Oli w `server.js` (naprawione w `5b3ce25`); (2) merge PR #2 wrzucił do `server.js` znaczniki konfliktu i położył serwer. **Przed każdym pushem: `git pull`, rozwiązać konflikty (zostawić obie części, jeśli obie są potrzebne), `git grep -n "<<<<<<<"`, a potem `npm test` i odpalić aplikację.**
 
 ### Poprawki techniczne (P0, małe)
 - [x] **Naprawić deploy (Enard):** runy #6 i #7 przechodzą
 - [x] **`docker-compose.yml`: `${PROJECT_ID}` bez wartości dawało błędną nazwę obrazu** (`…pkg.dev//app-images/…`, potwierdzone: `invalid reference format`), więc `docker compose up --build` z README się wykładał. Poprawione na `${PROJECT_ID:-local}` (Claude, 16:20); na serwerze, gdzie `PROJECT_ID` jest ustawione, bez zmian
 - [x] **Puste `.dockerignore`:** wpisane `node_modules`, `.env` (+ `dist` we frontendzie). Obraz frontendu nie dostaje już windowsowych `node_modules`
 - [ ] Pusty `frontend/nginx.conf`: usunąć albo wypełnić (teraz frontend w Dockerze chodzi na `vite preview`, nie na nginx)
-- [ ] `backend/data/db.json` dodać do `.gitignore` (i `git rm --cached`). Zmienia się przy każdym logowaniu, a `db.js` i tak tworzy go sam z danych startowych
+- [ ] **Krok testów w deployu (Enard):** przed budowaniem obrazów w `deploy.yml` dodać `cd frontend && npm ci && npm test` oraz `node --check backend/server.js`. Zepsuty kod (jak #10) nie trafi wtedy na serwer, tylko deploy zatrzyma się na testach
+- [ ] `backend/data/db.json` dodać do `.gitignore` (i `git rm --cached`). Zmienia się przy każdym logowaniu (PR #2 wrzucił do repo profile testowych użytkowników), a `db.js` i tak tworzy go sam z danych startowych. **Uwaga:** wtedy w `SEED` w `db.js` trzeba podmienić Katarzynę na Mariusza (teraz Mariusz jest tylko w `db.json`)
+- [ ] Na serwerze plik bazy leży na wolumenie, więc nowa lista osób (Mariusz zamiast Katarzyny) tam nie dotrze. Enard: jednorazowo usunąć wolumen `backend-data` albo poprawić plik ręcznie
 - [ ] Gdy deploy przejdzie: wpisać do README link do działającego demo
 - [ ] (drobne) Ostrzeżenie w Actions: `actions/checkout@v4` i `setup-gcloud@v2` działają na wycofywanym Node 20. Na razie nic nie psuje
 - [ ] Dashboard: usunąć krok „Świadczenie 800 plus” (poza zakresem zadania ZUS) i podmienić listę na kroki z kalkulatora (sekcja 8)
