@@ -11,10 +11,16 @@ export const zasilek = (podstawaMies, stawka, dni, P = DEFAULT_PARAMS) =>
 export const tygodnieMac = (dzieci, P = DEFAULT_PARAMS) =>
   P.tygodnieMacierzynski[Math.min(Math.max(dzieci, 1), 5)];
 
-/** Wymiar urlopu rodzicielskiego (tygodnie): 41/43, z „Za życiem” 65/67 (KP art. 182¹a). */
+/** Wymiar urlopu rodzicielskiego (tygodnie): 41/43, z „Za życiem” 65/67 (KP art. 182¹a).
+ *  `przyjete` = 62 tyg. przysługuje WYŁĄCZNIE rodzinie zastępczej, która przyjęła dziecko
+ *  w wieku do 14 lat (art. 183 § 4³ pkt 3 k.p.). Przy przysposobieniu „Za życiem” to 65/67 tyg.
+ *  (art. 183 § 4⁴ k.p.) — B-06. */
 export const tygodnieRodz = (dzieci, zaZyciem, przyjete, P = DEFAULT_PARAMS) => {
   const k = Math.min(Math.max(dzieci, 1), 2);
-  if (!zaZyciem) return P.tygodnieRodzicielski[k];
+  if (!zaZyciem) {
+    if (przyjete) return P.tygodnieRodzicielskiPrzyjete?.[k] ?? P.tygodnieRodzicielski[k];
+    return P.tygodnieRodzicielski[k];
+  }
   return przyjete ? P.tygodnieZaZyciem.przyjete : P.tygodnieZaZyciem[k];
 };
 

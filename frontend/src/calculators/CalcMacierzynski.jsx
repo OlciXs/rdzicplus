@@ -64,7 +64,7 @@ export default function CalcMacierzynski() {
       <Bullets items={[
         <>Wymiar: <b>{tygMac} tygodni</b> ({n} {n === 1 ? "dziecko" : "dzieci"}), z tego przed porodem max {CFG.przedPorodemMax} tyg.</>,
         <>Przed porodem: <b>{przed} tyg.</b> (wymaga zaświadczenia o przewidywanej dacie porodu; wniosek ≥ 14 dni przed — RWN § 2), po porodzie: <b>{tygMac - przed} tyg.</b></>,
-        <>Minimum matki po porodzie: <b>{CFG.wyliczneMacierzynskieMatki} tyg.</b> (pierwsze 14 tygodni matka wykorzystuje osobiście).</>,
+        <>Minimum matki po porodzie: <b>{CFG.wylaczneMacierzynskieMatki} tyg.</b> (pierwsze 14 tygodni matka wykorzystuje osobiście).</>,
       ]} />
     );
   } else if (s.szczegol === "martwe") {
@@ -182,6 +182,16 @@ export default function CalcMacierzynski() {
       </div>
 
       <div className="result-stack">
+        {r.brakPodstawy && (
+          <section className="result-card warning">
+            <h3 className="result-title">Brak podstawy wymiaru</h3>
+            <p>
+              Nie podano podstawy wymiaru zasiłku (0 zł). Kwoty nie są liczone — sprawdź, czy
+              w dniu porodu podlegałaś ubezpieczeniu chorobowemu. Bez ubezpieczenia zasiłek
+              macierzyński nie przysługuje (rozważ świadczenie rodzicielskie w gminie).
+            </p>
+          </section>
+        )}
         <section className="result-card">
           <h3 className="result-title">1. Urlop macierzyński</h3>
           {blokMac}
@@ -193,7 +203,7 @@ export default function CalcMacierzynski() {
             {bladOjca ? (
               <p>
                 <Badge tone="err">BŁĄD</Badge> Ojciec może przejąć max {Math.max(0, maxDlaOjca)} tyg.
-                (matka musi wykorzystać {CFG.wyliczneMacierzynskieMatki} tyg. po porodzie). Wniosek matki
+                (matka musi wykorzystać {CFG.wylaczneMacierzynskieMatki} tyg. po porodzie). Wniosek matki
                 ≥ 7 dni przed powrotem do pracy; wniosek ojca ≥ 14 dni przed rozpoczęciem.
               </p>
             ) : (
@@ -220,7 +230,7 @@ export default function CalcMacierzynski() {
           <h3 className="result-title">{tygUzup ? "3" : "2"}. Urlop rodzicielski – wspólna pula</h3>
           {s.szczegol === "brak" ? (
             <Bullets items={[
-              <>Pula: <b>{pool} tygodni</b>{zaZ ? " („Za życiem”)" : ""}, po <b>{CFG.wyliczneRodzicielskie} tyg. wyłącznych</b> na każdego rodzica (tej części nie można przenieść; zasiłek za nią zawsze {CFG.stRodzicielski}%).</>,
+              <>Pula: <b>{pool} tygodni</b>{zaZ ? " („Za życiem”)" : ""}, po <b>{CFG.wylaczneRodzicielskie} tyg. wyłącznych</b> na każdego rodzica (tej części nie można przenieść; zasiłek za nią zawsze {CFG.stRodzicielski}%).</>,
               <>Do wykorzystania: jednorazowo lub max <b>{CFG.maxCzesci} części</b>; do końca roku kalendarzowego, w którym dziecko kończy <b>{CFG.limitRokZycia} lat</b>.{r.rodzicielskiDoRoku ? ` Do: 31.12.${r.rodzicielskiDoRoku}.` : ""}</>,
               <>Wariant: {wz81 ? <>81,5% podstawy za macierzyński + rodzicielski (wniosek ≤ {CFG.deadlineSredniowany} dni po porodzie)</> : <>100% za macierzyński, 70% za rodzicielski</>}</>,
             ]} />

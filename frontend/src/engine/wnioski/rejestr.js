@@ -493,7 +493,7 @@ export const WARIANTY = [
     id: "W5", wniosek: "przejecie", nazwa: "Matka rezygnuje z reszty urlopu na rzecz ojca (po 14 tygodniach)",
     kto: ["matka"], etapy: ["po_porodzie"],
     warunki: (k) => [
-      matkaWykorzystala(k, k.P.wyliczneMacierzynskieMatki),
+      matkaWykorzystala(k, k.P.wylaczneMacierzynskieMatki),
       w("Ojciec dziecka ma ubezpieczenie chorobowe", !k.drugi ? false : k.grupaDrugiego === null ? null : k.grupaDrugiego !== "brak", ["drugiRodzic.statusUbezpieczenia"]),
       w("Chcesz oddać resztę urlopu ojcu", k.matkaRezygnuje, ["urlopy.matkaRezygnuje"]),
     ],
@@ -513,7 +513,7 @@ export const WARIANTY = [
       maChorobowe(k),
       matkaUbezpieczona(k),
       okolicznosc(k, ["brak"], "Matka opiekuje się dzieckiem (brak szczególnych okoliczności)"),
-      matkaWykorzystala(k, k.P.wyliczneMacierzynskieMatki),
+      matkaWykorzystala(k, k.P.wylaczneMacierzynskieMatki),
       w("Matka rezygnuje z reszty urlopu na Twoją rzecz", k.matkaRezygnuje, ["urlopy.matkaRezygnuje"]),
     ],
     wymiar: (k) => (k.liczbaDzieci && k.macierzynskiWykorzystanoTyg !== null ? `Do ${Math.max(0, tygodnieMac(k.liczbaDzieci, k.P) - k.macierzynskiWykorzystanoTyg)} tygodni` : "Pozostała część urlopu macierzyńskiego"),
@@ -683,7 +683,7 @@ export const WARIANTY = [
     },
     wymiar: (k) => {
       const pula = tygodnieRodz(k.liczbaDzieci ?? 1, k.zaZyciem, k.etap === "przyjecie", k.P);
-      return `${pula} tygodni łącznie dla obojga rodziców; ${k.P.wyliczneRodzicielskie} tygodni każdego rodzica jest nieprzenoszalne; max ${k.P.maxCzesci} części`;
+      return `${pula} tygodni łącznie dla obojga rodziców; ${k.P.wylaczneRodzicielskie} tygodni każdego rodzica jest nieprzenoszalne; max ${k.P.maxCzesci} części`;
     },
     wysokosc: () => "70% (albo 81,5%, jeśli matka złożyła wniosek do 21 dni po porodzie); 9 tygodni drugiego rodzica – 70%",
     adresat: ADRES_URLOPU,

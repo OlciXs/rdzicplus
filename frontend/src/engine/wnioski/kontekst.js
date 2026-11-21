@@ -29,7 +29,8 @@ export const GRUPA_TYTULU = {
 };
 
 // Zadłużenie blokuje zasiłki tylko tym, którzy sami opłacają składki (art. 2a UZ).
-const SAMI_PLACA_SKLADKI = ["dg", "wspolpraca", "duchowny"];
+// B-14: art. 2a ust. 1 u.z. wymienia też marynarzy (art. 6 ust. 1 pkt 24 u.s.u.s.).
+const SAMI_PLACA_SKLADKI = ["dg", "wspolpraca", "duchowny", "marynarz"];
 
 const DAY = 86400000;
 const yn = (v) => (v === "tak" ? true : v === "nie" ? false : null);
@@ -37,6 +38,17 @@ const liczba = (v) => {
   if (v === "" || v === null || v === undefined) return null;
   const n = Number(String(v).replace(",", "."));
   return Number.isFinite(n) ? n : null;
+};
+// B-24: kwota w profilu musi być sensowna — ujemna lub 0 traktujemy jak brak danych.
+const kwotaProfilu = (v) => {
+  const n = liczba(v);
+  return n === null || n <= 0 ? null : n;
+};
+// B-23: liczba dzieci z jednego porodu — tylko sensowny zakres 1..5.
+const dzieciPorodu = (v) => {
+  const n = liczba(v);
+  if (n === null || n <= 0) return null;
+  return Math.min(Math.ceil(n), 5);
 };
 const dni = (od, doDnia) => Math.round((doDnia - od) / DAY);
 const miesiace = (od, doDnia) =>
@@ -113,15 +125,15 @@ export function kontekstSprawy(profil = {}, { dzis, params = DEFAULT_PARAMS } = 
     ubezpieczonyWDniuZdarzenia,
     zmianaWymiaru12m: yn(u.zmianaWymiaru12m),
     wiecejNizJedenTytul: yn(u.wiecejNizJedenTytul),
-    podstawa: liczba(u.podstawaWymiaru),
+    podstawa: kwotaProfilu(u.podstawaWymiaru),
     liczbaUbezpieczonych: pl.liczbaUbezpieczonych || null, // "do_20" | "powyzej_20" | "nie_wiem"
     // dziecko
     dataUrodzenia,
     pdp,
     dataPrzyjecia,
     dzienZdarzenia,
-    liczbaDzieci: liczba(d.liczbaDzieci),
-    liczbaZyjacych: liczba(d.liczbaZyjacych),
+    liczbaDzieci: dzieciPorodu(d.liczbaDzieci),
+    liczbaZyjacych: dzieciPorodu(d.liczbaZyjacych),
     wiekDzieckaMies: dataUrodzenia ? miesiace(dataUrodzenia, today) : null,
     dniOdPorodu: etap === "po_porodzie" && dataUrodzenia ? dni(dataUrodzenia, today) : null,
     wiekPrzyPrzyjeciuLat: dataUrodzenia && dataPrzyjecia ? ageYears(dataUrodzenia, dataPrzyjecia) : null,

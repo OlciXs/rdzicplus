@@ -8,8 +8,12 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3001
-      # hasło panelu admina (/admin); puste = hasło demo z backend/server.js
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      # hasło panelu admina (/admin). UWAGA (I-02): `${ADMIN_PASSWORD:-}` wstawia PUSTY string,
+      # a nie brak zmiennej — `"" || "zus-demo-2026"` w server.js daje wtedy hasło demo.
+      # Dlatego hasło demo jest ustawiane jawnie i opisane w README.
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-zus-demo-2026}
+      # B-18: 0 = tryb produkcyjny (kod logowania nie wraca do klienta). W demo zostaw 1.
+      DEMO_MODE: ${DEMO_MODE:-1}
     ports:
       - "3001:3001"
     volumes:

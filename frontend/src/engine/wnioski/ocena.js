@@ -125,7 +125,7 @@ export function ostrzezenia(k) {
     else if (k.wiekDzieckaMies >= 9) dodaj("V5", "ostrzezenie", `Urlop ojcowski trzeba wykorzystać, zanim dziecko skończy 12 miesięcy (zostało ok. ${k.P.deadlineOjcowskiMies - k.wiekDzieckaMies} mies.).`);
   }
   if (k.drugiRodzicRodzicielski === "nie")
-    dodaj("V9", "ostrzezenie", `Drugi rodzic nie bierze urlopu rodzicielskiego – jego ${k.P.wyliczneRodzicielskie} tygodni przepada (nie da się ich przenieść).`);
+    dodaj("V9", "ostrzezenie", `Drugi rodzic nie bierze urlopu rodzicielskiego – jego ${k.P.wylaczneRodzicielskie} tygodni przepada (nie da się ich przenieść).`);
   if (k.typPrzyjecia === "rodzina_zastepcza_zawodowa")
     dodaj("V20", "blad", "Zawodowa rodzina zastępcza nie ma prawa do urlopu na warunkach urlopu macierzyńskiego.");
   if (k.wymiarPracyPrzyLaczeniu === "powyzej")

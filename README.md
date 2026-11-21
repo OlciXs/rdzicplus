@@ -76,7 +76,7 @@ zbierają dane z formularza i wyświetlają wynik.
 | `engine/engine.test.js` | testy z ręcznie policzonymi wartościami |
 | `engine/wnioski/` | **wnioski i ich warianty**: co przysługuje przy danym profilu (niżej) |
 
-Testy (88: kalkulatory + warianty wniosków na przykładowych rodzinach):
+Testy (161: kalkulatory, warianty wniosków, regresje do `RAPORT_BLEDOW.md` i spójność z bazą wiedzy):
 
 ```bash
 cd frontend && npm test
@@ -96,9 +96,12 @@ Rodzic wypełnia „Moje dane”, wybiera wniosek, a silnik ocenia **każdy wari
 
 | Plik | Zawartość |
 | --- | --- |
-| `engine/wnioski/rejestr.js` | 14 wniosków do wyboru i 45 wariantów (W1–W50 z `docs/01-katalog-swiadczen-2026.md`): warunki, wymiar, wysokość, adresat, formularz, termin, dokumenty, potrzebne pola, podstawa prawna; niepewne oznaczone `pewnosc: "do_potwierdzenia"` |
+| `engine/wnioski/rejestr.js` | **14 wniosków i 40 wariantów** opartych na `docs/01-katalog-swiadczen-2026.md`: warunki, wymiar, wysokość, adresat, formularz, termin, dokumenty, potrzebne pola, podstawa prawna; niepewne oznaczone `pewnosc: "do_potwierdzenia"`. Dokumentacja opisuje 50 pozycji — część jest **świadomie scalona** (np. W23/W24 → W6–W9b), a `spojnosc.test.js` pilnuje, by rejestr nie rozjechał się z bazą wiedzy |
 | `engine/wnioski/kontekst.js` | profil z `GET /api/profile` → fakty dla reguł (tak / nie / brak danych) |
 | `engine/wnioski/ocena.js` | `ocenWniosek(profil, wniosekId)`, `przegladWnioskow(profil)` i ostrzeżenia V1–V40 z `docs/02-dane-do-wnioskow-2026.md` |
+| `engine/regresja.test.js` | testy regresyjne do każdego naprawionego błędu z `RAPORT_BLEDOW.md` (B-01…B-24) |
+| `engine/wnioski/spojnosc.test.js` | spójność rejestru z `engine/dane/zus_dane_2026.json` (podstawy prawne, unikalność ID, pokrycie wniosków) |
+| `engine/walidacja.js` | sanityzacja wejścia silnika (`NaN`/`Infinity`/wartości ujemne nie wchodzą do wyliczeń) |
 | `engine/wnioski/wnioski.test.js` | testy na rodzinach: etat w ciąży, działalność z długiem, zlecenie (90 dni), studentka, utrata pracy w ciąży, ojciec przejmujący urlop (14 tyg., szpital, zgon, matka nieubezpieczona), wcześniak, martwe urodzenie, adopcja, 81,5%, rodzicielski, opiekuńczy |
 
 Ekran: `frontend/src/pages/Wnioski.jsx` (`/wnioski`) – kafelki wniosków z licznikami (najpierw to, co przysługuje),

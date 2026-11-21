@@ -1,6 +1,7 @@
 // a) Zasiłek chorobowy w ciąży (UZ art. 4, 8–12, 2a; KP art. 92).
 import { DEFAULT_PARAMS } from "./params.js";
 import { zasilek, toDate } from "./helpers.js";
+import { kwota, liczbaDni } from "./walidacja.js";
 import { ktoWyplaca } from "./platnik.js";
 
 /**
@@ -18,23 +19,29 @@ import { ktoWyplaca } from "./platnik.js";
  * @param {number} [input.zaleglosc=0]  zaległość składkowa w zł
  */
 export function chorobowyWCiazy(input, P = DEFAULT_PARAMS) {
+  // B-21: sanityzacja wejścia — NaN/Infinity/ujemne nie mogą wejść do wyliczeń.
   const {
     status = "obw",
-    dniUbezpieczenia = 0,
-    liczbaUbPlatnika = 0,
     dataUrodzenia,
     poczatek,
-    dniNiezdolnosci = 0,
-    wykorzystaneWynagrodzenie = 0,
-    wykorzystanyOkres = 0,
     kodB = true,
-    podstawa = 0,
-    zaleglosc = 0,
   } = input;
+  const dniUbezpieczenia = liczbaDni(input.dniUbezpieczenia);
+  const liczbaUbPlatnika = liczbaDni(input.liczbaUbPlatnika);
+  const dniNiezdolnosci = liczbaDni(input.dniNiezdolnosci);
+  const wykorzystaneWynagrodzenie = liczbaDni(input.wykorzystaneWynagrodzenie);
+  const wykorzystanyOkres = liczbaDni(input.wykorzystanyOkres);
+  const podstawa = kwota(input.podstawa);
+  const zaleglosc = kwota(input.zaleglosc);
+  // B-15: czy przed obecnym zwolnieniem były zwolnienia bez kodu B (reset okresu zasiłkowego).
+  const wczesniejszeBezB = input.wczesniejszeBezB === true;
   const od = toDate(poczatek);
   const ur = toDate(dataUrodzenia);
-  // Limit 14 dni obowiązuje od roku kalendarzowego po roku, w którym pracownik kończy 50 lat.
-  const wiek50 = ur && od ? od.getFullYear() > ur.getFullYear() + 50 : false;
+  // Art. 92 § 5 k.p.: limit 14 dni dotyczy niezdolności przypadającej PO roku kalendarzowym,
+  // w którym pracownik ukończył 50 lat. Czyli dopiero od 1 stycznia roku (rok urodzenia + 51).
+  // Przykład: ur. 1976 (kończy 50 lat w 2026) → limit 14 dni dopiero od 2027-01-01.
+  // B-01: prawidłowy warunek — rok niezdolności musi być PÓŹNIEJSZY niż rok ukończenia 50 lat.
+  const poRoku50 = ur && od ? od.getFullYear() >= ur.getFullYear() + 51 : false;
 
   /* 1. prawo do zasiłku */
   const wymaganyOkres = status === "obw" ? P.oczekiwanieObowiazkowe : P.oczekiwanieDobrowolne;
@@ -48,13 +55,17 @@ export function chorobowyWCiazy(input, P = DEFAULT_PARAMS) {
 
   /* 4. okres zasiłkowy (liczony najpierw – ogranicza płatne dni) */
   const okresMax = kodB ? P.okresZasilkowyCiaza : P.okresZasilkowy;
-  const pozostaloPrzed = Math.max(0, okresMax - wykorzystanyOkres);
+  // B-15 (art. 9 ust. 2 zdanie 2 u.z.): jeżeli po przerwie niezdolność wystąpiła w trakcie
+  // ciąży (kod B), okresów sprzed przerwy NIE wlicza się do okresu zasiłkowego — okres
+  // liczy się od nowa. Wcześniej `wykorzystanyOkres` był zawsze odejmowany.
+  const wykorzystanySkutecznie = kodB && wczesniejszeBezB ? 0 : wykorzystanyOkres;
+  const pozostaloPrzed = Math.max(0, okresMax - wykorzystanySkutecznie);
   const dniPlatne = Math.min(dniNiezdolnosci, pozostaloPrzed);
   const pozostaloPo = Math.max(0, pozostaloPrzed - dniNiezdolnosci);
   const przekroczonyOkres = dniNiezdolnosci > pozostaloPrzed;
 
   /* 2. wynagrodzenie chorobowe (pracodawca) vs zasiłek */
-  const limitWynagrodzenia = wiek50 ? P.wynagrodzenieChorobowe50 : P.wynagrodzenieChorobowe;
+  const limitWynagrodzenia = poRoku50 ? P.wynagrodzenieChorobowe50 : P.wynagrodzenieChorobowe;
   const dostepneWynagrodzenie = Math.max(0, limitWynagrodzenia - wykorzystaneWynagrodzenie);
   const dniWynagrodzenia = status === "obw" ? Math.min(dniPlatne, dostepneWynagrodzenie) : 0;
   const dniZasilku = dniPlatne - dniWynagrodzenia;
@@ -67,14 +78,19 @@ export function chorobowyWCiazy(input, P = DEFAULT_PARAMS) {
   const kwotaWynagrodzenia = wyplata ? (dziennaPodstawa * stawkaWynagrodzenia * dniWynagrodzenia) / 100 : 0;
   const kwotaZasilku = wyplata ? zasilek(podstawa, stawkaZasilku, dniZasilku, P) : 0;
 
+  // B-12: kto wypłaca — status dobrowolny oznacza, że chodzi o osobę, która sama opłaca składki
+  // (działalność / zlecenie). Przyjmujemy „dg”, bo dla działalności i współpracy ZUS wypłaca zawsze; dla
+  // zlecenia próg 20 obowiązuje, ale to samo wynika z liczby ubezpieczonych.
+  const statusPlatnika = status === "dobr" ? "dg" : "pracownik";
+
   return {
     maPrawo,
     wymaganyOkres,
     brakujeDni,
     zalegloscBlokada,
     wyplata,
-    wiek50,
-    platnik: ktoWyplaca({ status: "pracownik", liczbaUbezpieczonych: liczbaUbPlatnika }, P),
+    wiek50: poRoku50,
+    platnik: ktoWyplaca({ status: statusPlatnika, liczbaUbezpieczonych: liczbaUbPlatnika }, P),
     limitWynagrodzenia,
     dniWynagrodzenia,
     dniZasilku,
@@ -87,6 +103,8 @@ export function chorobowyWCiazy(input, P = DEFAULT_PARAMS) {
     kwotaZasilku,
     kwotaRazem: kwotaWynagrodzenia + kwotaZasilku,
     okresMax,
+    wykorzystanyOkres: wykorzystanySkutecznie,
+    resetOkresuZasilkowego: kodB && wczesniejszeBezB && wykorzystanyOkres > 0,
     pozostaloPrzed,
     pozostaloPo,
     przekroczonyOkres,

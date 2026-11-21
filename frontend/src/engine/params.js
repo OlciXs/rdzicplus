@@ -22,7 +22,7 @@ export const DEFAULT_PARAMS = Object.freeze({
   potracenie: 13.71, // składki finansowane przez ubezpieczonego (E 9,76 + R 1,5 + chor 2,45)
   dniMiesiaca: 30, // zasiłek dzienny = 1/30 podstawy miesięcznej
   minWynagrodzenie: 4806, // zł, 2026 (Dz.U. 2025 poz. 1242)
-  minPodstawaPracownik: 4147.09, // minimalne wynagrodzenie - 13,71% (art. 45 UZ)
+  minPodstawaPracownik: 4147.1, // minimalne wynagrodzenie - 13,71% (art. 45 UZ)
   maxPodstawaZasilku: 20321.3, // limit podstawy zasiłku (od maks. składki 23 550 zł) - wg załącznika
   maxPodstawaSkladki: 23550, // 250% prognozowanego przeciętnego wynagrodzenia 2026
   // najniższa podstawa składek dla przedsiębiorców (60% × 9 420 = 5 652 zł) minus składki
@@ -47,11 +47,14 @@ export const DEFAULT_PARAMS = Object.freeze({
   // urlopy i zasiłek macierzyński
   tygodnieMacierzynski: { 1: 20, 2: 31, 3: 33, 4: 35, 5: 37 }, // liczba dzieci -> tyg. (KP art. 180)
   przedPorodemMax: 6, // max tygodni przed porodem
-  wyliczneMacierzynskieMatki: 14, // nieprzenoszalna część matki po porodzie (8 przy orzeczeniu)
+  wylaczneMacierzynskieMatki: 14, // nieprzenoszalna część matki po porodzie (8 przy orzeczeniu)
   minimalneNaWarunkach: 9, // tygodnie - minimum urlopu na warunkach urlopu macierzyńskiego
   tygodnieRodzicielski: { 1: 41, 2: 43 },
-  tygodnieZaZyciem: { 1: 65, 2: 67, przyjete: 62 }, // 62 – DO POTWIERDZENIA (TODO, sekcja 12)
-  wyliczneRodzicielskie: 9, // tygodnie na rodzica, nieprzenoszalne
+  // B-06: rodzina zastępcza, która przyjęła dziecko do 14 lat (art. 183 § 3 i § 4 pkt 3 k.p.)
+  // ma 38 tygodni urlopu rodzicielskiego zamiast 41.
+  tygodnieRodzicielskiPrzyjete: { 1: 38, 2: 38 },
+  tygodnieZaZyciem: { 1: 65, 2: 67, przyjete: 62 }, // 62 tylko dla rodziny zastępczej (art. 183 § 4³ pkt 3 k.p.)
+  wylaczneRodzicielskie: 9, // tygodnie na rodzica, nieprzenoszalne
   maxCzesci: 5, // urlop rodzicielski max części
   limitRokZycia: 6, // do końca roku kal., w którym dziecko kończy 6 lat
   deadlineSredniowany: 21, // dni od porodu na wniosek 81,5%
@@ -61,6 +64,9 @@ export const DEFAULT_PARAMS = Object.freeze({
   uzupełniajacyLimitPozny: 8, // pozostałe przypadki
   martweUrodzenieTygodnie: 8, // po porodzie; nie krócej niż 7 dni od zgonu
   zgonPo8TygDni: 7,
+  // B-02: minimalny pobyt dziecka w szpitalu, by przysługiwał uzupełniający urlop macierzyński
+  // (art. 180² k.p.; Poradnik ZUS 2026 — „co najmniej 5 dni po narodzinach”).
+  minHospitalizacjaDni: 5,
 
   // adopcja / rodzina zastępcza – limity wieku dziecka w chwili przyjęcia (UZ art. 29, KP art. 183)
   limitWiekuPrzysposobienie: 14,
@@ -125,14 +131,15 @@ export const PARAM_GROUPS = [
     klucze: {
       tygodnieMacierzynski: "Macierzyński wg liczby dzieci",
       przedPorodemMax: "Maks. przed porodem",
-      wyliczneMacierzynskieMatki: "Część matki po porodzie",
+      wylaczneMacierzynskieMatki: "Część matki po porodzie",
       tygodnieRodzicielski: "Rodzicielski wg liczby dzieci",
       tygodnieZaZyciem: "Rodzicielski „Za życiem”",
-      wyliczneRodzicielskie: "Część nieprzenoszalna rodzica",
+      wylaczneRodzicielskie: "Część nieprzenoszalna rodzica",
       maxCzesci: "Maks. liczba części rodzicielskiego",
       tygodnieOjcowski: "Ojcowski",
       uzupełniajacyLimitWczesny: "Uzupełniający – wcześniak (< 28 tyg. / ≤ 1000 g)",
       uzupełniajacyLimitPozny: "Uzupełniający – pozostałe",
+      minHospitalizacjaDni: "Uzupełniający – min. dni pobytu w szpitalu",
       martweUrodzenieTygodnie: "Po martwym urodzeniu",
       limitLaczenie: "Rodzicielski łączony z pracą – limit",
       limitLaczenieZaZyciem: "Łączony z pracą „Za życiem” – limit",

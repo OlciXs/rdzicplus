@@ -73,10 +73,16 @@ describe("f) podstawa wymiaru", () => {
     expect(grosze(r.dzienna)).toBe(143.82);
   });
 
-  it("pracownik poniżej minimum → podniesione do 4 147,09 zł", () => {
+  it("pracownik poniżej minimum → podniesione do 4 147,10 zł", () => {
     const r = podstawaWymiaru({ status: "pracownik", miesiace: dwanascie(3000) });
-    expect(r.podstawa).toBe(4147.09);
+    // 4 806 × (1 − 13,71%) = 4 147,0974 → 4 147,10 zł (wcześniej zaokrąglane w dół do ,09)
+    expect(r.podstawa).toBe(4147.1);
     expect(r.limit.typ).toBe("min");
+  });
+
+  it("pracownik na ½ etatu → minimum proporcjonalne do wymiaru", () => {
+    const r = podstawaWymiaru({ status: "pracownik", miesiace: dwanascie(2000), wymiarEtatu: 0.5 });
+    expect(r.podstawa).toBe(2073.55);
   });
 
   it("nie-pracownik powyżej limitu → ucięte do 20 321,30 zł", () => {

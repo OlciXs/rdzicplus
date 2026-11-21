@@ -1,6 +1,7 @@
 // b) Zasiłek macierzyński: wymiar urlopów i kwoty (KP art. 180–182³; UZ art. 29–31).
 import { DEFAULT_PARAMS } from "./params.js";
 import { zasilek, tygodnieMac, tygodnieRodz, toDate, addDays, daysInclusive } from "./helpers.js";
+import { kwota, liczbaDni } from "./walidacja.js";
 
 /**
  * @param {object} input
@@ -20,22 +21,23 @@ import { zasilek, tygodnieMac, tygodnieRodz, toDate, addDays, daysInclusive } fr
  * @param {number} [input.dniHospitalizacji=0]
  */
 export function zasilekMacierzynski(input, P = DEFAULT_PARAMS) {
+  // B-21..B-24: sanityzacja — zakresy i skończone liczby.
   const {
-    dzieci = 1,
     porod,
-    przedPorodem = 0,
     zaZyciem = false,
     sytuacja = "brak",
     dataZgonu,
     wniosek815 = false,
-    podstawaMatki = 0,
-    podstawaOjca = 0,
-    tygodnieDlaOjca = 0,
     ojcowski = true,
-    tydzienCiazy = 0,
-    masa = 0,
-    dniHospitalizacji = 0,
   } = input;
+  const dzieci = Math.min(Math.max(Math.ceil(Number(input.dzieci) || 1), 1), 5);
+  const przedPorodem = liczbaDni(input.przedPorodem);
+  const podstawaMatki = kwota(input.podstawaMatki);
+  const podstawaOjca = kwota(input.podstawaOjca);
+  const tygodnieDlaOjca = liczbaDni(input.tygodnieDlaOjca);
+  const tydzienCiazy = liczbaDni(input.tydzienCiazy);
+  const masa = liczbaDni(input.masa);
+  const dniHospitalizacji = liczbaDni(input.dniHospitalizacji);
   const dataPorodu = toDate(porod);
   const przed = Math.min(przedPorodem, P.przedPorodemMax);
   const stMac = wniosek815 ? P.stSredniowany : P.stMacierzynski;
@@ -56,14 +58,16 @@ export function zasilekMacierzynski(input, P = DEFAULT_PARAMS) {
 
   /* podział z ojcem (po 14 tyg. matki) */
   const dlaOjca = Math.max(0, tygodnieDlaOjca);
-  const maxDlaOjca = tygMac - przed - P.wyliczneMacierzynskieMatki;
+  const maxDlaOjca = tygMac - przed - P.wylaczneMacierzynskieMatki;
   const bladOjca = sytuacja === "brak" && dlaOjca > maxDlaOjca;
 
   /* urlop uzupełniający (wcześniak / hospitalizacja, KP art. 180²) */
   let tygUzup = 0;
   let limitUzup = 0;
   const wczesniak = tydzienCiazy > 0 && (tydzienCiazy < 28 || (masa > 0 && masa <= 1000));
-  if (sytuacja === "brak" && dniHospitalizacji > 0) {
+  // B-02: art. 180² k.p. — urlop przysługuje, gdy dziecko przebywa w szpitalu CO NAJMNIEJ 5 dni.
+  // Wcześniej warunek to `> 0`, więc 1–4 dni dawały nienależny tydzień urlopu.
+  if (sytuacja === "brak" && dniHospitalizacji >= P.minHospitalizacjaDni) {
     limitUzup = wczesniak ? P.uzupełniajacyLimitWczesny : P.uzupełniajacyLimitPozny;
     tygUzup = Math.min(limitUzup, Math.ceil(dniHospitalizacji / 7));
   }
@@ -90,7 +94,10 @@ export function zasilekMacierzynski(input, P = DEFAULT_PARAMS) {
     const dniPo = (tygMac - przed - dlaOjca) * 7;
     dodaj({ id: "po", opis: "Urlop macierzyński po porodzie", kto: "matka", dni: Math.round(dniPo), stawka: stMac, kwota: zasilek(podstawaMatki, stMac, dniPo, P) });
     if (dlaOjca > 0) {
-      dodaj({ id: "ojciecMac", opis: "Część urlopu macierzyńskiego przejęta", kto: "ojciec", dni: dlaOjca * 7, stawka: stMac, kwota: zasilek(podstawaOjca, stMac, dlaOjca * 7, P) });
+      // B-03: art. 31 ust. 3f u.z. — zasiłek za część urlopu przejętą przez ojca wynosi
+      // ZAWSZE 70% podstawy, także przy wariancie uśrednionym 81,5% (art. 30a ust. 1 u.z.
+      // wyłącza 9 tygodni drugiego rodzica z wniosku o 81,5%).
+      dodaj({ id: "ojciecMac", opis: "Część urlopu macierzyńskiego przejęta", kto: "ojciec", dni: dlaOjca * 7, stawka: P.stRodzicielski, kwota: zasilek(podstawaOjca, P.stRodzicielski, dlaOjca * 7, P) });
     }
     if (tygUzup > 0) {
       dodaj({ id: "uzupelniajacy", opis: "Uzupełniający urlop macierzyński", kto: "matka", dni: tygUzup * 7, stawka: P.stMacierzynski, kwota: zasilek(podstawaMatki, P.stMacierzynski, tygUzup * 7, P) });
@@ -113,6 +120,10 @@ export function zasilekMacierzynski(input, P = DEFAULT_PARAMS) {
     poPorodzie: tygMac - przed,
     stMac,
     stRodz,
+    // B-04: brak podstawy wymiaru (np. matka nieubezpieczona) — sygnalizujemy zamiast
+    // zwracać „przysługuje 0,00 zł”.
+    brakPodstawy: !(podstawaMatki > 0),
+    brakPodstawyOjca: !(podstawaOjca > 0),
     martwe,
     dlaOjca,
     maxDlaOjca,

@@ -1,5 +1,6 @@
 // f) Podstawa wymiaru zasiłku (UZ art. 36–48a).
 import { DEFAULT_PARAMS } from "./params.js";
+import { kwota, kwoty, liczbaDni } from "./walidacja.js";
 
 /**
  * @param {object} input
@@ -12,12 +13,16 @@ import { DEFAULT_PARAMS } from "./params.js";
 export function podstawaWymiaru(input, P = DEFAULT_PARAMS) {
   const {
     status = "pracownik",
-    miesiace = [],
     ileMies = 12,
     premieKwartalne = 0,
     premiaRoczna = 0,
   } = input;
-  const limitMies = Math.min(12, Math.max(1, ileMies));
+  // B-21/B-22: wejście musi być skończone i nieujemne, inaczej NaN/Infinity/ujemne
+  // premie propagowały się do podstawy i do kwot zasiłku.
+  const miesiace = kwoty(input.miesiace);
+  const premieK = kwota(premieKwartalne);
+  const premiaR = kwota(premiaRoczna);
+  const limitMies = Math.min(12, Math.max(1, liczbaDni(ileMies)));
 
   // Miesiące z kwotą 0 są pomijane (np. przepracowane < 50% czasu – art. 38 ust. 2).
   let suma = 0;
@@ -33,16 +38,22 @@ export function podstawaWymiaru(input, P = DEFAULT_PARAMS) {
 
   const srednia = suma / licznik;
   // Premie kwartalne i roczne wliczane w 1/12 (art. 42).
-  const dodatek = premieKwartalne / 12 + premiaRoczna / 12;
+  const dodatek = premieK / 12 + premiaR / 12;
   const przecietne = srednia + dodatek;
   const potracenie = (przecietne * P.potracenie) / 100;
 
   let podstawa = przecietne * (1 - P.potracenie / 100);
   let limit = null;
   if (status === "pracownik") {
-    if (podstawa < P.minPodstawaPracownik) {
-      limit = { typ: "min", wartosc: P.minPodstawaPracownik };
-      podstawa = P.minPodstawaPracownik;
+    // B-17: art. 45 ust. 1 u.z. mówi o pracy w PEŁNYM wymiarze — minimum jest proporcjonalne
+    // do wymiaru etatu. `wymiarEtatu` domyślnie 1 (pełny etat).
+    const etat = input.wymiarEtatu > 0 && Number.isFinite(Number(input.wymiarEtatu))
+      ? Math.min(Number(input.wymiarEtatu), 1)
+      : 1;
+    const minimum = Math.round(P.minPodstawaPracownik * etat * 100) / 100;
+    if (podstawa < minimum) {
+      limit = { typ: "min", wartosc: minimum, etat };
+      podstawa = minimum;
     }
   } else if (podstawa > P.maxPodstawaZasilku) {
     limit = { typ: "max", wartosc: P.maxPodstawaZasilku };

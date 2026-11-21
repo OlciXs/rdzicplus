@@ -3,7 +3,8 @@ import { Link, Navigate } from "react-router-dom";
 import { api } from "../api.js";
 import { useAuth } from "../auth.js";
 
-const formatCode = (code) => `${code.slice(0, 3)} ${code.slice(3)}`;
+// B-18: backend w trybie produkcyjnym (DEMO_MODE=0) nie zwraca kodu — wtedy go nie pokazujemy.
+const formatCode = (code) => (code ? `${code.slice(0, 3)} ${code.slice(3)}` : "••• •••");
 
 export default function Login() {
   const { user, loading, login } = useAuth();
@@ -42,6 +43,7 @@ export default function Login() {
   // Krok 2: kopiujemy kod i "przechodzimy do aplikacji mObywatel"
   const copyCode = async () => {
     try {
+      if (!request.code) return;
       await navigator.clipboard.writeText(request.code);
       setCopied(true);
     } catch {

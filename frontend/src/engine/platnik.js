@@ -9,7 +9,12 @@ import { DEFAULT_PARAMS } from "./params.js";
  */
 export function ktoWyplaca({ status = "pracownik", liczbaUbezpieczonych = 0 }, P = DEFAULT_PARAMS) {
   const duzyPlatnik = liczbaUbezpieczonych > P.progPlatnika;
-  // Przedsiębiorca zawsze składa do ZUS; pracownik i zleceniobiorca – zależnie od wielkości płatnika.
-  const kto = status === "dg" ? "ZUS" : duzyPlatnik ? "PLATNIK" : "ZUS";
+  // B-11: art. 61 ust. 1 pkt 2 u.z. — ZUS wypłaca ZAWSZE tym kategoriom:
+  //  b) osoby prowadzące pozarolniczą działalność i osoby z nimi współpracujące,
+  //  c) duchowni,
+  //  d) osoby uprawnione do zasiłków za okres po ustaniu ubezpieczenia.
+  //  (pkt a — płatnik ≤ 20 ubezpieczonych — obsługuje gałąź niżej)
+  const zawszeZUS = ["dg", "wspolpraca", "duchowny", "marynarz", "poUstaniu"];
+  const kto = zawszeZUS.includes(status) ? "ZUS" : duzyPlatnik ? "PLATNIK" : "ZUS";
   return { kto, duzyPlatnik };
 }

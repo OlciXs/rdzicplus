@@ -39,6 +39,10 @@ app.get("/api/hello", (req, res) => {
   res.json({ message: "Hello World z backendu!" });
 });
 
+// B-18: w trybie demo zwracamy kod w odpowiedzi (tak działa symulacja mObywatela dla jury).
+// Na wdrożeniu produkcyjnym kod NIE może wracać do klienta — ustaw DEMO_MODE=0.
+const DEMO_MODE = process.env.DEMO_MODE !== "0";
+
 // 1. Strona prosi o kod logowania
 app.post("/api/auth/mobywatel/start", (req, res) => {
   const now = Date.now();
@@ -48,7 +52,10 @@ app.post("/api/auth/mobywatel/start", (req, res) => {
   const code = String(crypto.randomInt(100000, 1000000));
   loginRequests.set(requestId, { code, expiresAt: now + CODE_TTL_MS });
 
-  res.json({ requestId, code, expiresInSec: CODE_TTL_MS / 1000 });
+  // B-18: kod zwracany tylko w trybie demo.
+  const body = { requestId, expiresInSec: CODE_TTL_MS / 1000 };
+  if (DEMO_MODE) body.code = code;
+  res.json(body);
 });
 
 // 2. "Aplikacja mObywatel" pokazuje osoby do wyboru (symulacja)
@@ -105,7 +112,20 @@ app.get("/api/profile", requireAuth, (req, res) => {
 });
 
 app.put("/api/profile", requireAuth, (req, res) => {
-  const result = db.saveProfile(req.user.id, req.body);
+  // S-09: minimalna walidacja typu wejścia — klient nie może zapisać dowolnego JSON.
+  const body = req.body;
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return res.status(400).json({ error: "Profil musi być obiektem." });
+  }
+  if (JSON.stringify(body).length > 100_000) {
+    return res.status(413).json({ error: "Profil jest zbyt duży." });
+  }
+  for (const [sekcja, wartosci] of Object.entries(body)) {
+    if (wartosci === null || typeof wartosci !== "object" || Array.isArray(wartosci)) {
+      return res.status(400).json({ error: `Sekcja „${sekcja}” musi być obiektem.` });
+    }
+  }
+  const result = db.saveProfile(req.user.id, body);
   if (!result) return res.status(404).json({ error: "Nie znaleziono profilu." });
   res.json({ ok: true, ...result });
 });

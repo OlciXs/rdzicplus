@@ -142,7 +142,7 @@ export default function CalcAdopcja() {
         <section className="result-card">
           <h3 className="result-title">3. Urlop rodzicielski</h3>
           <Bullets items={[
-            <>Wymiar: <b>{pool} tygodni</b>{zaZ ? " („Za życiem”)" : ""}; po {CFG.wyliczneRodzicielskie} tyg. wyłącznych na rodzica; max {CFG.maxCzesci} części{r.rodzicielskiDoRoku ? `; do 31.12.${r.rodzicielskiDoRoku}` : ""} (koniec roku kal., w którym dziecko kończy {CFG.limitRokZycia} lat).</>,
+            <>Wymiar: <b>{pool} tygodni</b>{zaZ ? " („Za życiem”)" : ""}; po {CFG.wylaczneRodzicielskie} tyg. wyłącznych na rodzica; max {CFG.maxCzesci} części{r.rodzicielskiDoRoku ? `; do 31.12.${r.rodzicielskiDoRoku}` : ""} (koniec roku kal., w którym dziecko kończy {CFG.limitRokZycia} lat).</>,
             <>Dokumenty: jak wyżej + oświadczenie drugiego rodzica; „Za życiem” – kopia zaświadczenia (RWN § 15 ust. 2 pkt 3).</>,
           ]} />
         </section>
@@ -153,7 +153,7 @@ export default function CalcAdopcja() {
             cols={[{ label: "Świadczenie" }, { label: "", align: "right" }]}
             rows={[
               { cells: [`Na warunkach urlopu macierzyńskiego (${tygMacierzy} tyg., ${stMac}%)`, zl(kMac)] },
-              { cells: [`Urlop rodzicielski – Twoja część (${tygRodzWlasne} z ${pool} tyg., ${stRodz}%; ${CFG.wyliczneRodzicielskie} tyg. zostaje dla drugiego rodzica)`, zl(kRodz)] },
+              { cells: [`Urlop rodzicielski – Twoja część (${tygRodzWlasne} z ${pool} tyg., ${stRodz}%; ${CFG.wylaczneRodzicielskie} tyg. zostaje dla drugiego rodzica)`, zl(kRodz)] },
               ...(s.ojcowski
                 ? [{ cells: ["Urlop ojcowski (2 tyg., 100%)", zl(kOjc)] }]
                 : []),

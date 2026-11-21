@@ -126,7 +126,7 @@ export default function CalcOboje() {
             <Badge tone="warn">PULA: {pool} TYG.</Badge>
           </p>
           <Bullets items={[
-            <>Pula wspólna: <b>{pool} tyg.</b>{zaZ ? " („Za życiem”)" : ""}; wyłącznej części (po {CFG.wyliczneRodzicielskie} tyg. na rodzica) nie przenosi się na drugiego rodzica.</>,
+            <>Pula wspólna: <b>{pool} tyg.</b>{zaZ ? " („Za życiem”)" : ""}; wyłącznej części (po {CFG.wylaczneRodzicielskie} tyg. na rodzica) nie przenosi się na drugiego rodzica.</>,
             <>Matka: {tM} tyg. w {cM} {cM === 1 ? "części" : "częściach"}; ojciec: {tO} tyg. w {cO} {cO === 1 ? "części" : "częściach"}; suma: {tM + tO} / {pool} tyg.</>,
           ]} />
           <List items={err} tone="err" />
