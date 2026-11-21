@@ -53,7 +53,7 @@ export default function CalcMacierzynski() {
     masa,
     dniHospitalizacji: hosp,
   }, CFG);
-  const { tygMac, przed, stMac, dlaOjca, maxDlaOjca, bladOjca, tygUzup, limitUzup } = r;
+  const { tygMac, przed, stMac, dlaOjca, dlaOjcaWpisane, maxDlaOjca, bladOjca, tygUzup, limitUzup } = r;
   const pool = r.pulaRodzicielska;
   const mT = r.sumaMatka;
 
@@ -197,13 +197,13 @@ export default function CalcMacierzynski() {
           {blokMac}
         </section>
 
-        {s.szczegol === "brak" && dlaOjca > 0 && (
+        {s.szczegol === "brak" && dlaOjcaWpisane > 0 && (
           <section className="result-card">
             <h3 className="result-title">Podział z ojcem</h3>
             {bladOjca ? (
               <p>
-                <Badge tone="err">BŁĄD</Badge> Ojciec może przejąć max {Math.max(0, maxDlaOjca)} tyg.
-                (matka musi wykorzystać {CFG.wylaczneMacierzynskieMatki} tyg. po porodzie). Wniosek matki
+                <Badge tone="err">BŁĄD</Badge> Wpisano {dlaOjcaWpisane} tyg., a ojciec może przejąć max {maxDlaOjca} tyg.
+                (matka musi wykorzystać {CFG.wylaczneMacierzynskieMatki} tyg. po porodzie) – w kwotach liczymy {dlaOjca} tyg. Wniosek matki
                 ≥ 7 dni przed powrotem do pracy; wniosek ojca ≥ 14 dni przed rozpoczęciem.
               </p>
             ) : (

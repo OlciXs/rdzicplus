@@ -135,7 +135,8 @@ const AKT = "Odpis skrócony aktu urodzenia (gdy zasiłek wypłaca ZUS – nie t
 export function uzupelniajacyWymiar(k) {
   if (!k.szpitalOd || !k.tydzienCiazy) return null;
   const koniec = k.szpitalDo ?? k.dzis;
-  const dniPobytu = Math.round((koniec - k.szpitalOd) / 86400000) + 1;
+  // Odwrócone daty (koniec przed początkiem) albo początek w przyszłości → 0 dni, nie ujemne tygodnie.
+  const dniPobytu = Math.max(0, Math.round((koniec - k.szpitalOd) / 86400000) + 1);
   const wczesny = k.tydzienCiazy === "ponizej_28" || (k.masa !== null && k.masa <= 1000);
   const limit = wczesny ? k.P.uzupełniajacyLimitWczesny : k.P.uzupełniajacyLimitPozny;
   return { dniPobytu, limit, tygodnie: Math.min(limit, Math.ceil(dniPobytu / 7)) };
@@ -620,7 +621,9 @@ export const WARIANTY = [
         ...(po37
           ? [w("Po 37. tygodniu: pobyt min. 2 dni, zaczął się między 5. a 28. dniem po porodzie",
               start === null || !wym ? null : start >= 5 && start <= 28 && wym.dniPobytu >= 2, ["dziecko.szpitalOd", "dziecko.dataUrodzenia"])]
-          : []),
+          // B-02 (spójnie z kalkulatorem macierzyńskim): co najmniej 5 dni w szpitalu.
+          : [w(`Dziecko było w szpitalu co najmniej ${k.P.minHospitalizacjaDni} dni`,
+              wym ? wym.dniPobytu >= k.P.minHospitalizacjaDni : null, ["dziecko.szpitalOd"])]),
         w("Drugi rodzic nie korzysta z tego urlopu", k.drugiRodzicUzupelniajacy === null ? (k.drugi ? null : true) : !k.drugiRodzicUzupelniajacy, ["urlopy.drugiRodzicUzupelniajacy"]),
       ];
     },
@@ -672,7 +675,7 @@ export const WARIANTY = [
     kto: ["matka", "ojciec"], etapy: ["ciaza", "po_porodzie", "przyjecie"],
     warunki: (k) => {
       const rok = k.dataUrodzenia ? k.dataUrodzenia.getFullYear() + k.P.limitRokZycia : null;
-      const pula = tygodnieRodz(k.liczbaDzieci ?? 1, k.zaZyciem, k.etap === "przyjecie", k.P);
+      const pula = tygodnieRodz(k.liczbaDzieci ?? 1, k.zaZyciem, k.typPrzyjecia === "rodzina_zastepcza", k.P);
       return [
         maChorobowe(k),
         bezZadluzenia(k),
@@ -682,7 +685,7 @@ export const WARIANTY = [
       ];
     },
     wymiar: (k) => {
-      const pula = tygodnieRodz(k.liczbaDzieci ?? 1, k.zaZyciem, k.etap === "przyjecie", k.P);
+      const pula = tygodnieRodz(k.liczbaDzieci ?? 1, k.zaZyciem, k.typPrzyjecia === "rodzina_zastepcza", k.P);
       return `${pula} tygodni łącznie dla obojga rodziców; ${k.P.wylaczneRodzicielskie} tygodni każdego rodzica jest nieprzenoszalne; max ${k.P.maxCzesci} części`;
     },
     wysokosc: () => "70% (albo 81,5%, jeśli matka złożyła wniosek do 21 dni po porodzie); 9 tygodni drugiego rodzica – 70%",

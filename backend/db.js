@@ -144,7 +144,11 @@ export const db = {
       const source = nextProfile?.[section];
       if (!source || typeof source !== "object") continue;
       for (const key of Object.keys(user.profile[section])) {
-        if (source[key] !== undefined) user.profile[section][key] = source[key];
+        const v = source[key];
+        // Tylko wartości proste (tekst / liczba / tak-nie). Obiekt albo tablica w polu
+        // dawały w formularzu „[object Object]” i śmieci w silniku wniosków.
+        if (typeof v === "string") user.profile[section][key] = v.slice(0, 1000);
+        else if (typeof v === "boolean" || (typeof v === "number" && Number.isFinite(v))) user.profile[section][key] = v;
       }
     }
 

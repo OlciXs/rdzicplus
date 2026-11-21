@@ -327,3 +327,31 @@ describe("parametry z panelu admina", () => {
     expect(ocenWniosek(p, "ojcowski", { dzis: DZIS, params: P }).warianty[0].status).toBe("dostepny");
   });
 });
+
+describe("spójność rejestru z kalkulatorami (przegląd 21.11, 21:45)", () => {
+  const adopcyjny = (typ) => profil({
+    sytuacja: { etap: "przyjecie", rola: "matka", typPrzyjecia: typ },
+    ubezpieczony: { statusUbezpieczenia: "pracownik", ubezpieczenieUstalo: "nie" },
+    dziecko: { dataUrodzenia: "2024-01-01", dataPrzyjecia: "2026-11-01" },
+  });
+  it("przysposobienie: rodzicielski 41 tyg. (jak adopcja.js), rodzina zastępcza: 38 tyg.", () => {
+    expect(status(adopcyjny("przysposobienie"), "rodzicielski", "W25").wymiar).toMatch(/^41 tygodni/);
+    expect(status(adopcyjny("rodzina_zastepcza"), "rodzicielski", "W25").wymiar).toMatch(/^38 tygodni/);
+  });
+
+  const szpital = (od, doDnia) => profil({
+    sytuacja: { etap: "po_porodzie", rola: "matka" },
+    ubezpieczony: { statusUbezpieczenia: "pracownik", ubezpieczenieUstalo: "nie" },
+    dziecko: { dataUrodzenia: "2026-09-01", martwe: "nie", pobytWSzpitalu: "tak", tydzienCiazy: "28_37", masaUrodzenia: "1800", szpitalOd: od, szpitalDo: doDnia },
+    drugiRodzic: { brak: true },
+  });
+  it("uzupełniający: 3 dni w szpitalu to za mało (min. 5), 5 dni wystarcza", () => {
+    expect(status(szpital("2026-09-01", "2026-09-03"), "uzupelniajacy", "W4").status).toBe("niedostepny");
+    expect(status(szpital("2026-09-01", "2026-09-05"), "uzupelniajacy", "W4").status).toBe("dostepny");
+  });
+  it("odwrócone daty pobytu nie dają ujemnych tygodni", () => {
+    const v = status(szpital("2026-09-20", "2026-09-01"), "uzupelniajacy", "W4");
+    expect(v.status).toBe("niedostepny");
+    expect(v.wymiar).not.toMatch(/-\d/);
+  });
+});

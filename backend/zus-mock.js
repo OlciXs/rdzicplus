@@ -118,7 +118,13 @@ const DOMYSLNA = {
 };
 
 const osoba = (user) => OSOBY[user.pesel] ?? DOMYSLNA;
-const isoDate = (v) => (/^\d{4}-\d{2}-\d{2}$/.test(v ?? "") ? v : null);
+// Prawdziwa data RRRR-MM-DD (30 lutego i 2026-13-45 odpadają – Date by je „przesunął”).
+const isoDate = (v) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(v ?? "")) return null;
+  const d = new Date(`${v}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === v ? v : null;
+};
+const wPrzyszlosci = (iso) => iso > new Date().toISOString().slice(0, 10);
 
 // Wnioski o odpis aktu urodzenia – w pamięci (symulacja; po restarcie znikają).
 const odpisy = new Map(); // userId -> [wniosek]
@@ -178,7 +184,8 @@ export function registerZusMockRoutes(app, requireAuth) {
     const errors = {};
     if (!imie) errors.imie = "Podaj imię dziecka.";
     if (!nazwisko) errors.nazwisko = "Podaj nazwisko dziecka.";
-    if (!dataUrodzenia) errors.dataUrodzenia = "Podaj datę urodzenia.";
+    if (!dataUrodzenia) errors.dataUrodzenia = "Podaj poprawną datę urodzenia.";
+    else if (wPrzyszlosci(dataUrodzenia)) errors.dataUrodzenia = "Data urodzenia nie może być w przyszłości.";
     if (!miejsceUrodzenia) errors.miejsceUrodzenia = "Podaj miejsce urodzenia.";
     if (!rodzaj) errors.rodzaj = "Wybierz rodzaj odpisu.";
     if (!odbior) errors.odbior = "Wybierz sposób odbioru.";

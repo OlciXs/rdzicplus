@@ -13,8 +13,27 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 > - krok (1) – Ola, „risk”: profil „Moje dane” w 7 krokach, ~80 pól warunkowych (`backend/db.js` → `emptyProfile`)
 > - kroki (2)–(3) od strony silnika – Claude, 20:40, bez commita: `frontend/src/engine/wnioski/` – **14 wniosków, 45 wariantów** (w tym 9 informacyjnych), ocena każdego wariantu na podstawie profilu Oli (`dostepny` / `niedostepny` + powód / `brak_danych` + które pola / `nie_dotyczy` / `informacja`), wymiar, wysokość, adresat (pracodawca / ZUS / gmina), formularz, termin z konkretną datą, dokumenty, pola do uzupełnienia, ostrzeżenia V1–V40. **38 testów** na rodzinach (razem 88). Opis w README → „Wnioski i warianty”
 > - ekran „Złóż wniosek” – Claude, 21:00, bez commita: `/wnioski` (kafelek w panelu + pozycja w menu): kafelki 14 wniosków z licznikami (przysługuje / brak danych / nie przysługuje, „nie dotyczy” wyszarzone na końcu), ostrzeżenia dla sprawy, karty wariantów z powodami, terminami z datą, dokumentami i warunkami ✓/✗/?; linki „uzupełnij” otwierają „Moje dane” na właściwym kroku (dodane `?krok=` w `ProfilePage.jsx`). Sprawdzone w przeglądarce (pusty profil → „ZACZNIJ TU”; profil Bożeny → chorobowy 2 przysługuje, macierzyński 2 przysługuje) i na telefonie
-> **Następne:** generator samego wniosku do druku / PDF dla najczęstszych wariantów (W1, W2, W21, W25, W22, W4, W28) – dane z profilu wstawione w pola, oświadczenia jako checkboxy; drobne: `db.json` – cofnąć `mob-mariuszz` (test Enarda) i dodać plik do `.gitignore`.
+> - **generator wniosków do druku / PDF** – Claude, 21.11 w nocy, bez commita: `/wnioski/druk?v=…` (przycisk „🖨️ Przygotuj wniosek do druku” na karcie wariantu, który przysługuje albo czeka na dane). **11 wariantów:** W1, W2, W3, W5, W22, W4, W21, W25, W12, W28, W11. Pola z „Moje dane” (do poprawienia na ekranie, nie nadpisują profilu), oświadczenia J1/J2/J14/J20 i 81,5% jako checkboxy, lista załączników, kontrola terminów i okresów na żywo (np. ojcowski 7 dni przed i do 12. miesiąca, rodzicielski 21 dni i max 32 tyg. na rodzica, 6 tyg. przed porodem, 14 tyg. matki przed przejęciem, ½ etatu przy łączeniu). Osoba bez umowy o pracę dostaje „ściągę” z danymi do ZAM w eZUS zamiast pisma do pracodawcy. Druk / PDF przez okno drukowania przeglądarki (style `@media print`). Silnik: `engine/wnioski/druki.js`, 15 testów + fuzz na 1000 profilach (znalazł ujemne liczby z profilu i wyjątek przy absurdalnych tygodniach – naprawione)
+> **Następne:** symulowana „wysyłka” wniosku (do pracodawcy / do ZUS przez PUE) z numerem i statusem w „Dane z ZUS”; kalendarz terminów od daty porodu; drobne: `db.json` – cofnąć `mob-mariuszz` (test Enarda) i dodać plik do `.gitignore`.
+> **Do potwierdzenia w generatorze:** treść pism oparta na `docs/02` (szkic z Mistrala) – sprawdzić z rozporządzeniem o wnioskach; W1 po porodzie (urlop przysługuje z mocy prawa, pismo to raczej „informacja + wniosek o 81,5%”); zakres danych ZAM
 > **Do weryfikacji (oznaczone w kodzie `do_potwierdzenia`):** W4 uzupełniający dla nie-pracowników, W12 łączenie z pracą (wydłużona część, pole I14), W44 podwyższenie (szacunek podatku), W47 chorobowy po ustaniu (14 dni), W11 staż 6 mies., W19 świadczenie rodzicielskie (poza ZUS). W dokumentach Mistrala jest też nieaktualny **Z-3b** (zlikwidowany 24.10.2026) – w rejestrze go nie używamy.
+
+### Przegląd i testy zaawansowane (Claude, sobota 21.11 wieczorem, bez commita)
+Sprawdzone: **171 testów** (5 plików, w tym nowy `fuzz.test.js` – 6000 losowych przypadków), build, 34 testy brzegowe API (bezpośrednio i przez proxy frontu w Dockerze), Docker (`docker compose up --build`: oba kontenery healthy, wszystkie strony 200), przeglądarka (logowanie, panel, profil, ZUS, odpis, 12 wniosków, kalkulator macierzyński, admin) – bez `NaN`/`undefined`, bez błędów w konsoli.
+
+**Naprawione:**
+- [x] **b) Macierzyński: ujemne dni i kwoty**, gdy ojcu wpisano więcej tygodni, niż może przejąć (np. 30 → matka „−112 dni”, ujemna kwota). Teraz kwoty liczą maksimum (6 tyg.), a UI pokazuje „Wpisano 30 tyg., a ojciec może przejąć max 6 tyg.”. `poPorodzie` przy martwym urodzeniu nie spada poniżej 0 (wykryte testem fuzz)
+- [x] **Cofnięta „poprawka B-03”** z `RAPORT_BLEDOW.md`: przejęta przez ojca część **urlopu macierzyńskiego** znowu po **100%** (art. 31 ust. 1 u.z.). 70% z art. 31 ust. 3f dotyczy tylko 9 tygodni **urlopu rodzicielskiego** drugiego rodzica – to liczy `oboje.js`
+- [x] **Rejestr wniosków niespójny z kalkulatorami po zmianach Montarexa:** pula rodzicielska 38 tyg. (rodzina zastępcza) liczyła się też przy przysposobieniu (ma być 41); W4 (uzupełniający) nie sprawdzał minimum 5 dni w szpitalu; odwrócone daty szpitala dawały ujemną liczbę dni
+- [x] **Backend:** obiekty/tablice w polach profilu zapisywały się jako „[object Object]”; panel admina przyjmował stawkę −5% albo 1e9 (teraz: nieujemne, stawki ≤ 100, etat ≤ 1, ochrona `__proto__`); odpis aktu przyjmował 30 lutego i datę urodzenia z przyszłości; zepsuty JSON zwracał HTML ze stack trace'em (teraz JSON 400/413)
+
+**Do decyzji / potwierdzenia (nie zmieniałem):**
+- [ ] **B-05 (łączenie z pracą):** tabela w raporcie się nie zgadza (dosłownie „× etat” przy ½ etatu daje 61,5, nie 82). Nasz wzór `urlop ÷ (1 − etat)` zakłada pracę także w wydłużonej części (pole I14) – to dwa warianty, oba opisane w `laczenie.js`
+- [ ] **B-01:** „poprawka” jest matematycznie identyczna z oryginałem – bez skutków, ale niepotrzebna
+- [ ] `minPodstawaPracownik` = **4 147,10** (Montarex) vs **4 147,09** (ZUS zaokrągla składki osobno) – potwierdzić, które
+- [ ] 38 / 62 tyg. rodzicielskiego dla rodziny zastępczej – `do_potwierdzenia`
+- [ ] Logowanie przy `DEMO_MODE=0`: kod nie wraca do klienta, więc nie da się go potwierdzić (brak prawdziwej aplikacji mObywatel). Domyślnie `DEMO_MODE=1`, na demo OK; na produkcji i tak zastępuje to prawdziwe mObywatel
+- [ ] `engine/terminy.js` używany tylko w testach – podpiąć w UI albo usunąć
 
 > **Serwer znów działa.** Deploy #10 (PR #2) padł, bo przy merge'u do `backend/server.js` trafiły znaczniki konfliktu (`<<<<<<<`) i backend nie startował. Naprawione w commicie „backend fix”; od tamtej pory deploye **#11–#17 są zielone**.
 > **Żeby się nie powtórzyło:** po rozwiązaniu konfliktu `git grep -n "<<<<<<<"` przed commitem, a w deployu krok z testami (niżej).
@@ -46,7 +65,7 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 - [ ] **Lokalnie „Sesja wygasła” bez powodu:** `npm run dev` w backendzie to `node --watch`, który restartuje serwer, gdy Windows/antywirus/Docker dotknie plików w `node_modules`; sesje są w pamięci, więc znikają. Tylko w trybie deweloperskim (serwer używa `npm start`). Poprawka: w `backend/package.json` `"dev": "node --watch-path=server.js --watch-path=db.js --watch-path=zus-mock.js server.js"`
 - [ ] „Dane z ZUS” → „Przenieś do »Moje dane«” wypełnia na razie tytuł, podstawę i płatnika. Nowy profil ma też `platnik.liczbaUbezpieczonych`, `ubezpieczony.ubezpieczenieOd`, `zdrowie.zla*` – warto je też przenosić (e-ZLA, okres ubezpieczenia)
 - [ ] Nowe pola profilu (np. `dziecko.liczbaZyjacych`, `dziecko.tydzienCiazy`, `urlopy.*`) nie są jeszcze podstawiane w kalkulatorach (`useProfileDefaults.js`) – do zrobienia razem z osobą od kalkulatorów
-- [ ] Backend zapisuje w profilu dowolne wartości (bez sprawdzania typów/długości) – na demo OK, przed wdrożeniem walidacja
+- [x] ~~Backend zapisuje w profilu dowolne wartości~~ – tylko tekst (≤ 1000 znaków), liczby i tak/nie (Claude, 21.11 wieczorem)
 
 **Jeszcze nie ma:** uploadu PDF / przykładowych spraw („Sprawdź mój przypadek”), jednego podsumowania „co mi przysługuje”, planera osi czasu, generatora wniosków urlopowych do pracodawcy.
 
@@ -306,7 +325,7 @@ Wagi oceny: związek z wyzwaniem 25% · kompletność + UX 25% · pomysł 20% ·
 
 - [ ] P0: na podstawie profilu lista „Twoje dokumenty” (co, do kogo, termin, link do wzoru na zus.pl)
 - [ ] P0: kalendarz terminów od daty porodu (14 / 21 / 7 dni, 12 miesięcy, 6 lat, §2.7 „Terminy wniosków”)
-- [ ] P1: **generator wniosków urlopowych do pracodawcy** (macierzyński, rodzicielski, ojcowski, praca w rodzicielskim). Treść zadania mówi wprost, że trzeba je zaprojektować. Pola z rozporządzenia RWN, autouzupełnianie z profilu, pobranie PDF
+- [x] P1: **generator wniosków urlopowych do pracodawcy** – `/wnioski/druk` (11 wariantów, autouzupełnianie z profilu, kontrola terminów, druk/PDF z przeglądarki, ściąga do ZAM dla nie-pracowników). Zostało: potwierdzić treść z rozporządzeniem RWN
 - [ ] P1: symulowana „wysyłka do pracodawcy / do ZUS (PUE)” z potwierdzeniem
 - [ ] P2: eksport terminów do kalendarza (.ics)
 
