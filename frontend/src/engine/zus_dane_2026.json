@@ -1,0 +1,4509 @@
+{
+  "schema": "zus.knowledge/1.0",
+  "meta": {
+    "title": "Zasiłkowy Przewodnik Przyszłego Rodzica — baza wiedzy",
+    "version": "1.0.0",
+    "legal_state_date": "2026-04-01",
+    "legal_state_note": "Materiały ZUS opisują stan prawny na 2026 r. Część przypisów dotyczy zmian obowiązujących od 1.07.2026 i od 1.01.2027. Dokumenty odwzorowują przepisy z udostępnionych wyciągów; miejsca niepełne oznaczono w `missing_in_material`.\n",
+    "not_legal_advice": true,
+    "source_files": [
+      "ZUS - Pełna treść zadania konkursowego.pdf",
+      "ZUS - Regulamin zadania konkursowego.pdf",
+      "Materiały dodatkowe ZUS/Materiały dla uczestników/Poradnik dla rodziców, ZUS 2026.pdf",
+      "Materiały dodatkowe ZUS/Materiały dla uczestników/Kodeks pracy (wyciąg z przepisów).pdf",
+      "Materiały dodatkowe ZUS/Materiały dla uczestników/wyciąg z ustawy o świadczeniach pieniężnych z ubezpieczeń społecznych w razie choroby i macierzyństwa (ustawa zasiłkowa).pdf",
+      "Materiały dodatkowe ZUS/Materiały dla uczestników/rozporządzenie w spr. zakresu informacji o okolicznościach mających wpływ na prawo do zasiłków ...pdf",
+      "Materiały dodatkowe ZUS/Materiały dla uczestników/rozporządzenie w sprawie wniosków dot. uprawnień pracowników związanych z rodzicielstwem .pdf",
+      "Materiały dodatkowe ZUS/Materiały dla uczestników/Załącznik_ maksymalny czas trwania zasiłków, wysokość, podstawa wymiaru.docx"
+    ],
+    "counts": {
+      "legal_acts": 30,
+      "insurance_titles": 13,
+      "fields": 135,
+      "forms": 14,
+      "benefits": 47,
+      "documents": 45,
+      "variants": 24,
+      "validation_rules": 40,
+      "deadlines": 21,
+      "discrepancies": 6,
+      "missing_in_material": 10
+    }
+  },
+  "legal_acts": [
+    {
+      "key": "u.z.",
+      "name": "Ustawa z 25.06.1999 r. o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa",
+      "short": "ustawa zasiłkowa",
+      "dz_u": "Dz.U. 2026 poz. 854 (+1123)",
+      "in_extract": true,
+      "role": "zasiłki"
+    },
+    {
+      "key": "k.p.",
+      "name": "Ustawa z 26.06.1974 r. – Kodeks pracy",
+      "short": "Kodeks pracy",
+      "dz_u": "Dz.U. 2026 poz. 1245",
+      "in_extract": true,
+      "role": "urlopy związane z rodzicielstwem"
+    },
+    {
+      "key": "rozp.zas.",
+      "name": "Rozporządzenie MRPiPS z 27.09.2026 r. w sprawie zakresu informacji o okolicznościach mających wpływ na prawo do zasiłków ... oraz dokumentów niezbędnych do przyznania i wypłaty zasiłków",
+      "short": "rozporządzenie zasiłkowe",
+      "dz_u": "Dz.U. 2026 poz. 1316",
+      "in_extract": true,
+      "role": "DANE I DOKUMENTY DO WNIOSKÓW",
+      "annexes": {
+        "1": "dane do zasiłku chorobowego (wniosek)",
+        "2": "zaświadczenie płatnika – pracownik (20 pkt)",
+        "3": "zaświadczenie płatnika – nie-pracownik (17 pkt)",
+        "4": "oświadczenie po ustaniu ubezpieczenia (9 pkt)",
+        "5": "wniosek o świadczenie rehabilitacyjne (cz. I–IV)",
+        "6": "dane do zasiłku macierzyńskiego (19 pkt)",
+        "7": "wniosek o zasiłek opiekuńczy (9 pkt)"
+      }
+    },
+    {
+      "key": "rozp.wn.",
+      "name": "Rozporządzenie MRPiPS z 11.03.2025 r. w sprawie wniosków dotyczących uprawnień pracowników związanych z rodzicielstwem oraz dokumentów dołączanych do takich wniosków",
+      "short": "rozporządzenie o wnioskach pracowniczych",
+      "dz_u": "Dz.U. 2025 poz. 322",
+      "in_extract": true,
+      "role": "TREŚĆ WNIOSKÓW URLOPOWYCH"
+    },
+    {
+      "key": "u.s.u.s.",
+      "name": "Ustawa z 13.10.1998 r. o systemie ubezpieczeń społecznych",
+      "dz_u": "Dz.U. 2026 poz. 199 (+252, 426, 473, 507, 734)",
+      "in_extract": false
+    },
+    {
+      "key": "ust.zdrow.",
+      "name": "Ustawa z 27.08.2004 r. o świadczeniach opieki zdrowotnej finansowanych ze środków publicznych",
+      "dz_u": "Dz.U. 2025 poz. 1461",
+      "in_extract": false
+    },
+    {
+      "key": "ust.em.rent.",
+      "name": "Ustawa z 17.12.1998 r. o emeryturach i rentach z Funduszu Ubezpieczeń Społecznych",
+      "dz_u": "Dz.U. 2025 poz. 1749 (+26, 425)",
+      "in_extract": false
+    },
+    {
+      "key": "ust.za.zyciem",
+      "name": "Ustawa z 04.11.2016 r. o wsparciu kobiet w ciąży i rodzin „Za życiem”",
+      "dz_u": "Dz.U. 2024 poz. 1829",
+      "in_extract": false,
+      "key_article": "art. 4 ust. 2 pkt 2–4 i ust. 3"
+    },
+    {
+      "key": "ust.sw.rodz.",
+      "name": "Ustawa z 28.11.2003 r. o świadczeniach rodzinnych",
+      "dz_u": "Dz.U. 2025 poz. 1208 (+2026 poz. 203)",
+      "in_extract": false,
+      "role": "świadczenie rodzicielskie; kwota progowa podwyższenia"
+    },
+    {
+      "key": "ust.min.wyn.",
+      "name": "Ustawa z 10.10.2002 r. o minimalnym wynagrodzeniu za pracę",
+      "dz_u": "Dz.U. 2024 poz. 1773",
+      "in_extract": false
+    },
+    {
+      "key": "praw.przed.",
+      "name": "Ustawa z 06.03.2018 r. – Prawo przedsiębiorców",
+      "dz_u": "Dz.U. 2025 poz. 1480 (+1795, 1826; 2026 poz. 507)",
+      "in_extract": false
+    },
+    {
+      "key": "ust.opieka3",
+      "name": "Ustawa z 04.02.2011 r. o opiece nad dziećmi w wieku do lat 3",
+      "dz_u": "Dz.U. 2025 poz. 798 (+2026 poz. 1123)",
+      "in_extract": false,
+      "role": "umowa uaktywniająca (niania), dzienny opiekun"
+    },
+    {
+      "key": "ust.praw.pacj.",
+      "name": "Ustawa z 06.11.2008 r. o prawach pacjenta i Rzeczniku Praw Pacjenta",
+      "dz_u": "Dz.U. 2024 poz. 581 (+2026 poz. 26, 791)",
+      "in_extract": false
+    },
+    {
+      "key": "ust.dz.lecz.",
+      "name": "Ustawa z 15.04.2011 r. o działalności leczniczej",
+      "dz_u": "Dz.U. 2026 poz. 156",
+      "in_extract": false
+    },
+    {
+      "key": "ust.sys.inf.",
+      "name": "Ustawa z 28.04.2011 r. o systemie informacji w ochronie zdrowia",
+      "dz_u": "Dz.U. 2026 poz. 208 (+252, 791)",
+      "in_extract": false
+    },
+    {
+      "key": "ust.dor.el.",
+      "name": "Ustawa z 18.11.2020 r. o doręczeniach elektronicznych",
+      "dz_u": "Dz.U. 2026 poz. 3 (+507)",
+      "in_extract": false
+    },
+    {
+      "key": "ust.informat.",
+      "name": "Ustawa z 17.02.2005 r. o informatyzacji działalności podmiotów realizujących zadania publiczne",
+      "dz_u": "Dz.U. 2025 poz. 1703 (+2026 poz. 160)",
+      "in_extract": false
+    },
+    {
+      "key": "ust.usl.plat.",
+      "name": "Ustawa z 19.08.2011 r. o usługach płatniczych",
+      "dz_u": "Dz.U. 2026 poz. 623",
+      "in_extract": false
+    },
+    {
+      "key": "ust.zm.kp.2024",
+      "name": "Ustawa z 06.12.2024 r. o zmianie ustawy – Kodeks pracy oraz niektórych innych ustaw",
+      "dz_u": "Dz.U. 2024 poz. 1871",
+      "in_extract": false
+    },
+    {
+      "key": "ust.zm.2026_441",
+      "name": "Ustawa z 13.02.2026 r.",
+      "dz_u": "Dz.U. 2026 poz. 441",
+      "in_extract": false,
+      "role": "nowe brzmienie art. 61b u.z. od 1.07.2026"
+    },
+    {
+      "key": "ust.zm.2025_26",
+      "name": "Ustawa z 18.12.2025 r.",
+      "dz_u": "Dz.U. 2026 poz. 26",
+      "in_extract": false,
+      "role": "art. 9 ust. 4 i art. 17 ust. 1d–1e — od 1.01.2027"
+    },
+    {
+      "key": "ust.praca.morze",
+      "name": "Ustawa z 05.08.2015 r. o pracy na morzu",
+      "dz_u": "Dz.U. 2026 poz. 102 (+1079)",
+      "in_extract": false
+    },
+    {
+      "key": "ust.zap.zoln.",
+      "name": "Ustawa z 10.12.1993 r. o zaopatrzeniu emerytalnym żołnierzy zawodowych oraz ich rodzin",
+      "dz_u": "Dz.U. 2025 poz. 305 (+2026 poz. 26)",
+      "in_extract": false
+    },
+    {
+      "key": "ust.zap.funk.",
+      "name": "Ustawa z 18.02.1994 r. o zaopatrzeniu emerytalnym funkcjonariuszy Policji, ABW, AW, SKW, SW, CBŚP, SG, Straży Marszałkowskiej, SOP, PSP, Służby Celno-Skarbowej i Służby Więziennej oraz ich rodzin",
+      "dz_u": "Dz.U. 2026 poz. 505",
+      "in_extract": false
+    },
+    {
+      "key": "rozp.skl.",
+      "name": "Rozporządzenie MPiPS z 18.12.1998 r. w sprawie szczegółowych zasad ustalania podstawy wymiaru składek na ubezpieczenia emerytalne i rentowe",
+      "dz_u": "Dz.U. 2025 poz. 316",
+      "in_extract": false
+    },
+    {
+      "key": "rozp.e.rent.",
+      "name": "Rozporządzenie MPiPS z 11.10.2011 r. w sprawie postępowania o świadczenia emerytalno-rentowe",
+      "dz_u": "Dz.U. 2011 nr 237 poz. 1412",
+      "in_extract": false
+    },
+    {
+      "key": "rozp.kontrola",
+      "name": "Rozporządzenie MPiPS z 27.07.1999 r. w sprawie szczegółowych zasad i trybu kontroli prawidłowości wykorzystywania zwolnień lekarskich",
+      "dz_u": "Dz.U. 1999 nr 65 poz. 743",
+      "in_extract": false
+    },
+    {
+      "key": "rozp.orzekanie",
+      "name": "Rozporządzenie MPiPS z 10.11.2015 r. w sprawie trybu i sposobu orzekania o czasowej niezdolności do pracy, wystawiania zaświadczenia lekarskiego",
+      "dz_u": "Dz.U. 2015 poz. 2013",
+      "in_extract": false
+    },
+    {
+      "key": "rozp.zas.2015",
+      "name": "Rozporządzenie MRPiPS z 08.12.2015 r. w sprawie zakresu informacji ... (poprzednie)",
+      "dz_u": "uchylone przez Dz.U. 2026 poz. 1316 (§42)",
+      "in_extract": false,
+      "status": "repealed"
+    },
+    {
+      "key": "rozp.wn.2023",
+      "name": "Rozporządzenie MRiPS z 08.05.2023 r. w sprawie wniosków dotyczących uprawnień pracowników ... (poprzednie)",
+      "dz_u": "Dz.U. 2023 poz. 937",
+      "in_extract": false,
+      "status": "repealed"
+    }
+  ],
+  "insurance_titles": [
+    {
+      "id": "etat",
+      "label": "Umowa o pracę",
+      "kind": "obligatory",
+      "waiting_days": 30,
+      "sickness_pay": true,
+      "payer_rule": "płatnik (>20 ubezpieczonych) albo ZUS"
+    },
+    {
+      "id": "powolanie",
+      "label": "Powołanie / wybór / mianowanie / spółdzielcza umowa o pracę",
+      "kind": "obligatory",
+      "waiting_days": 30,
+      "sickness_pay": true,
+      "note": "traktowany jak pracownik (art. 2 k.p.)"
+    },
+    {
+      "id": "zlecenie",
+      "label": "Umowa zlecenia / agencyjna / o świadczenie usług",
+      "kind": "voluntary",
+      "waiting_days": 90,
+      "sickness_pay": false,
+      "precondition": "obowiązkowe emerytalne i rentowe",
+      "base_cap_procent": 250
+    },
+    {
+      "id": "dg",
+      "label": "Pozarolnicza działalność gospodarcza",
+      "kind": "voluntary",
+      "waiting_days": 90,
+      "sickness_pay": false,
+      "precondition": "obowiązkowe emerytalne i rentowe",
+      "base_cap_procent": 250,
+      "payer_always": "ZUS"
+    },
+    {
+      "id": "wspolpraca",
+      "label": "Współpraca z osobą prowadzącą działalność",
+      "kind": "voluntary",
+      "waiting_days": 90,
+      "sickness_pay": false,
+      "payer_always": "ZUS"
+    },
+    {
+      "id": "duchowny",
+      "label": "Duchowny (płatnik własnych składek)",
+      "kind": "voluntary",
+      "waiting_days": 90,
+      "sickness_pay": false,
+      "payer_always": "ZUS"
+    },
+    {
+      "id": "marynarz",
+      "label": "Marynarz (art. 6 ust. 1 pkt 24 u.s.u.s.)",
+      "kind": "voluntary",
+      "waiting_days": 90,
+      "sickness_pay": false,
+      "payer_always": "ZUS"
+    },
+    {
+      "id": "uaktywniajaca",
+      "label": "Umowa uaktywniająca (niania)",
+      "kind": "obligatory",
+      "waiting_days": 30,
+      "sickness_pay": false
+    },
+    {
+      "id": "umowa_o_dzielo",
+      "label": "Umowa o dzieło",
+      "kind": "none",
+      "note": "brak tytułu, poza przypadkiem umowy z własnym pracodawcą / na jego rzecz"
+    },
+    {
+      "id": "student_zlecenie",
+      "label": "Student/uczeń do 26 r.ż. na zleceniu",
+      "kind": "none",
+      "note": "wyłączony z ubezpieczeń społecznych"
+    },
+    {
+      "id": "nierejestrowa",
+      "label": "Działalność nierejestrowana",
+      "kind": "none"
+    },
+    {
+      "id": "ulga_na_start",
+      "label": "Ulga na start",
+      "kind": "none",
+      "note": "brak ubezpieczeń społecznych; tylko zdrowotne"
+    },
+    {
+      "id": "brak",
+      "label": "Bezrobotny / student / osoba nieubezpieczona",
+      "kind": "none",
+      "redirect": "świadczenie rodzicielskie (poza ZUS)"
+    }
+  ],
+  "waiting_period_exemptions": {
+    "basis": "art. 4 ust. 3 u.z.",
+    "cases": [
+      {
+        "id": "absolwent",
+        "label": "Absolwent szkoły/uczelni/szkoły doktorskiej w ciągu 90 dni od ukończenia nauki"
+      },
+      {
+        "id": "wypadek_droga",
+        "label": "Niezdolność wskutek wypadku w drodze do pracy lub z pracy"
+      },
+      {
+        "id": "10_lat",
+        "label": "Obowiązkowo ubezpieczony z wcześniejszym co najmniej 10-letnim okresem obowiązkowego ubezpieczenia chorobowego"
+      },
+      {
+        "id": "parlamentarzysta",
+        "label": "Poseł/senator w ciągu 90 dni od ukończenia kadencji"
+      },
+      {
+        "id": "sluzba_celna",
+        "label": "Funkcjonariusz Służby Celnej (art. 165 ust. 7 i art. 167 ust. 2 przepisów wprow. KAS)"
+      }
+    ]
+  },
+  "rates_2026": {
+    "minimal_wage_brutto": 4806.0,
+    "currency": "PLN",
+    "social_contribution_deduction_procent": 13.71,
+    "health_contribution_procent": 9.0,
+    "chorobowa_stopa_procent": 2.45,
+    "emerytalna_stopa_procent": 19.52,
+    "rentowa_stopa_procent": 8.0,
+    "voluntary_chorob_base_cap_brutto": 23550.0,
+    "voluntary_chorob_base_cap_net": 20321.3,
+    "min_benefit_base_fulltime": 4147.1,
+    "debt_threshold": 48.06,
+    "funeral_allowance": 7000.0,
+    "zycie_za_zyciem": false,
+    "calculated": true
+  },
+  "benefit_rates": {
+    "sick_pay_normal": 80,
+    "sick_pay_pregnancy": 100,
+    "sick_pay_accident_commute": 100,
+    "rehab_first_3m": 90,
+    "rehab_rest": 75,
+    "rehab_pregnancy": 100,
+    "maternity_basic": 100,
+    "maternity_parental": 70,
+    "maternity_parental_81_5": 81.5,
+    "maternity_second_parent_part": 70,
+    "care_allowance": 80
+  },
+  "limits": {
+    "sickness_period_days": {
+      "standard": 182,
+      "pregnancy_or_tb": 270,
+      "after_insurance_end": 91,
+      "note": "91 dni nie dotyczy ciąży i gruźlicy (art. 8 ust. 2 u.z.)"
+    },
+    "sick_pay_days_employer": {
+      "under_50": 33,
+      "from_50": 14,
+      "basis": "art. 92 k.p."
+    },
+    "maternity_weeks": {
+      "1": 20,
+      "2": 31,
+      "3": 33,
+      "4": 35,
+      "5+": 37,
+      "basis": "art. 180 § 1 k.p."
+    },
+    "maternity_prenatal_max_weeks": 6,
+    "maternity_must_use_personally_weeks": 14,
+    "maternity_min_after_birth_for_handover_weeks": 14,
+    "maternity_min_with_disability_weeks": 8,
+    "maternity_stillbirth_weeks": 8,
+    "maternity_stillbirth_min_days_after_death": 7,
+    "supplementary_weeks": {
+      "limit_15": 15,
+      "limit_8": 8,
+      "basis": "art. 180² k.p."
+    },
+    "parental_weeks": {
+      "1": 41,
+      "2+": 43,
+      "basis": "art. 182¹a § 1 k.p."
+    },
+    "parental_weeks_za_zyciem": {
+      "1": 65,
+      "2+": 67,
+      "basis": "art. 182¹a § 2 k.p."
+    },
+    "parental_weeks_adoption_38": {
+      "1": 38,
+      "basis": "art. 183 § 4 pkt 3 k.p."
+    },
+    "parental_weeks_adoption_38_za_zyciem": {
+      "1": 62,
+      "basis": "art. 183 § 4³ pkt 3 k.p."
+    },
+    "parental_non_transferable_weeks": 9,
+    "parental_max_parts": 5,
+    "parental_until_child_age_years": 6,
+    "parental_extension_weeks": {
+      "normal": {
+        "1": 82,
+        "2+": 86
+      },
+      "za_zyciem": {
+        "1": 130,
+        "2+": 134
+      },
+      "basis": "art. 182¹f § 1 i § 1¹ k.p."
+    },
+    "paternal_weeks": 2,
+    "paternal_days": 14,
+    "paternal_max_parts": 2,
+    "paternal_min_part_days": 7,
+    "paternal_until_child_months": 12,
+    "paternal_adoption_months": 12,
+    "paternal_adoption_max_child_years": 14,
+    "adoption_macierzyński_min_weeks": 9,
+    "adoption_child_max_age": {
+      "rodzina_zastepcza": 7,
+      "rodzina_zastepcza_odroczenie": 10,
+      "przysposobienie": 14
+    },
+    "wychowawczy_months": 36,
+    "wychowawczy_until_child_years": 6,
+    "care_allowance_days": {
+      "child_under_14": 60,
+      "child_disability_14_18": 30,
+      "child_over_14_or_adult": 14,
+      "total_cap": 60
+    },
+    "rehabilitation_months": 12
+  },
+  "field_groups": {
+    "A": "Dane identyfikacyjne ubezpieczonego",
+    "B": "Dane płatnika składek",
+    "C": "Dane dziecka",
+    "D": "Dane drugiego rodzica / członka rodziny",
+    "E": "Dane o ubezpieczeniu / zatrudnieniu",
+    "F": "Dane o niezdolności i zaświadczeniach lekarskich",
+    "G": "Dane ciążowe i porodowe",
+    "H": "Dane o hospitalizacji dziecka",
+    "I": "Dane o urlopach i planach rodzicielskich",
+    "J": "Oświadczenia",
+    "K": "Dane płatności i pouczenia"
+  },
+  "fields": {
+    "A1": {
+      "group": "A",
+      "label": "Pierwsze imię",
+      "type": "string",
+      "required": true,
+      "basis": "art. 61b ust. 3 pkt 1 u.z.; zał. 1–7"
+    },
+    "A2": {
+      "group": "A",
+      "label": "Nazwisko",
+      "type": "string",
+      "required": true,
+      "basis": "art. 61b ust. 3 pkt 1 u.z."
+    },
+    "A3": {
+      "group": "A",
+      "label": "Numer PESEL",
+      "type": "pesel",
+      "required": true,
+      "basis": "zał. 1–7",
+      "note": "jeżeli nie nadano — seria i numer paszportu + data urodzenia"
+    },
+    "A3b": {
+      "group": "A",
+      "label": "Seria i numer paszportu",
+      "type": "string",
+      "required": false,
+      "conditional": "brak PESEL",
+      "basis": "art. 61b ust. 3 pkt 1 u.z."
+    },
+    "A3c": {
+      "group": "A",
+      "label": "Data urodzenia",
+      "type": "date",
+      "required": false,
+      "conditional": "brak PESEL",
+      "basis": "art. 61b ust. 3 pkt 1 u.z."
+    },
+    "A4": {
+      "group": "A",
+      "label": "Adres zamieszkania",
+      "type": "string",
+      "required": true,
+      "basis": "zał. 1 pkt 1"
+    },
+    "A5": {
+      "group": "A",
+      "label": "Numer rachunku bankowego",
+      "type": "account",
+      "required": true,
+      "basis": "zał. 1 pkt 8; zał. 2 pkt 15; zał. 3 pkt 13; zał. 6 pkt 17; zał. 7 pkt 7"
+    },
+    "A6": {
+      "group": "A",
+      "label": "Miejscowość, data i podpis wnioskodawcy",
+      "type": "string",
+      "required": true,
+      "basis": "zał. 1 pkt 9; zał. 6 pkt 18; zał. 7 pkt 8"
+    },
+    "A7": {
+      "group": "A",
+      "label": "Sposób podpisu elektronicznego",
+      "type": "enum",
+      "enums": [
+        "kwalifikowany podpis elektroniczny",
+        "podpis zaufany",
+        "podpis osobisty",
+        "system ZUS"
+      ],
+      "required": false,
+      "conditional": "wniosek elektroniczny do ZUS",
+      "basis": "art. 61b ust. 1 pkt 2 u.z."
+    },
+    "B1": {
+      "group": "B",
+      "label": "NIP płatnika składek",
+      "type": "nip",
+      "required": true,
+      "basis": "zał. 1 pkt 2; zał. 2 pkt 1; zał. 3 pkt 1; zał. 6 pkt 1"
+    },
+    "B2": {
+      "group": "B",
+      "label": "REGON płatnika składek",
+      "type": "regon",
+      "required": true,
+      "basis": "zał. 1 pkt 2"
+    },
+    "B3": {
+      "group": "B",
+      "label": "Nazwa i adres płatnika składek",
+      "type": "string",
+      "required": true,
+      "basis": "zał. 2 pkt 2; zał. 3 pkt 2; zał. 6 pkt 2"
+    },
+    "B4": {
+      "group": "B",
+      "label": "PESEL albo seria i numer paszportu płatnika",
+      "type": "string",
+      "required": false,
+      "conditional": "brak NIP",
+      "basis": "zał. 1 pkt 2"
+    },
+    "B5": {
+      "group": "B",
+      "label": "Liczba ubezpieczonych zgłaszanych do ubezpieczenia chorobowego",
+      "type": "number",
+      "required": true,
+      "basis": "zał. 2 pkt 11; zał. 3 pkt 12",
+      "note": ">20 → płatnik zasiłku; ≤20 → ZUS; stan na 30.11 roku poprzedniego (art. 61 ust. 2 u.z.)"
+    },
+    "B6": {
+      "group": "B",
+      "label": "Data złożenia wniosku o zasiłek macierzyński u płatnika",
+      "type": "date",
+      "required": false,
+      "basis": "zał. 2 pkt 12; zał. 3 pkt 7"
+    },
+    "B7": {
+      "group": "B",
+      "label": "Data i podpis osoby upoważnionej oraz numer telefonu",
+      "type": "string",
+      "required": false,
+      "basis": "zał. 2 pkt 18; zał. 3 pkt 15"
+    },
+    "B8": {
+      "group": "B",
+      "label": "Symbol PKD",
+      "type": "string",
+      "required": false,
+      "basis": "zał. 5 cz. II pkt 2"
+    },
+    "B9": {
+      "group": "B",
+      "label": "Kod zawodu",
+      "type": "string",
+      "required": false,
+      "basis": "zał. 5 cz. II pkt 2"
+    },
+    "C1": {
+      "group": "C",
+      "label": "Imię dziecka",
+      "type": "string",
+      "required": true,
+      "basis": "zał. 2 pkt 13; zał. 3 pkt 8; zał. 6 pkt 5; § 13 ust. 3"
+    },
+    "C2": {
+      "group": "C",
+      "label": "Nazwisko dziecka",
+      "type": "string",
+      "required": true,
+      "basis": "zał. 6 pkt 5"
+    },
+    "C3": {
+      "group": "C",
+      "label": "Numer PESEL dziecka",
+      "type": "pesel",
+      "required": false,
+      "conditional": "o ile nadano",
+      "basis": "zał. 6 pkt 5; § 13 ust. 3"
+    },
+    "C4": {
+      "group": "C",
+      "label": "Data urodzenia dziecka",
+      "type": "date",
+      "required": true,
+      "basis": "zał. 6 pkt 5; § 13 ust. 3"
+    },
+    "C5": {
+      "group": "C",
+      "label": "Miejsce urodzenia dziecka",
+      "type": "string",
+      "required": true,
+      "basis": "zał. 6 pkt 5; § 13 ust. 3"
+    },
+    "C6": {
+      "group": "C",
+      "label": "Liczba dzieci urodzonych przy jednym porodzie",
+      "type": "number",
+      "required": true,
+      "enums": [
+        1,
+        2,
+        3,
+        4,
+        "5+"
+      ],
+      "basis": "art. 180 § 1 k.p."
+    },
+    "C7": {
+      "group": "C",
+      "label": "Liczba dzieci pozostałych przy życiu",
+      "type": "number",
+      "required": false,
+      "conditional": "zgon dziecka / poród mnogi",
+      "basis": "art. 180¹ § 1–2 k.p."
+    },
+    "C8": {
+      "group": "C",
+      "label": "Wiek dziecka w dniu przyjęcia na wychowanie (lata)",
+      "type": "number",
+      "required": false,
+      "conditional": "adopcja / rodzina zastępcza",
+      "basis": "art. 183 § 1, § 1¹ k.p.; art. 29 ust. 1 u.z."
+    },
+    "C9": {
+      "group": "C",
+      "label": "Liczba dzieci przyjętych jednocześnie na wychowanie",
+      "type": "number",
+      "required": false,
+      "conditional": "adopcja / rodzina zastępcza",
+      "basis": "art. 183 § 1 pkt 1–5 k.p."
+    },
+    "D1": {
+      "group": "D",
+      "label": "Imię drugiego rodzica / członka rodziny",
+      "type": "string",
+      "required": false,
+      "conditional": "gdy niezbędne do rozpatrzenia wniosku",
+      "basis": "zał. 2 pkt 14; zał. 3 pkt 9; zał. 6 pkt 6"
+    },
+    "D2": {
+      "group": "D",
+      "label": "Nazwisko drugiego rodzica / członka rodziny",
+      "type": "string",
+      "required": false,
+      "basis": "zał. 6 pkt 6"
+    },
+    "D3": {
+      "group": "D",
+      "label": "Numer PESEL drugiego rodzica / członka rodziny",
+      "type": "pesel",
+      "required": true,
+      "conditional": "przejęcie urlopu / podział / oświadczenie drugiego rodzica",
+      "basis": "§ 20 ust. 1 pkt 2; § 23; § 27; § 30; § 32 rozp.zas."
+    },
+    "D4": {
+      "group": "D",
+      "label": "Adres zamieszkania drugiego rodzica / członka rodziny",
+      "type": "string",
+      "required": false,
+      "basis": "zał. 6 pkt 6"
+    },
+    "D5": {
+      "group": "D",
+      "label": "Relacja do dziecka",
+      "type": "enum",
+      "enums": [
+        "matka",
+        "ojciec",
+        "inny członek najbliższej rodziny"
+      ],
+      "required": false,
+      "basis": "art. 175¹ k.p."
+    },
+    "D6": {
+      "group": "D",
+      "label": "NIP i nazwy płatników zasiłku drugiego rodzica",
+      "type": "string",
+      "required": false,
+      "conditional": "urlop rodzicielski dzielony",
+      "basis": "art. 29 ust. 1 pkt 4 rozp.zas."
+    },
+    "E1": {
+      "group": "E",
+      "label": "Tytuł do ubezpieczenia chorobowego",
+      "type": "enum",
+      "enums": [
+        "umowa o pracę",
+        "zlecenie",
+        "działalność gospodarcza",
+        "współpraca",
+        "duchowny",
+        "marynarz",
+        "umowa uaktywniająca",
+        "brak"
+      ],
+      "required": true,
+      "basis": "art. 6 ust. 1 u.s.u.s.; zał. 3 pkt 4; zał. 6 pkt 4",
+      "ref": "insurance_titles"
+    },
+    "E2": {
+      "group": "E",
+      "label": "Okres podlegania ubezpieczeniu chorobowemu (od–do)",
+      "type": "date_range",
+      "required": true,
+      "basis": "zał. 3 pkt 5"
+    },
+    "E3": {
+      "group": "E",
+      "label": "Wymiar czasu pracy i data jego zmiany",
+      "type": "string",
+      "required": false,
+      "conditional": "pracownik",
+      "basis": "zał. 2 pkt 4; art. 40 u.z."
+    },
+    "E4": {
+      "group": "E",
+      "label": "Okres zatrudnienia u płatnika składek (od–do)",
+      "type": "date_range",
+      "required": false,
+      "conditional": "pracownik",
+      "basis": "zał. 2 pkt 4"
+    },
+    "E5": {
+      "group": "E",
+      "label": "Czy praca jest wykonywana za granicą",
+      "type": "boolean",
+      "required": false,
+      "conditional": "pracownik",
+      "basis": "zał. 2 pkt 5"
+    },
+    "E6": {
+      "group": "E",
+      "label": "Czy zatrudnienie na podstawie umowy o pracę tymczasową",
+      "type": "boolean",
+      "required": false,
+      "conditional": "pracownik",
+      "basis": "zał. 2 pkt 6"
+    },
+    "E7": {
+      "group": "E",
+      "label": "Przychód stanowiący podstawę wymiaru składek za poszczególne miesiące oraz liczba dni przepracowanych i obowiązujących",
+      "type": "string",
+      "required": false,
+      "conditional": "nie-pracownik",
+      "basis": "zał. 3 pkt 14"
+    },
+    "E8": {
+      "group": "E",
+      "label": "Składniki wynagrodzenia (miesięczne stałe/zmienne, kwartalne, roczne, inne) z liczbą dni, przyczyną nieprzepracowania i procentem składki",
+      "type": "string",
+      "required": false,
+      "conditional": "pracownik",
+      "basis": "zał. 2 pkt 16"
+    },
+    "E9": {
+      "group": "E",
+      "label": "Umowy cywilne (agencyjna/zlecenia/o świadczenie usług/o dzieło): termin i kwoty za poszczególne miesiące",
+      "type": "string",
+      "required": false,
+      "conditional": "pracownik z dodatkową umową cywilną",
+      "basis": "zał. 2 pkt 17"
+    },
+    "E10": {
+      "group": "E",
+      "label": "Czy objęty ubezpieczeniem jako osoba z umowy uaktywniającej",
+      "type": "boolean",
+      "required": false,
+      "basis": "zał. 3 pkt 4"
+    },
+    "E11": {
+      "group": "E",
+      "label": "Uprawnienie do emerytury/renty (organ rentowy i data)",
+      "type": "string",
+      "required": false,
+      "basis": "zał. 4 pkt 2; zał. 5 cz. I pkt 3"
+    },
+    "E12": {
+      "group": "E",
+      "label": "Uprawnienie do zasiłku dla bezrobotnych / przedemerytalnego / świadczenia przedemerytalnego / rodzicielskiego świadczenia uzupełniającego / nauczycielskiego świadczenia kompensacyjnego (data)",
+      "type": "string",
+      "required": false,
+      "basis": "zał. 4 pkt 3; zał. 5 cz. I pkt 4"
+    },
+    "E13": {
+      "group": "E",
+      "label": "Ubezpieczenie społeczne rolników (obowiązkowo/dobrowolnie/domownik), hektary przeliczeniowe lub dział specjalny",
+      "type": "string",
+      "required": false,
+      "basis": "zał. 4 pkt 4"
+    },
+    "E14": {
+      "group": "E",
+      "label": "Prowadzenie gospodarstwa rolnego przez wnioskodawcę lub małżonka",
+      "type": "boolean",
+      "required": false,
+      "basis": "zał. 4 pkt 4"
+    },
+    "E15": {
+      "group": "E",
+      "label": "Kontynuowanie / podjęcie działalności zarobkowej oraz data podjęcia",
+      "type": "string",
+      "required": false,
+      "basis": "zał. 4 pkt 4; art. 13 ust. 1 pkt 2 u.z."
+    },
+    "E16": {
+      "group": "E",
+      "label": "Urlop bezpłatny u innego pracodawcy (okres)",
+      "type": "string",
+      "required": false,
+      "basis": "zał. 4 pkt 5"
+    },
+    "E17": {
+      "group": "E",
+      "label": "Uprawnienie do stypendium / świadczenia PUP (data)",
+      "type": "string",
+      "required": false,
+      "basis": "zał. 4 pkt 6"
+    },
+    "E18": {
+      "group": "E",
+      "label": "Korzystanie z urlopu bezpłatnego / wychowawczego / opiekuńczego, areszt, kara pozbawienia wolności, usprawiedliwiona nieobecność (art. 632 § 8 k.p.) — z okresami",
+      "type": "string",
+      "required": false,
+      "basis": "zał. 2 pkt 8; zał. 3 pkt 11"
+    },
+    "E19": {
+      "group": "E",
+      "label": "Stan zadłużenia z tytułu składek na dzień powstania prawa do świadczenia",
+      "type": "currency",
+      "required": false,
+      "conditional": "działalność / współpraca / duchowny / marynarz",
+      "basis": "art. 2a u.z.",
+      "threshold": "1% minimalnego wynagrodzenia (2026: 48,06 zł)"
+    },
+    "E20": {
+      "group": "E",
+      "label": "Podstawa wymiaru składki (zadeklarowana kwota)",
+      "type": "currency",
+      "required": false,
+      "conditional": "działalność / zlecenie",
+      "basis": "art. 18 ust. 8 u.s.u.s.; art. 48a u.z."
+    },
+    "F1": {
+      "group": "F",
+      "label": "Okres, za który wnioskodawca ubiega się o zasiłek (od–do)",
+      "type": "date_range",
+      "required": true,
+      "basis": "zał. 1 pkt 4; zał. 7 pkt 2"
+    },
+    "F2": {
+      "group": "F",
+      "label": "Seria i numer zaświadczenia lekarskiego (e-ZLA)",
+      "type": "string",
+      "required": true,
+      "basis": "zał. 1 pkt 4; zał. 7 pkt 2"
+    },
+    "F3": {
+      "group": "F",
+      "label": "Kod literowy e-ZLA",
+      "type": "enum",
+      "enums": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E"
+      ],
+      "required": true,
+      "basis": "art. 57 ust. 1 u.z.",
+      "note": "B = ciąża; C = alkohol; D = gruźlica"
+    },
+    "F3b": {
+      "group": "F",
+      "label": "Wniosek o nieumieszczanie kodu B i D na e-ZLA",
+      "type": "boolean",
+      "required": false,
+      "basis": "art. 57 ust. 2 u.z."
+    },
+    "F4": {
+      "group": "F",
+      "label": "Czy niezdolność powstała w okresie ubezpieczenia, czy po ustaniu tytułu oraz data ustania tytułu",
+      "type": "string",
+      "required": true,
+      "basis": "zał. 1 pkt 6"
+    },
+    "F5": {
+      "group": "F",
+      "label": "Przyczyna niezdolności (choroba zawodowa / wypadek przy pracy / wypadek w drodze) oraz dokument potwierdzający",
+      "type": "enum",
+      "enums": [
+        "choroba",
+        "choroba zawodowa",
+        "wypadek przy pracy",
+        "wypadek w drodze do pracy lub z pracy"
+      ],
+      "required": true,
+      "basis": "zał. 1 pkt 7; zał. 2 pkt 7; zał. 3 pkt 10"
+    },
+    "F6": {
+      "group": "F",
+      "label": "Okresy, za które płatnik wypłacił wynagrodzenie za czas niezdolności (rok bieżący i poprzedni) z kodami",
+      "type": "string",
+      "required": false,
+      "basis": "zał. 2 pkt 9; zał. 3 pkt 6"
+    },
+    "F7": {
+      "group": "F",
+      "label": "Okresy, za które płatnik wypłacił zasiłek chorobowy wliczane do okresu zasiłkowego, z kodami",
+      "type": "string",
+      "required": false,
+      "basis": "zał. 2 pkt 10; zał. 3 pkt 7"
+    },
+    "F8": {
+      "group": "F",
+      "label": "Czy za okres przysługuje wynagrodzenie za pracę (marynarz, art. 75 pkt 2 ustawy o pracy na morzu) i w jakim okresie",
+      "type": "string",
+      "required": false,
+      "conditional": "marynarz",
+      "basis": "zał. 1 pkt 5; zał. 5 cz. I pkt 5"
+    },
+    "F9": {
+      "group": "F",
+      "label": "Typ okresu zasiłkowego (182/270) i data jego zakończenia",
+      "type": "string",
+      "required": false,
+      "conditional": "świadczenie rehabilitacyjne",
+      "basis": "zał. 5 cz. III pkt 2"
+    },
+    "F10": {
+      "group": "F",
+      "label": "Przyczyna ubiegania się o świadczenie rehabilitacyjne",
+      "type": "enum",
+      "enums": [
+        "ogólny stan zdrowia",
+        "wypadek przy pracy",
+        "choroba zawodowa"
+      ],
+      "required": false,
+      "conditional": "świadczenie rehabilitacyjne",
+      "basis": "zał. 5 cz. I pkt 2"
+    },
+    "G1": {
+      "group": "G",
+      "label": "Przewidywana data porodu (PDP)",
+      "type": "date",
+      "required": true,
+      "conditional": "ciąża",
+      "basis": "zał. 6 pkt 10; § 13 ust. 1 pkt 1 rozp.zas."
+    },
+    "G2": {
+      "group": "G",
+      "label": "Faktyczna data porodu",
+      "type": "date",
+      "required": true,
+      "conditional": "poród",
+      "basis": "§ 13 ust. 1 pkt 2 rozp.zas."
+    },
+    "G3": {
+      "group": "G",
+      "label": "Data rozpoczęcia urlopu macierzyńskiego (max 6 tyg. przed PDP)",
+      "type": "date",
+      "required": false,
+      "conditional": "urlop przed porodem",
+      "basis": "art. 180 § 2 k.p.; § 2 rozp.wn."
+    },
+    "G4": {
+      "group": "G",
+      "label": "Czy poród był mnogi oraz liczba dzieci",
+      "type": "string",
+      "required": true,
+      "conditional": "poród",
+      "basis": "art. 180 § 1 k.p."
+    },
+    "G5": {
+      "group": "G",
+      "label": "Czy dziecko urodziło się martwe",
+      "type": "boolean",
+      "required": false,
+      "conditional": "poród",
+      "basis": "art. 180¹ § 1 k.p."
+    },
+    "G6": {
+      "group": "G",
+      "label": "Data zgonu dziecka",
+      "type": "date",
+      "required": false,
+      "conditional": "zgon dziecka",
+      "basis": "art. 180¹ § 1–2 k.p."
+    },
+    "G7": {
+      "group": "G",
+      "label": "Czy urodzenie nastąpiło za granicą oraz kraj",
+      "type": "string",
+      "required": false,
+      "basis": "§ 14 rozp.zas."
+    },
+    "G8": {
+      "group": "G",
+      "label": "Czy w okresie ciąży pobierano zasiłek chorobowy (podstawa wymiaru przed porodem)",
+      "type": "boolean",
+      "required": false,
+      "basis": "Poradnik ZUS 2026"
+    },
+    "H1": {
+      "group": "H",
+      "label": "Tydzień ciąży, w którym nastąpiło urodzenie",
+      "type": "enum",
+      "enums": [
+        "przed 28. tygodniem",
+        "28–37 tygodni",
+        "po 37. tygodniu"
+      ],
+      "required": false,
+      "conditional": "uzupełniający urlop",
+      "basis": "art. 180² § 1 k.p."
+    },
+    "H2": {
+      "group": "H",
+      "label": "Masa urodzeniowa dziecka (g)",
+      "type": "number",
+      "required": false,
+      "conditional": "uzupełniający urlop",
+      "basis": "art. 180² § 1 k.p.",
+      "thresholds": [
+        "≤1000",
+        ">1000"
+      ]
+    },
+    "H3": {
+      "group": "H",
+      "label": "Okresy pobytu dziecka w szpitalu (od–do, wszystkie do sumowania)",
+      "type": "string",
+      "required": false,
+      "conditional": "uzupełniający urlop",
+      "basis": "art. 180² § 3, § 5 k.p."
+    },
+    "H4": {
+      "group": "H",
+      "label": "Data pierwszego dnia pobytu w szpitalu",
+      "type": "date",
+      "required": false,
+      "conditional": "urodzenie po 37. tyg.",
+      "basis": "art. 180² § 1 pkt 3 k.p.",
+      "note": "musi przypadać między 5. a 28. dniem po porodzie"
+    },
+    "H5": {
+      "group": "H",
+      "label": "Przy porodzie mnogim: najniższa masa urodzeniowa i najdłuższa hospitalizacja",
+      "type": "string",
+      "required": false,
+      "conditional": "poród mnogi + uzupełniający urlop",
+      "basis": "art. 180² § 2 k.p."
+    },
+    "H6": {
+      "group": "H",
+      "label": "Termin zakończenia urlopu macierzyńskiego",
+      "type": "date",
+      "required": true,
+      "conditional": "uzupełniający urlop",
+      "basis": "art. 180² § 6 k.p."
+    },
+    "I1": {
+      "group": "I",
+      "label": "Rodzaj świadczenia i jego okres",
+      "type": "string",
+      "required": true,
+      "basis": "zał. 2 pkt 19; zał. 3 pkt 16; zał. 6 pkt 7"
+    },
+    "I2": {
+      "group": "I",
+      "label": "Okres dotychczas wykorzystanego urlopu rodzicielskiego / zasiłku za ten okres",
+      "type": "string",
+      "required": false,
+      "conditional": "urlop rodzicielski",
+      "basis": "§ 15 ust. 1 pkt 2 rozp.wn."
+    },
+    "I3": {
+      "group": "I",
+      "label": "Liczba wykorzystanych części urlopu rodzicielskiego / liczba wniosków o zasiłek za część urlopu",
+      "type": "number",
+      "required": false,
+      "conditional": "urlop rodzicielski",
+      "basis": "§ 15 ust. 1 pkt 2 rozp.wn.; art. 182¹d § 2 k.p."
+    },
+    "I4": {
+      "group": "I",
+      "label": "Okres, na który ma być udzielony urlop lub jego część",
+      "type": "date_range",
+      "required": true,
+      "conditional": "wniosek urlopowy",
+      "basis": "§ 15 ust. 1 pkt 3 rozp.wn."
+    },
+    "I5": {
+      "group": "I",
+      "label": "Okresy udzielonych urlopów (macierzyński / na warunkach / uzupełniający / rodzicielski / ojcowski)",
+      "type": "string",
+      "required": false,
+      "basis": "zał. 2 pkt 12"
+    },
+    "I6": {
+      "group": "I",
+      "label": "Stawka procentowa wypłaconego zasiłku macierzyńskiego",
+      "type": "enum",
+      "enums": [
+        100,
+        81.5,
+        70
+      ],
+      "required": false,
+      "basis": "zał. 2 pkt 12; zał. 3 pkt 7"
+    },
+    "I7": {
+      "group": "I",
+      "label": "Data złożenia wniosku o zasiłek macierzyński",
+      "type": "date",
+      "required": false,
+      "basis": "zał. 2 pkt 12; zał. 3 pkt 7"
+    },
+    "I8": {
+      "group": "I",
+      "label": "Czy ubezpieczony zamierza korzystać z pełnego wymiaru urlopu macierzyńskiego/na warunkach i urlopu rodzicielskiego oraz czy co najmniej 1 dzień urlopu rodzicielskiego przypadnie w 1. roku życia dziecka",
+      "type": "boolean",
+      "required": true,
+      "basis": "zał. 6 pkt 15; art. 30a ust. 1 u.z.",
+      "note": "decyduje o wariancie 81,5%"
+    },
+    "I9": {
+      "group": "I",
+      "label": "Oświadczenie, czy dziecko posiada zaświadczenie „Za życiem”",
+      "type": "boolean",
+      "required": true,
+      "basis": "zał. 6 pkt 9; art. 61b ust. 4a u.z."
+    },
+    "I10": {
+      "group": "I",
+      "label": "Informacja o korzystaniu przez drugiego rodzica z zasiłku za urlop rodzicielski lub uzupełniający",
+      "type": "string",
+      "required": false,
+      "basis": "zał. 6 pkt 14"
+    },
+    "I11": {
+      "group": "I",
+      "label": "Część urlopu rodzicielskiego lub ojcowskiego (która z kolei)",
+      "type": "number",
+      "required": false,
+      "basis": "zał. 6 pkt 16"
+    },
+    "I12": {
+      "group": "I",
+      "label": "Wymiar czasu pracy przy łączeniu z urlopem rodzicielskim (max ½ etatu)",
+      "type": "string",
+      "required": false,
+      "conditional": "łączenie z pracą",
+      "basis": "§ 16 pkt 2 rozp.wn.; art. 182¹e § 1 k.p."
+    },
+    "I13": {
+      "group": "I",
+      "label": "Okres, w którym pracownik zamierza łączyć urlop z pracą",
+      "type": "date_range",
+      "required": false,
+      "conditional": "łączenie z pracą",
+      "basis": "§ 16 pkt 3 rozp.wn."
+    },
+    "I14": {
+      "group": "I",
+      "label": "Zamiar łączenia części urlopu powstałej z proporcjonalnego wydłużenia z pracą (i wymiar) albo brak zamiaru",
+      "type": "string",
+      "required": false,
+      "conditional": "łączenie z pracą",
+      "basis": "§ 16 pkt 4 rozp.wn."
+    },
+    "I15": {
+      "group": "I",
+      "label": "Data, od której ojciec / inny członek będzie korzystał z uprawnień",
+      "type": "date",
+      "required": false,
+      "conditional": "przejęcie urlopu przez ojca",
+      "basis": "§ 18 ust. 1 pkt 1; § 21; § 23 rozp.wn."
+    },
+    "I16": {
+      "group": "I",
+      "label": "Termin powrotu do pracy (matka rezygnująca)",
+      "type": "date",
+      "required": false,
+      "conditional": "rezygnacja matki",
+      "basis": "§ 3 ust. 1 pkt 2; § 4 ust. 1 pkt 2 rozp.wn."
+    },
+    "I17": {
+      "group": "I",
+      "label": "Okres urlopu macierzyńskiego / pobierania zasiłku wykorzystanego przed porodem",
+      "type": "string",
+      "required": false,
+      "conditional": "przejęcie urlopu",
+      "basis": "§ 5 ust. 1 pkt 3 rozp.wn."
+    },
+    "I18": {
+      "group": "I",
+      "label": "Okres urlopu wychowawczego dotychczas wykorzystany na dane dziecko",
+      "type": "string",
+      "required": false,
+      "conditional": "urlop wychowawczy",
+      "basis": "§ 19 ust. 1 pkt 4 rozp.wn."
+    },
+    "I19": {
+      "group": "I",
+      "label": "Liczba części urlopu wychowawczego wykorzystanych na dane dziecko",
+      "type": "number",
+      "required": false,
+      "conditional": "urlop wychowawczy",
+      "basis": "§ 19 ust. 1 pkt 5 rozp.wn."
+    },
+    "I20": {
+      "group": "I",
+      "label": "Okres, przez który pracownik zamierza pracować w obniżonym wymiarze (urlop wychowawczy)",
+      "type": "date_range",
+      "required": false,
+      "conditional": "obniżenie etatu",
+      "basis": "§ 20 ust. 1 pkt 3 rozp.wn."
+    },
+    "I21": {
+      "group": "I",
+      "label": "Wymiar czasu pracy, w którym pracownik zamierza pracować (obniżenie etatu)",
+      "type": "string",
+      "required": false,
+      "conditional": "obniżenie etatu",
+      "basis": "§ 20 ust. 1 pkt 4 rozp.wn."
+    },
+    "I22": {
+      "group": "I",
+      "label": "Okres dotychczas wykorzystanego urlopu rodzicielskiego z tytułu rodziny zastępczej",
+      "type": "string",
+      "required": false,
+      "conditional": "rodzina zastępcza → przysposobienie",
+      "basis": "art. 183 § 8 k.p."
+    },
+    "I23": {
+      "group": "I",
+      "label": "Okres dotychczas wykorzystanego urlopu na warunkach urlopu macierzyńskiego z tytułu rodziny zastępczej",
+      "type": "string",
+      "required": false,
+      "conditional": "rodzina zastępcza → przysposobienie",
+      "basis": "art. 183 § 7 k.p."
+    },
+    "J1": {
+      "group": "J",
+      "label": "Oświadczenie o braku zamiaru korzystania przez drugiego rodzica z uzupełniającego urlopu macierzyńskiego / zasiłku za ten okres",
+      "type": "boolean",
+      "required": true,
+      "conditional": "uzupełniający urlop",
+      "basis": "§ 26 pkt 1 rozp.zas.; § 14 ust. 2 pkt 2 rozp.wn."
+    },
+    "J2": {
+      "group": "J",
+      "label": "Oświadczenie o braku zamiaru korzystania przez drugiego rodzica z urlopu rodzicielskiego albo o okresie, w którym zamierza korzystać",
+      "type": "boolean",
+      "required": true,
+      "conditional": "urlop rodzicielski",
+      "basis": "§ 29 pkt 1; § 30 ust. 1 pkt 1 rozp.zas.; § 15 ust. 2 pkt 2 rozp.wn."
+    },
+    "J3": {
+      "group": "J",
+      "label": "Oświadczenie o dacie przyjęcia dziecka na wychowanie",
+      "type": "boolean",
+      "required": true,
+      "conditional": "adopcja / rodzina zastępcza",
+      "basis": "§ 16 ust. 1 pkt 1; § 27; § 30 rozp.zas."
+    },
+    "J4": {
+      "group": "J",
+      "label": "Oświadczenie o dacie porzucenia dziecka przez matkę",
+      "type": "boolean",
+      "required": false,
+      "conditional": "porzucenie",
+      "basis": "§ 20 ust. 3 rozp.zas.; § 9 ust. 1 pkt 2 rozp.wn."
+    },
+    "J5": {
+      "group": "J",
+      "label": "Oświadczenie o dniu zgonu matki dziecka",
+      "type": "boolean",
+      "required": false,
+      "conditional": "zgon matki",
+      "basis": "§ 20 ust. 4 rozp.zas.; § 8 ust. 1 pkt 2; § 10 ust. 1 pkt 2 rozp.wn."
+    },
+    "J6": {
+      "group": "J",
+      "label": "Oświadczenie o śmierci matki / porzuceniu przez matkę (matka nieubezpieczona)",
+      "type": "boolean",
+      "required": false,
+      "conditional": "matka nieubezpieczona",
+      "basis": "§ 20 ust. 4 rozp.zas."
+    },
+    "J7": {
+      "group": "J",
+      "label": "Oświadczenie o dacie, od której matka rezygnuje z pobierania zasiłku macierzyńskiego",
+      "type": "boolean",
+      "required": false,
+      "conditional": "rezygnacja matki",
+      "basis": "§ 18 ust. 1; § 21 rozp.zas."
+    },
+    "J8": {
+      "group": "J",
+      "label": "Oświadczenie, że matka dziecka nie posiada tytułu do ubezpieczenia chorobowego (z jej PESEL)",
+      "type": "boolean",
+      "required": false,
+      "conditional": "ojciec przejmuje urlop rodzicielski",
+      "basis": "§ 32 ust. 1 pkt 4 rozp.zas."
+    },
+    "J9": {
+      "group": "J",
+      "label": "Oświadczenie matki o dacie podjęcia zatrudnienia w wymiarze ≥ ½ etatu (z PESEL matki, nazwą i NIP pracodawcy)",
+      "type": "boolean",
+      "required": false,
+      "conditional": "matka nieubezpieczona podjęła pracę",
+      "basis": "§ 25 ust. 1 pkt 2 rozp.zas."
+    },
+    "J10": {
+      "group": "J",
+      "label": "Oświadczenie ojca wskazujące datę pobierania zasiłku przypadającą w okresie zatrudnienia matki",
+      "type": "boolean",
+      "required": false,
+      "conditional": "matka nieubezpieczona podjęła pracę",
+      "basis": "§ 25 ust. 1 pkt 3 lit. a rozp.zas."
+    },
+    "J11": {
+      "group": "J",
+      "label": "Zobowiązanie do poinformowania płatnika o ustaniu zatrudnienia matki",
+      "type": "boolean",
+      "required": false,
+      "conditional": "matka nieubezpieczona podjęła pracę",
+      "basis": "§ 25 ust. 1 pkt 3 lit. b rozp.zas."
+    },
+    "J12": {
+      "group": "J",
+      "label": "Oświadczenie, że nie zapewniono ubezpieczonej innego zatrudnienia",
+      "type": "boolean",
+      "required": false,
+      "conditional": "upadłość / likwidacja / śmierć pracodawcy",
+      "basis": "§ 17 pkt 3 rozp.zas."
+    },
+    "J13": {
+      "group": "J",
+      "label": "Oświadczenie o dacie umieszczenia dziecka w pieczy zastępczej / zakładzie opiekuńczo-leczniczym / pielęgnacyjno-opiekuńczym / rehabilitacji leczniczej",
+      "type": "boolean",
+      "required": false,
+      "conditional": "umieszczenie dziecka",
+      "basis": "§ 19 rozp.zas."
+    },
+    "J14": {
+      "group": "J",
+      "label": "Oświadczenie, czy zasiłek macierzyński za okres urlopu ojcowskiego został pobrany z innego tytułu",
+      "type": "boolean",
+      "required": true,
+      "conditional": "urlop ojcowski",
+      "basis": "§ 33 ust. 1 pkt 2 rozp.zas.; § 17 ust. 2 pkt 3 rozp.wn."
+    },
+    "J15": {
+      "group": "J",
+      "label": "Oświadczenie, czy zasiłek macierzyński przysługuje z więcej niż jednego tytułu oraz który płatnik ma wypłacić podwyższenie",
+      "type": "boolean",
+      "required": false,
+      "conditional": "zbieg tytułów",
+      "basis": "§ 28 pkt 1 rozp.zas.; art. 62 ust. 4–5 u.z."
+    },
+    "J16": {
+      "group": "J",
+      "label": "Oświadczenie o posiadaniu przez dziecko zaświadczenia „Za życiem”",
+      "type": "boolean",
+      "required": false,
+      "conditional": "za życiem",
+      "basis": "art. 61b ust. 4a u.z."
+    },
+    "J17": {
+      "group": "J",
+      "label": "Oświadczenie o okresie urlopu macierzyńskiego / pobierania zasiłku wykorzystanego przed porodem",
+      "type": "boolean",
+      "required": false,
+      "conditional": "przejęcie urlopu",
+      "basis": "§ 5 ust. 1 pkt 3; § 6 ust. 1 pkt 3; § 9 ust. 1 pkt 3 rozp.wn."
+    },
+    "J18": {
+      "group": "J",
+      "label": "Zobowiązanie do poinformowania pracodawcy o dacie opuszczenia placówki przez matkę",
+      "type": "boolean",
+      "required": false,
+      "conditional": "matka w szpitalu",
+      "basis": "§ 6 ust. 1 pkt 4; § 7 ust. 1 pkt 4 rozp.wn."
+    },
+    "J19": {
+      "group": "J",
+      "label": "Oświadczenie o okresie dotychczasowego korzystania z obniżonego wymiaru czasu pracy",
+      "type": "boolean",
+      "required": false,
+      "conditional": "obniżenie etatu",
+      "basis": "§ 20 ust. 2 pkt 2 rozp.wn."
+    },
+    "J20": {
+      "group": "J",
+      "label": "Oświadczenie o braku zamiaru korzystania przez drugiego rodzica/opiekuna z urlopu wychowawczego albo o okresie",
+      "type": "boolean",
+      "required": false,
+      "conditional": "urlop wychowawczy",
+      "basis": "§ 19 ust. 2 pkt 1 rozp.wn."
+    },
+    "J21": {
+      "group": "J",
+      "label": "Oświadczenie o braku domownika mogącego zapewnić opiekę",
+      "type": "boolean",
+      "required": true,
+      "conditional": "zasiłek opiekuńczy",
+      "basis": "zał. 7 pkt 5"
+    },
+    "J22": {
+      "group": "J",
+      "label": "Oświadczenie o zasiłku opiekuńczym pobranym w danym roku (przez wnioskodawcę, matkę/ojca, małżonka, innego członka) z liczbą dni, płatnikiem i PESEL",
+      "type": "string",
+      "required": true,
+      "conditional": "zasiłek opiekuńczy",
+      "basis": "zał. 7 pkt 6 lit. a–c"
+    },
+    "J23": {
+      "group": "J",
+      "label": "Oświadczenie o pozostawaniu we wspólnym gospodarstwie domowym z dzieckiem powyżej 14 lat lub chorym członkiem rodziny",
+      "type": "boolean",
+      "required": false,
+      "conditional": "zasiłek opiekuńczy",
+      "basis": "zał. 7 pkt 6 lit. d"
+    },
+    "J24": {
+      "group": "J",
+      "label": "Oświadczenie o chorobie niani / dziennego opiekuna",
+      "type": "boolean",
+      "required": false,
+      "conditional": "zasiłek opiekuńczy",
+      "basis": "§ 36 ust. 1 pkt 4 rozp.zas."
+    },
+    "J25": {
+      "group": "J",
+      "label": "Oświadczenie o pobieraniu przez matkę zasiłku macierzyńskiego w okresie 8 tygodni po porodzie",
+      "type": "boolean",
+      "required": false,
+      "conditional": "art. 32a u.z.",
+      "basis": "§ 40 pkt 2 rozp.zas."
+    },
+    "J26": {
+      "group": "J",
+      "label": "Oświadczenie ojca o przerwaniu działalności zarobkowej w celu sprawowania opieki",
+      "type": "boolean",
+      "required": false,
+      "conditional": "matka nie jest pracownikiem",
+      "basis": "§ 3 ust. 2 rozp.wn."
+    },
+    "J27": {
+      "group": "J",
+      "label": "Oświadczenie o okresie i wymiarze pracy w czasie urlopu rodzicielskiego oraz o pracy w urlopie wydłużonym (art. 182¹f § 3–7)",
+      "type": "boolean",
+      "required": false,
+      "conditional": "łączenie z pracą",
+      "basis": "§ 29 pkt 2; § 30 ust. 1 pkt 3; § 32 ust. 1 pkt 2 rozp.zas."
+    },
+    "J28": {
+      "group": "J",
+      "label": "Zobowiązanie do informowania o zmianach danych (emerytura/renta, zasiłki, działalność)",
+      "type": "boolean",
+      "required": false,
+      "conditional": "świadczenie rehabilitacyjne",
+      "basis": "zał. 5 cz. I pkt 6"
+    },
+    "J29": {
+      "group": "J",
+      "label": "Oświadczenie o wystąpieniu o ustalenie uprawnień / prawie do emerytury lub renty",
+      "type": "boolean",
+      "required": false,
+      "basis": "zał. 4 pkt 2; zał. 5 cz. I pkt 3"
+    },
+    "J30": {
+      "group": "J",
+      "label": "Oświadczenie o prawie do podwyższenia zasiłku i braku pobierania go z innego tytułu",
+      "type": "boolean",
+      "required": false,
+      "conditional": "podwyższenie do świadczenia rodzicielskiego",
+      "basis": "§ 28 pkt 1 rozp.zas."
+    },
+    "K1": {
+      "group": "K",
+      "label": "Numer rachunku bankowego do wypłaty",
+      "type": "account",
+      "required": true,
+      "basis": "art. 65 u.z."
+    },
+    "K2": {
+      "group": "K",
+      "label": "Odbiór przez osobę upoważnioną / do rąk osoby wypłacającej wynagrodzenie",
+      "type": "string",
+      "required": false,
+      "basis": "art. 65 ust. 1–2 u.z."
+    },
+    "K3": {
+      "group": "K",
+      "label": "Wypłata osobie mieszkającej za granicą (rachunek/instrument płatniczy w kraju)",
+      "type": "string",
+      "required": false,
+      "conditional": "zamieszkanie za granicą",
+      "basis": "art. 65 ust. 3 u.z."
+    },
+    "K4": {
+      "group": "K",
+      "label": "Pouczenie (element formularza)",
+      "type": "string",
+      "required": false,
+      "basis": "zał. 1 pkt 10; zał. 6 pkt 19; zał. 7 pkt 9; zał. 2 pkt 20; zał. 3 pkt 17"
+    }
+  },
+  "forms": [
+    {
+      "symbol": "ZAM",
+      "name": "Wniosek o zasiłek macierzyński za okres urlopu macierzyńskiego, urlopu rodzicielskiego",
+      "status": "active",
+      "note": "od 24.10.2026 wchłonął ZUR i ZAO — jedyny formularz macierzyński"
+    },
+    {
+      "symbol": "ZUR",
+      "name": "Wniosek o zasiłek macierzyński za okres urlopu rodzicielskiego",
+      "status": "repealed",
+      "repealed_on": "2026-10-24"
+    },
+    {
+      "symbol": "ZAO",
+      "name": "Wniosek o zasiłek macierzyński za okres urlopu ojcowskiego",
+      "status": "repealed",
+      "repealed_on": "2026-10-24"
+    },
+    {
+      "symbol": "Z-3",
+      "name": "Zaświadczenie płatnika składek — pracownik",
+      "status": "active"
+    },
+    {
+      "symbol": "Z-3a",
+      "name": "Zaświadczenie płatnika składek — nie-pracownik (zleceniobiorca, osoba współpracująca)",
+      "status": "active"
+    },
+    {
+      "symbol": "Z-3b",
+      "name": "Zaświadczenie płatnika składek — osoba prowadząca działalność",
+      "status": "repealed",
+      "repealed_on": "2026-10-24",
+      "note": "Poradnik ZUS 2026 (stan 1.04.2026) jeszcze go wskazuje"
+    },
+    {
+      "symbol": "ZAS-12",
+      "name": "Zaświadczenie płatnika składek — na dalszy okres",
+      "status": "active"
+    },
+    {
+      "symbol": "ZAS-53",
+      "name": "Wniosek o zasiłek chorobowy (osoby niebędące pracownikami)",
+      "status": "active"
+    },
+    {
+      "symbol": "Z-15A",
+      "name": "Wniosek o zasiłek opiekuńczy — opieka nad dzieckiem",
+      "status": "active"
+    },
+    {
+      "symbol": "Z-15B",
+      "name": "Wniosek o zasiłek opiekuńczy — inny chory członek rodziny",
+      "status": "active"
+    },
+    {
+      "symbol": "Z-12",
+      "name": "Wniosek o zasiłek pogrzebowy",
+      "status": "active"
+    },
+    {
+      "symbol": "ZUS ZUA",
+      "name": "Zgłoszenie do ubezpieczeń (w tym dobrowolne chorobowe)",
+      "status": "active"
+    },
+    {
+      "symbol": "e-ZLA",
+      "name": "Zaświadczenie lekarskie (elektroniczne)",
+      "status": "active"
+    },
+    {
+      "symbol": "Poświadczenie ubezpieczenia chorobowego",
+      "name": "Dokument wewnętrzny ZUS",
+      "status": "internal"
+    }
+  ],
+  "benefits": [
+    {
+      "id": "W35",
+      "name": "Wynagrodzenie chorobowe (pracownik, w tym w ciąży)",
+      "category": "pregnancy",
+      "eligible": "matka",
+      "payer": "pracodawca (nie ZUS)",
+      "duration": "33 dni (14 dni od 50 r.ż.) w roku kalendarzowym",
+      "amount": "80%, ale 100% gdy choroba przypadająca w czasie ciąży lub wypadek w drodze",
+      "basis": "art. 92 § 1 pkt 1–2 k.p.",
+      "has_zus_application": false
+    },
+    {
+      "id": "W34",
+      "name": "Zasiłek chorobowy w okresie ciąży",
+      "category": "pregnancy",
+      "eligible": "matka",
+      "payer": "płatnik składek lub ZUS",
+      "duration": "270 dni (okres zasiłkowy)",
+      "amount": "100% podstawy wymiaru od 1. dnia",
+      "basis": "art. 6, 8, 11 ust. 2 pkt 1 u.z.",
+      "requires_code": "B",
+      "has_zus_application": true
+    },
+    {
+      "id": "W36",
+      "name": "Reset okresu zasiłkowego przy przejściu na kod B",
+      "category": "pregnancy",
+      "eligible": "matka",
+      "duration": "270 dni liczone od nowa",
+      "amount": "100%",
+      "basis": "art. 9 ust. 2 zdanie 2 u.z.",
+      "has_zus_application": false
+    },
+    {
+      "id": "W37",
+      "name": "Świadczenie rehabilitacyjne (w tym w ciąży)",
+      "category": "pregnancy",
+      "eligible": "oboje",
+      "payer": "ZUS",
+      "duration": "do 12 miesięcy",
+      "amount": "90% za pierwsze 3 mies., 75% za pozostały, 100% w ciąży",
+      "basis": "art. 18–22 u.z.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W38",
+      "name": "Zasiłek w wysokości zasiłku macierzyńskiego (upadłość/likwidacja/śmierć pracodawcy)",
+      "category": "pregnancy",
+      "eligible": "matka",
+      "payer": "ZUS",
+      "duration": "do dnia porodu",
+      "amount": "100%",
+      "basis": "art. 30 ust. 1 i 3 u.z.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W33",
+      "name": "Zwolnienie na badania lekarskie w ciąży (z wynagrodzeniem)",
+      "category": "pregnancy",
+      "eligible": "matka",
+      "payer": "pracodawca",
+      "amount": "100% wynagrodzenia",
+      "basis": "art. 185 § 2 k.p.",
+      "has_zus_application": false
+    },
+    {
+      "id": "W1",
+      "name": "Zasiłek macierzyński za okres urlopu macierzyńskiego",
+      "category": "maternity",
+      "eligible": "matka",
+      "duration": "20/31/33/35/37 tyg. zależnie od liczby dzieci",
+      "amount": "100%",
+      "basis": "art. 180 § 1, § 3 k.p.; art. 29, 29a, 31 ust. 1 u.z.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W2",
+      "name": "Urlop macierzyński przed porodem (max 6 tyg.)",
+      "category": "maternity",
+      "eligible": "matka",
+      "duration": "do 6 tyg. przed PDP",
+      "amount": "100%",
+      "basis": "art. 180 § 2 k.p.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W29",
+      "name": "Przedłużenie umowy do dnia porodu (umowa na czas określony)",
+      "category": "maternity",
+      "eligible": "matka",
+      "duration": "do dnia porodu",
+      "amount": "zasiłek macierzyński po ustaniu ubezpieczenia",
+      "basis": "art. 177 § 3 k.p.; art. 30 ust. 4 u.z.",
+      "has_zus_application": false
+    },
+    {
+      "id": "W4",
+      "name": "Zasiłek macierzyński za okres uzupełniającego urlopu macierzyńskiego",
+      "category": "maternity",
+      "eligible": "oboje",
+      "duration": "1 tydzień za każdy tydzień hospitalizacji, do 15 tyg. / do 8 tyg.",
+      "amount": "100%",
+      "basis": "art. 180² k.p.; § 26–27 rozp.zas.",
+      "has_zus_application": true,
+      "one_parent_only": true
+    },
+    {
+      "id": "W10",
+      "name": "Zasiłek macierzyński przy urodzeniu martwego dziecka / zgonie dziecka",
+      "category": "maternity",
+      "eligible": "matka",
+      "duration": "8 tyg. po porodzie (min. 7 dni od zgonu) / 7 dni od zgonu po 8. tyg.",
+      "amount": "100%",
+      "basis": "art. 180¹ k.p.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W5",
+      "name": "Przejęcie przez ojca części urlopu macierzyńskiego po 14 tyg.",
+      "category": "maternity",
+      "eligible": "ojciec",
+      "duration": "pozostała część",
+      "amount": "100%",
+      "basis": "art. 180 § 4–5, § 8–9 k.p.; art. 29 ust. 3 u.z.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W6",
+      "name": "Przejęcie po 8 tyg. — matka z orzeczeniem o niezdolności do samodzielnej egzystencji",
+      "category": "maternity",
+      "eligible": "ojciec",
+      "allies": "inny_czlonek",
+      "duration": "pozostała część",
+      "amount": "100%",
+      "basis": "art. 180 § 6–7 k.p.; art. 29 ust. 5 u.z.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W7",
+      "name": "Przejęcie czasowe — matka w szpitalu (po 8 tyg.)",
+      "category": "maternity",
+      "eligible": "ojciec",
+      "allies": "inny_czlonek",
+      "duration": "okres hospitalizacji",
+      "amount": "100%",
+      "basis": "art. 180 § 10–11 k.p.; art. 29 ust. 6 u.z.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W8",
+      "name": "Zasiłek po zgonie / porzuceniu przez matkę",
+      "category": "maternity",
+      "eligible": "ojciec",
+      "allies": "inny_czlonek",
+      "duration": "część po zdarzeniu",
+      "amount": "100%",
+      "basis": "art. 180 § 12–13 k.p.; art. 29 ust. 7 u.z.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W9",
+      "name": "Zasiłek, gdy matka jest nieubezpieczona (zgon / porzucenie / niezdolność / podjęcie pracy ≥ ½ etatu)",
+      "category": "maternity",
+      "eligible": "ojciec",
+      "allies": "inny_czlonek",
+      "duration": "od zdarzenia / w okresie zatrudnienia matki",
+      "amount": "100%",
+      "basis": "art. 180 § 15, § 17 k.p.; art. 29 ust. 9–10 u.z.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W39",
+      "name": "Zasiłek macierzyński po ustaniu ubezpieczenia w ciąży (śmierć/upadłość/likwidacja)",
+      "category": "maternity",
+      "eligible": "matka",
+      "duration": "okres urlopu macierzyńskiego i rodzicielskiego",
+      "amount": "100% / 70%",
+      "basis": "art. 30 ust. 1 pkt 1 u.z.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W40",
+      "name": "Zasiłek macierzyński po ustaniu ubezpieczenia (naruszenie prawa — prawomocny wyrok)",
+      "category": "maternity",
+      "eligible": "matka",
+      "duration": "okres urlopu macierzyńskiego i rodzicielskiego",
+      "amount": "100% / 70%",
+      "basis": "art. 30 ust. 1 pkt 2 u.z.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W13",
+      "name": "Przejęcie urlopu przez innego członka najbliższej rodziny",
+      "category": "maternity",
+      "eligible": "inny_czlonek",
+      "duration": "jak dla matki/ojca",
+      "amount": "100% / 70%",
+      "basis": "art. 175¹; art. 180 § 6–7 k.p.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W14",
+      "name": "Limit łączny — pula urlopu macierzyńskiego nie rośnie",
+      "category": "maternity",
+      "eligible": "oboje",
+      "duration": "suma ≤ art. 180 § 1",
+      "amount": "—",
+      "basis": "art. 180 § 14 k.p.",
+      "has_zus_application": false
+    },
+    {
+      "id": "W25",
+      "name": "Zasiłek macierzyński za okres urlopu rodzicielskiego",
+      "category": "parental",
+      "eligible": "oboje",
+      "duration": "41/43 tyg. (65/67 z „Za życiem”), w tym 9 tyg. nieprzenoszalne dla każdego",
+      "amount": "70% / 81,5%",
+      "basis": "art. 182¹a–182¹c k.p.; art. 31 ust. 2 i 3 u.z.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W41",
+      "name": "Wariant uśredniony 81,5%",
+      "category": "parental",
+      "eligible": "matka",
+      "duration": "cały okres macierzyński + rodzicielski",
+      "amount": "81,5%",
+      "basis": "art. 30a ust. 1–2; art. 31 ust. 3 u.z.",
+      "deadline_days_after_birth": 21,
+      "has_zus_application": true,
+      "is_option": true
+    },
+    {
+      "id": "W42",
+      "name": "Jednorazowe wyrównanie do 100% (brak dnia urlopu rodzicielskiego w 1. roku życia)",
+      "category": "parental",
+      "eligible": "matka",
+      "duration": "jednorazowo",
+      "amount": "wyrównanie zasiłku za urlop macierzyński do 100%",
+      "basis": "art. 31 ust. 3g–4 u.z.",
+      "has_zus_application": true,
+      "is_option": true
+    },
+    {
+      "id": "W43",
+      "name": "Część drugiego rodzica — zawsze 70% (9 tyg. nieprzenoszalne)",
+      "category": "parental",
+      "eligible": "oboje",
+      "duration": "9 tyg.",
+      "amount": "70%",
+      "basis": "art. 31 ust. 3f u.z.; art. 182¹a § 4 k.p.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W26",
+      "name": "Ojciec przejmujący urlop rodzicielski po matce",
+      "category": "parental",
+      "eligible": "ojciec",
+      "duration": "pozostała pula",
+      "amount": "70%",
+      "basis": "art. 182¹a § 6–7 k.p.; § 29–30 rozp.zas.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W12",
+      "name": "Łączenie urlopu rodzicielskiego z pracą (wydłużenie)",
+      "category": "parental",
+      "eligible": "oboje",
+      "duration": "do 82/86 tyg. (130/134 z „Za życiem”)",
+      "amount": "obniżony proporcjonalnie do wymiaru pracy",
+      "basis": "art. 182¹e–182¹f k.p.; art. 31 ust. 4a u.z.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W11",
+      "name": "Urlop wychowawczy",
+      "category": "parental",
+      "eligible": "oboje",
+      "duration": "do 36 miesięcy, do 6. r.ż. dziecka",
+      "amount": "BRAK zasiłku macierzyńskiego",
+      "basis": "art. 186–186⁸ k.p.",
+      "has_zus_application": false
+    },
+    {
+      "id": "W21",
+      "name": "Zasiłek macierzyński za okres urlopu ojcowskiego",
+      "category": "parental",
+      "eligible": "ojciec",
+      "duration": "2 tyg. (14 dni), 1 lub 2 części",
+      "amount": "100%",
+      "basis": "art. 182³ k.p.; § 33 rozp.zas.",
+      "has_zus_application": true,
+      "exclusive_to": "ojciec"
+    },
+    {
+      "id": "W23",
+      "name": "Wcześniejsze przejęcie urlopu macierzyńskiego (katalog okoliczności)",
+      "category": "maternity",
+      "eligible": "ojciec",
+      "duration": "pozostała część / okres hospitalizacji",
+      "amount": "100%",
+      "basis": "art. 180 § 6–17 k.p.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W27",
+      "name": "Ojciec przy uzupełniającym urlopie macierzyńskim (wcześniak)",
+      "category": "maternity",
+      "eligible": "ojciec",
+      "duration": "1–15 tyg.",
+      "amount": "100%",
+      "basis": "art. 180² § 1 k.p.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W28",
+      "name": "Zasiłek za urlop na warunkach urlopu macierzyńskiego (adopcja / rodzina zastępcza)",
+      "category": "maternity",
+      "eligible": "oboje",
+      "duration": "20–37 tyg. (min. 9 tyg.), limit wieku 7/10/14 lat",
+      "amount": "100%",
+      "basis": "art. 183 § 1, § 1¹, § 3 k.p.; art. 29 ust. 1 pkt 2–3 u.z.",
+      "has_zus_application": true,
+      "excludes": "rodzina zastępcza zawodowa"
+    },
+    {
+      "id": "W30",
+      "name": "Ojciec jako nie-pracownik — zasiłek za okres odpowiadający urlopowi",
+      "category": "parental",
+      "eligible": "ojciec",
+      "duration": "okres odpowiadający urlopowi",
+      "amount": "100% / 70% lub brak",
+      "basis": "art. 29 ust. 2 u.z.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W17",
+      "name": "Zasiłek opiekuńczy",
+      "category": "care",
+      "eligible": "oboje",
+      "payer": "płatnik składek lub ZUS",
+      "duration": "60 / 30 / 14 dni; łącznie max 60 dni w roku",
+      "amount": "80%",
+      "basis": "art. 2 pkt 6, art. 32, 32a u.z.; § 34–40 rozp.zas.",
+      "waiting_period": 0,
+      "has_zus_application": true
+    },
+    {
+      "id": "W44",
+      "name": "Podwyższenie zasiłku macierzyńskiego do świadczenia rodzicielskiego",
+      "category": "supplement",
+      "eligible": "oboje",
+      "amount": "do wysokości świadczenia rodzicielskiego",
+      "basis": "art. 31 ust. 3a–3c u.z.; § 28 rozp.zas.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W45",
+      "name": "Zasiłek pogrzebowy (dziecko martwo urodzone)",
+      "category": "special",
+      "eligible": "organizator",
+      "payer": "ZUS",
+      "amount": "7000 zł",
+      "basis": "ust. em.rent. (ustawa o emeryturach i rentach z FUS)",
+      "has_zus_application": true
+    },
+    {
+      "id": "W46",
+      "name": "Zasiłek chorobowy — wypadek w drodze do pracy/z pracy",
+      "category": "special",
+      "eligible": "oboje",
+      "duration": "182 dni",
+      "amount": "100%, bez okresu wyczekiwania",
+      "basis": "art. 11 ust. 2 pkt 3; art. 4 ust. 3 pkt 2 u.z.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W47",
+      "name": "Zasiłek chorobowy po ustaniu ubezpieczenia",
+      "category": "special",
+      "eligible": "oboje",
+      "duration": "do 91 dni (ciąża 270)",
+      "amount": "80% / 100%",
+      "basis": "art. 7, 8 ust. 2, 46 u.z.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W31",
+      "name": "Ochrona przed wypowiedzeniem (matka i ojciec w urlopie)",
+      "category": "special",
+      "eligible": "oboje",
+      "amount": "—",
+      "basis": "art. 177 k.p.",
+      "has_zus_application": false
+    },
+    {
+      "id": "W32",
+      "name": "Korzystanie z uprawnień „jedno z rodziców”",
+      "category": "special",
+      "eligible": "oboje",
+      "basis": "art. 189¹ k.p.",
+      "has_zus_application": false
+    },
+    {
+      "id": "W15",
+      "name": "Urodzenie dziecka za granicą",
+      "category": "special",
+      "eligible": "oboje",
+      "basis": "§ 14 rozp.zas.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W16",
+      "name": "Zbieg tytułów ubezpieczenia",
+      "category": "supplement",
+      "eligible": "oboje",
+      "basis": "art. 62 ust. 4–5 u.z.; art. 6a u.s.u.s.",
+      "has_zus_application": true
+    },
+    {
+      "id": "W18",
+      "name": "Zasiłek wyrównawczy",
+      "category": "outside",
+      "eligible": "oboje",
+      "basis": "art. 2 pkt 3 u.z.",
+      "has_zus_application": true,
+      "incomplete": true
+    },
+    {
+      "id": "W19",
+      "name": "Świadczenie rodzicielskie / uposażenie macierzyńskie",
+      "category": "outside",
+      "eligible": "oboje",
+      "payer": "gmina / MRPiPS (poza ZUS)",
+      "basis": "ust. św. rodzinnych",
+      "has_zus_application": false
+    },
+    {
+      "id": "W20",
+      "name": "Uposażenie macierzyńskie (funkcjonariusze służb mundurowych)",
+      "category": "outside",
+      "eligible": "oboje",
+      "payer": "właściwy organ służbowy",
+      "basis": "odrębne ustawy zaopatrzeniowe",
+      "has_zus_application": false,
+      "incomplete": true
+    },
+    {
+      "id": "W48",
+      "name": "Zadłużenie > 1% minimalnego wynagrodzenia — brak prawa do zasiłku",
+      "category": "risk",
+      "eligible": "oboje",
+      "amount": "BRAK PRAWA do spłaty całości zadłużenia",
+      "basis": "art. 2a u.z.",
+      "is_risk": true
+    },
+    {
+      "id": "W49",
+      "name": "Pozorna umowa / podwyższenie podstawy w ciąży — decyzja o niepodleganiu",
+      "category": "risk",
+      "eligible": "oboje",
+      "amount": "BRAK lub OBNIŻENIE świadczenia",
+      "basis": "u.s.u.s.; Poradnik ZUS 2026 s. 8, 11",
+      "is_risk": true
+    },
+    {
+      "id": "W50",
+      "name": "Przedawnienie roszczenia o wypłatę zasiłku",
+      "category": "risk",
+      "eligible": "oboje",
+      "amount": "6 miesięcy / 3 lata przy błędzie płatnika lub ZUS",
+      "basis": "art. 67 u.z.",
+      "is_risk": true
+    }
+  ],
+  "documents": [
+    {
+      "id": "DOC01",
+      "name": "e-ZLA (zaświadczenie lekarskie)",
+      "codes": [
+        "B",
+        "A",
+        "C",
+        "D",
+        "E"
+      ],
+      "issuer": "lekarz / felczer upoważniony przez ZUS",
+      "basis": "art. 55, 57 u.z.",
+      "used_in": [
+        "W34",
+        "W35",
+        "W36",
+        "W37"
+      ]
+    },
+    {
+      "id": "DOC02",
+      "name": "Wydruk e-ZLA / e-ZLA na formularzu (art. 55a ust. 6–7)",
+      "issuer": "lekarz",
+      "basis": "art. 55a ust. 6–7 u.z.",
+      "used_in": [
+        "W34",
+        "W35",
+        "W36"
+      ],
+      "conditional": "płatnik bez profilu informacyjnego"
+    },
+    {
+      "id": "DOC03",
+      "name": "Zaświadczenie lekarskie na zwykłym druku o przewidywanej dacie porodu",
+      "issuer": "lekarz",
+      "basis": "§ 13 ust. 1 pkt 1 rozp.zas.; § 2 rozp.wn.",
+      "used_in": [
+        "W2",
+        "W1",
+        "W38"
+      ]
+    },
+    {
+      "id": "DOC04",
+      "name": "Zaświadczenie lekarskie na zwykłym druku o stanie ciąży w okresie zatrudnienia",
+      "issuer": "lekarz",
+      "basis": "§ 15 ust. 1 pkt 1; § 17 pkt 1 rozp.zas.",
+      "used_in": [
+        "W38",
+        "W39",
+        "W40"
+      ]
+    },
+    {
+      "id": "DOC05",
+      "name": "Odpis skrócony aktu urodzenia dziecka (lub kopia)",
+      "issuer": "USC",
+      "basis": "§ 13 ust. 1 pkt 2 rozp.zas.",
+      "used_in": [
+        "W1",
+        "W2",
+        "W5",
+        "W6",
+        "W7",
+        "W8",
+        "W9",
+        "W10",
+        "W21",
+        "W25",
+        "W26",
+        "W28",
+        "W42"
+      ],
+      "usc_alternative": "ZUS może pozyskać sam (§ 13 ust. 3)"
+    },
+    {
+      "id": "DOC06",
+      "name": "Odpis skrócony aktu urodzenia z adnotacją, że dziecko urodziło się martwe",
+      "issuer": "USC",
+      "basis": "§ 13 ust. 1 pkt 2 rozp.zas.",
+      "used_in": [
+        "W10"
+      ]
+    },
+    {
+      "id": "DOC07",
+      "name": "Zaświadczenie o martwym urodzeniu (lekarz ginekolog-położnik / lek. w specjalizacji / położna)",
+      "issuer": "lekarz ze specjalizacją położnictwo i ginekologia / lekarz w trakcie specjalizacji / położna",
+      "basis": "§ 13 ust. 1 pkt 2; § 15 ust. 1 pkt 3; § 17 pkt 1 rozp.zas.",
+      "used_in": [
+        "W10",
+        "W38",
+        "W39",
+        "W40",
+        "W45"
+      ]
+    },
+    {
+      "id": "DOC08",
+      "name": "Karta zgonu (lub kopia)",
+      "basis": "Poradnik ZUS 2026 (zasiłek pogrzebowy)",
+      "used_in": [
+        "W45"
+      ]
+    },
+    {
+      "id": "DOC09",
+      "name": "Zaświadczenie szpitala (okres pobytu, tydzień ciąży, masa urodzeniowa)",
+      "issuer": "szpital",
+      "basis": "art. 180² § 5 k.p.",
+      "used_in": [
+        "W4",
+        "W27"
+      ]
+    },
+    {
+      "id": "DOC10",
+      "name": "Zaświadczenie o dacie przyjęcia matki do placówki leczniczej",
+      "issuer": "placówka lecznicza",
+      "basis": "§ 23 ust. 1 pkt 3; § 24 ust. 1 pkt 1 rozp.zas.",
+      "used_in": [
+        "W7"
+      ]
+    },
+    {
+      "id": "DOC11",
+      "name": "Zaświadczenie o dacie wypisania matki z placówki leczniczej",
+      "issuer": "placówka lecznicza",
+      "basis": "§ 23 ust. 1 pkt 4 rozp.zas.",
+      "used_in": [
+        "W7"
+      ]
+    },
+    {
+      "id": "DOC12",
+      "name": "Oświadczenie drugiego rodzica o braku zamiaru korzystania z uzupełniającego urlopu",
+      "basis": "§ 26 pkt 1 rozp.zas.; § 14 ust. 2 pkt 2 rozp.wn.",
+      "used_in": [
+        "W4",
+        "W27"
+      ]
+    },
+    {
+      "id": "DOC13",
+      "name": "Oświadczenie drugiego rodzica o braku zamiaru / okresie korzystania z urlopu rodzicielskiego",
+      "basis": "§ 29 pkt 1; § 30 ust. 1 pkt 1 rozp.zas.; § 15 ust. 2 pkt 2 rozp.wn.",
+      "used_in": [
+        "W25",
+        "W26"
+      ]
+    },
+    {
+      "id": "DOC14",
+      "name": "Kopia wniosku ojca / innego członka o udzielenie pozostałej części urlopu",
+      "basis": "§ 3 ust. 2; § 4 ust. 2 rozp.wn.",
+      "used_in": [
+        "W5",
+        "W6"
+      ]
+    },
+    {
+      "id": "DOC15",
+      "name": "Oświadczenie ojca o przerwaniu działalności zarobkowej w celu sprawowania opieki",
+      "basis": "§ 3 ust. 2 rozp.wn.",
+      "used_in": [
+        "W5"
+      ]
+    },
+    {
+      "id": "DOC16",
+      "name": "Oświadczenie matki o zamiarze rezygnacji z pozostałej części urlopu / zasiłku",
+      "basis": "§ 5 ust. 2 pkt 2 rozp.wn.",
+      "used_in": [
+        "W5",
+        "W6"
+      ]
+    },
+    {
+      "id": "DOC17",
+      "name": "Prawomocne orzeczenie o niezdolności matki do samodzielnej egzystencji",
+      "basis": "§ 4 ust. 2 pkt 2 rozp.wn.; § 21 pkt 4; § 22 rozp.zas.",
+      "used_in": [
+        "W6",
+        "W9",
+        "W17"
+      ]
+    },
+    {
+      "id": "DOC18",
+      "name": "Oświadczenie o dacie zgonu / porzucenia dziecka przez matkę",
+      "basis": "§ 20 ust. 3–4 rozp.zas.; § 8, § 9, § 10, § 11 rozp.wn.",
+      "used_in": [
+        "W8"
+      ]
+    },
+    {
+      "id": "DOC19",
+      "name": "Oświadczenie, że matka nie posiada tytułu do ubezpieczenia chorobowego (z PESEL)",
+      "basis": "§ 32 ust. 1 pkt 4 rozp.zas.",
+      "used_in": [
+        "W9",
+        "W30"
+      ]
+    },
+    {
+      "id": "DOC20",
+      "name": "Oświadczenie matki o dacie podjęcia zatrudnienia ≥ ½ etatu (PESEL matki, nazwa i NIP pracodawcy)",
+      "basis": "§ 25 ust. 1 pkt 2 rozp.zas.; § 13 ust. 2 pkt 2 rozp.wn.",
+      "used_in": [
+        "W9"
+      ]
+    },
+    {
+      "id": "DOC21",
+      "name": "Zaświadczenie sądu opiekuńczego o dacie wystąpienia do sądu / kopia wniosku z poświadczeniem",
+      "issuer": "sąd opiekuńczy",
+      "basis": "§ 16 ust. 1 pkt 2 rozp.zas.; § 18 ust. 2 pkt 1 rozp.wn.",
+      "used_in": [
+        "W28"
+      ]
+    },
+    {
+      "id": "DOC22",
+      "name": "Prawomocne lub wydane w trybie zabezpieczenia orzeczenie o umieszczeniu w rodzinie zastępczej / umowa ze starostą",
+      "issuer": "sąd opiekuńczy / starosta",
+      "basis": "§ 16 ust. 2 pkt 1 rozp.zas.",
+      "used_in": [
+        "W28"
+      ]
+    },
+    {
+      "id": "DOC23",
+      "name": "Kopia prawomocnej decyzji o odroczeniu obowiązku szkolnego",
+      "basis": "§ 16 ust. 2 pkt 3; § 30 ust. 1 pkt 9 rozp.zas.",
+      "used_in": [
+        "W11",
+        "W25",
+        "W28"
+      ]
+    },
+    {
+      "id": "DOC24",
+      "name": "Kopia prawomocnego postanowienia sądu o przysposobieniu dziecka",
+      "basis": "§ 33 ust. 1 pkt 1 rozp.zas.; § 17 ust. 2 pkt 2 rozp.wn.",
+      "used_in": [
+        "W21"
+      ]
+    },
+    {
+      "id": "DOC25",
+      "name": "Kopia zaświadczenia „Za życiem” (art. 4 ust. 3 ustawy)",
+      "issuer": "lekarz ubezpieczenia zdrowotnego ze specjalizacją II st. / tytułem specjalisty",
+      "basis": "ust.za.zyciem; § 15 ust. 2 pkt 3 rozp.wn.",
+      "used_in": [
+        "W25",
+        "W26"
+      ]
+    },
+    {
+      "id": "DOC26",
+      "name": "Oświadczenie o posiadaniu przez dziecko zaświadczenia „Za życiem”",
+      "basis": "art. 61b ust. 4a u.z.",
+      "used_in": [
+        "W25",
+        "W41"
+      ]
+    },
+    {
+      "id": "DOC27",
+      "name": "Zaświadczenie płatnika zasiłku o okresie i stawce % zasiłku matki (z PESEL matki)",
+      "issuer": "płatnik zasiłku",
+      "basis": "§ 20 ust. 1 pkt 2; § 23 ust. 1 pkt 2; § 27 ust. 1 pkt 1; § 30 ust. 1 pkt 2 rozp.zas.",
+      "used_in": [
+        "W5",
+        "W6",
+        "W7",
+        "W8",
+        "W23",
+        "W26"
+      ]
+    },
+    {
+      "id": "DOC28",
+      "name": "Zaświadczenie pracodawcy o okresie udzielonego urlopu (macierzyńskiego/uzupełniającego/rodzicielskiego)",
+      "issuer": "pracodawca",
+      "basis": "§ 26 pkt 2; § 29 pkt 2; § 30 ust. 1 pkt 3 rozp.zas.",
+      "used_in": [
+        "W4",
+        "W25",
+        "W26"
+      ]
+    },
+    {
+      "id": "DOC29",
+      "name": "Zaświadczenie pracodawcy o terminie zaprzestania korzystania z urlopu",
+      "issuer": "pracodawca",
+      "basis": "§ 18 ust. 1 pkt 2; § 21 pkt 2; § 24 ust. 1 pkt 3 rozp.zas.; § 18 ust. 1 pkt 3 rozp.wn.",
+      "used_in": [
+        "W5",
+        "W6",
+        "W7"
+      ]
+    },
+    {
+      "id": "DOC30",
+      "name": "Zaświadczenie pracodawcy o okresie i wymiarze pracy w urlopie oraz o wydłużeniu (art. 182¹f § 3–7)",
+      "issuer": "pracodawca",
+      "basis": "§ 29 pkt 2; § 30 ust. 1 pkt 3; § 32 ust. 1 pkt 2 rozp.zas.",
+      "used_in": [
+        "W12",
+        "W25",
+        "W26",
+        "W30"
+      ]
+    },
+    {
+      "id": "DOC31",
+      "name": "Świadectwo pracy / dokument potwierdzający wygaśnięcie lub rozwiązanie stosunku pracy",
+      "basis": "§ 15 ust. 1 pkt 2; § 17 pkt 2 rozp.zas.",
+      "used_in": [
+        "W38",
+        "W39"
+      ]
+    },
+    {
+      "id": "DOC32",
+      "name": "Prawomocne orzeczenie sądu o rozwiązaniu stosunku pracy z naruszeniem przepisów prawa",
+      "issuer": "sąd",
+      "basis": "§ 15 ust. 2 pkt 2 rozp.zas.",
+      "used_in": [
+        "W40"
+      ]
+    },
+    {
+      "id": "DOC33",
+      "name": "Karta wypadku w drodze do pracy lub z pracy",
+      "basis": "§ 10 ust. 1 rozp.zas.",
+      "used_in": [
+        "W46"
+      ]
+    },
+    {
+      "id": "DOC34",
+      "name": "Zaświadczenie lekarskie na zwykłym druku o związku niezdolności z wcześniejszym wypadkiem",
+      "issuer": "lekarz",
+      "basis": "§ 10 ust. 2 rozp.zas.",
+      "used_in": [
+        "W46"
+      ]
+    },
+    {
+      "id": "DOC35",
+      "name": "Zaświadczenie o stanie zdrowia (nie starsze niż miesiąc)",
+      "issuer": "lekarz prowadzący leczenie",
+      "basis": "§ 11 ust. 1 pkt 2 rozp.zas.",
+      "used_in": [
+        "W37"
+      ]
+    },
+    {
+      "id": "DOC36",
+      "name": "Wywiad zawodowy z miejsca pracy",
+      "issuer": "pracodawca",
+      "basis": "§ 11 ust. 1 pkt 3 rozp.zas.",
+      "used_in": [
+        "W37"
+      ],
+      "exemptions": "niezdolność po ustaniu ubezpieczenia, działalność, współpraca, duchowny, marynarz"
+    },
+    {
+      "id": "DOC37",
+      "name": "Protokół ustalenia okoliczności i przyczyn wypadku przy pracy / karta wypadku",
+      "basis": "§ 11 ust. 1 pkt 4 rozp.zas.",
+      "used_in": [
+        "W37"
+      ]
+    },
+    {
+      "id": "DOC38",
+      "name": "Decyzja o stwierdzeniu choroby zawodowej",
+      "issuer": "inspektor sanitarny",
+      "basis": "§ 11 ust. 1 pkt 5 rozp.zas.",
+      "used_in": [
+        "W37"
+      ]
+    },
+    {
+      "id": "DOC39",
+      "name": "Rachunki dotyczące poniesionych kosztów pogrzebu",
+      "basis": "Poradnik ZUS 2026 (zasiłek pogrzebowy)",
+      "used_in": [
+        "W45"
+      ]
+    },
+    {
+      "id": "DOC40",
+      "name": "Orzeczenie o znacznym stopniu niepełnosprawności albo orzeczenie o niepełnosprawności ze wskazaniami",
+      "basis": "§ 37, § 38 rozp.zas.",
+      "used_in": [
+        "W17"
+      ]
+    },
+    {
+      "id": "DOC41",
+      "name": "Decyzja o konieczności izolacji dziecka",
+      "issuer": "właściwy organ / uprawniony podmiot",
+      "basis": "§ 36 ust. 1 pkt 2 rozp.zas.",
+      "used_in": [
+        "W17"
+      ]
+    },
+    {
+      "id": "DOC42",
+      "name": "Kopia prawomocnego orzeczenia o niepełnosprawności/stopniu niepełnosprawności dziecka",
+      "basis": "§ 19 ust. 2 pkt 3 rozp.wn.",
+      "used_in": [
+        "W11"
+      ]
+    },
+    {
+      "id": "DOC43",
+      "name": "Dokumenty adopcyjne dla urlopu wychowawczego (akt zgonu drugiego rodzica / orzeczenie o ubezwłasnowolnieniu / orzeczenie o władzy rodzicielskiej)",
+      "basis": "§ 19 ust. 2 pkt 4 rozp.wn.",
+      "used_in": [
+        "W11"
+      ]
+    },
+    {
+      "id": "DOC44",
+      "name": "Dokumenty zagraniczne (akt urodzenia, zaświadczenie lekarskie) + tłumaczenie na język polski",
+      "basis": "§ 7–9, § 14, § 41 rozp.zas.; § 21 rozp.wn.",
+      "used_in": [
+        "W1",
+        "W15",
+        "W34",
+        "W36",
+        "W17"
+      ],
+      "translation_exempt": [
+        "UE",
+        "EFTA/EOG",
+        "Szwajcaria",
+        "Zjednoczone Królestwo",
+        "państwa stron umów międzynarodowych"
+      ]
+    },
+    {
+      "id": "DOC45",
+      "name": "Oświadczenie płatnika / dane do pozyskania aktu urodzenia przez ZUS (imię, nazwisko, PESEL dziecka, data i miejsce urodzenia, dane rodzica)",
+      "basis": "§ 13 ust. 3–4 rozp.zas.",
+      "used_in": [
+        "W1",
+        "W2",
+        "W10",
+        "W39",
+        "W40"
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "id": "VAR01",
+      "benefit": "W34",
+      "title": "Zasiłek chorobowy w ciąży — pracownik",
+      "applicant": "matka",
+      "channel": "PLATNIK_OR_ZUS",
+      "when": [
+        "insurance_title in [etat, powolanie]",
+        "zla_code == \"B\"",
+        {
+          "waiting_period_passed": true
+        }
+      ],
+      "forms": [
+        "e-ZLA",
+        "Z-3"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5",
+        "F8",
+        "K1",
+        "K2"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3",
+        "B5",
+        "E3",
+        "E4",
+        "E5",
+        "E6",
+        "E8",
+        "E9",
+        "E18",
+        "F5",
+        "F6",
+        "F7",
+        "I5",
+        "I6",
+        "I7"
+      ],
+      "fields_zus": [
+        "E2",
+        "E19",
+        "K4"
+      ],
+      "documents": [
+        "DOC01",
+        "DOC02",
+        "DOC33",
+        "DOC34"
+      ],
+      "duration": "do 270 dni",
+      "amount": "100%",
+      "basis": "art. 6, 8, 11 ust. 2 pkt 1, art. 57 ust. 1 u.z.",
+      "deadlines": [
+        "T20"
+      ]
+    },
+    {
+      "id": "VAR02",
+      "benefit": "W34",
+      "title": "Zasiłek chorobowy w ciąży — nie-pracownik (zlecenie / działalność / współpraca)",
+      "applicant": "matka",
+      "channel": "ZUS",
+      "when": [
+        "insurance_title in [zlecenie, dg, wspolpraca, duchowny, marynarz]",
+        "zla_code == \"B\"",
+        {
+          "waiting_period_90_days_passed": true
+        }
+      ],
+      "forms": [
+        "ZAS-53",
+        "Z-3a",
+        "Z-3b(e-ZUS)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "E1",
+        "E7",
+        "E19",
+        "E20",
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3",
+        "E2",
+        "E5",
+        "F6",
+        "F7"
+      ],
+      "fields_zus": [
+        "E19",
+        "K4"
+      ],
+      "documents": [
+        "DOC01"
+      ],
+      "duration": "do 270 dni",
+      "amount": "100%",
+      "basis": "art. 6, 8, 11 ust. 2 pkt 1 u.z.",
+      "deadlines": []
+    },
+    {
+      "id": "VAR03",
+      "benefit": "W37",
+      "title": "Świadczenie rehabilitacyjne",
+      "applicant": "either",
+      "channel": "ZUS",
+      "when": [
+        {
+          "sickness_period_exhausted": true
+        },
+        {
+          "prospect_of_recovery": true
+        }
+      ],
+      "forms": [
+        "wniosek_swiadczenie_rehabilitacyjne (zał. 5)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "F10",
+        "E11",
+        "E12",
+        "F8",
+        "J28",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3",
+        "B7",
+        "B8",
+        "B9",
+        "E2",
+        "E3",
+        "F1",
+        "F9"
+      ],
+      "fields_zus": [
+        "K4"
+      ],
+      "documents": [
+        "DOC35",
+        "DOC36",
+        "DOC37",
+        "DOC38"
+      ],
+      "duration": "do 12 miesięcy",
+      "amount": "90% / 75% / 100% w ciąży",
+      "basis": "art. 18–22 u.z.; § 11 rozp.zas.",
+      "deadlines": [],
+      "notes": "po ustaniu ubezpieczenia dodatkowo oświadczenie z § 4 (zał. 4)"
+    },
+    {
+      "id": "VAR04",
+      "benefit": "W38",
+      "title": "Zasiłek w wysokości zasiłku macierzyńskiego (upadłość / likwidacja / śmierć pracodawcy)",
+      "applicant": "matka",
+      "channel": "ZUS",
+      "when": [
+        {
+          "employment_ended_in_pregnancy": true
+        },
+        "reason in [upadlosc, likwidacja, smierc_pracodawcy]",
+        {
+          "no_other_employment": true
+        }
+      ],
+      "forms": [
+        "wniosek (zał. 6)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "G1",
+        "G2",
+        "I1",
+        "J12",
+        "K1",
+        "K2"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3",
+        "E2",
+        "E4",
+        "E7"
+      ],
+      "fields_zus": [
+        "K4"
+      ],
+      "documents": [
+        "DOC04",
+        "DOC31",
+        "DOC07"
+      ],
+      "duration": "do dnia porodu",
+      "amount": "100%",
+      "basis": "art. 30 ust. 3 u.z.; § 17 rozp.zas.",
+      "deadlines": []
+    },
+    {
+      "id": "VAR05",
+      "benefit": "W39",
+      "title": "Zasiłek macierzyński po ustaniu ubezpieczenia w ciąży",
+      "applicant": "matka",
+      "channel": "ZUS",
+      "when": [
+        {
+          "insurance_ended_in_pregnancy": true
+        },
+        "reason in [smierc, upadlosc, likwidacja, naruszenie_prawa]"
+      ],
+      "forms": [
+        "ZAM",
+        "Z-3"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "G1",
+        "G2",
+        "G3",
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3",
+        "E2",
+        "E4",
+        "E7",
+        "I5",
+        "I6",
+        "I7"
+      ],
+      "fields_zus": [
+        "K4"
+      ],
+      "documents": [
+        "DOC04",
+        "DOC31",
+        "DOC32",
+        "DOC07",
+        "DOC05",
+        "DOC45"
+      ],
+      "duration": "okres urlopu macierzyńskiego i rodzicielskiego",
+      "amount": "100% / 70%",
+      "basis": "art. 30 ust. 1 u.z.; § 15 rozp.zas.",
+      "deadlines": [],
+      "notes": "odpisu aktu urodzenia nie przedstawia się, gdy płatnikiem zasiłku jest ZUS (§ 13 ust. 2)"
+    },
+    {
+      "id": "VAR06",
+      "benefit": "W1",
+      "title": "Zasiłek macierzyński za urlop macierzyński — pracownica",
+      "applicant": "matka",
+      "channel": "PRACODAWCA_THEN_ZUS",
+      "when": [
+        "insurance_title in [etat, powolanie]",
+        {
+          "insured_on_birth_date": true
+        }
+      ],
+      "forms": [
+        "wniosek o urlop macierzyński",
+        "ZAM (gdy ZUS)",
+        "Z-3"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "C6",
+        "G1",
+        "G2",
+        "G4",
+        "G7",
+        "I1",
+        "I5",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3",
+        "B5",
+        "B6",
+        "B7",
+        "E3",
+        "E4",
+        "E8",
+        "E9",
+        "F6",
+        "F7",
+        "I5",
+        "I6",
+        "I7"
+      ],
+      "fields_zus": [
+        "K4"
+      ],
+      "documents": [
+        "DOC05",
+        "DOC03"
+      ],
+      "document_optional": [
+        "DOC45"
+      ],
+      "duration": "20/31/33/35/37 tyg.",
+      "amount": "100%",
+      "basis": "art. 180 § 1, § 3 k.p.; art. 31 ust. 1 u.z.; § 13 rozp.zas.",
+      "deadlines": []
+    },
+    {
+      "id": "VAR07",
+      "benefit": "W1",
+      "title": "Zasiłek macierzyński — nie-pracownica (ZAM / Z-3b)",
+      "applicant": "matka",
+      "channel": "ZUS",
+      "when": [
+        "insurance_title in [zlecenie, dg, wspolpraca]",
+        {
+          "insured_on_birth_date": true
+        }
+      ],
+      "forms": [
+        "ZAM",
+        "Z-3b (do 24.10.2026)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "C6",
+        "G1",
+        "G2",
+        "G4",
+        "G7",
+        "I1",
+        "E1",
+        "E19",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "E2",
+        "E7"
+      ],
+      "fields_zus": [
+        "K4"
+      ],
+      "documents": [
+        "DOC03",
+        "DOC05",
+        "DOC44"
+      ],
+      "duration": "20/31/33/35/37 tyg.",
+      "amount": "100%",
+      "basis": "art. 180 § 1 k.p.; Poradnik ZUS 2026",
+      "deadlines": []
+    },
+    {
+      "id": "VAR08",
+      "benefit": "W2",
+      "title": "Zasiłek macierzyński za okres przed porodem (max 6 tyg.)",
+      "applicant": "matka",
+      "channel": "PRACODAWCA_THEN_ZUS",
+      "when": [
+        {
+          "pdp_known": true
+        },
+        {
+          "application_at_least_14_days_before_start": true
+        }
+      ],
+      "forms": [
+        "wniosek (§ 2 rozp.wn.)",
+        "ZAM (gdy ZUS)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "G3"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3",
+        "B5",
+        "B6",
+        "B7"
+      ],
+      "documents": [
+        "DOC03"
+      ],
+      "duration": "max 6 tyg. przed PDP",
+      "amount": "100%",
+      "basis": "art. 180 § 2 k.p.; § 2 rozp.wn.; § 13 ust. 1 pkt 1 rozp.zas.",
+      "deadlines": [
+        "T1"
+      ],
+      "notes": "podstawa wymiaru taka sama jak poprzedzającego zasiłku chorobowego"
+    },
+    {
+      "id": "VAR09",
+      "benefit": "W4",
+      "title": "Uzupełniający urlop macierzyński (matka albo ojciec)",
+      "applicant": "either",
+      "channel": "PRACODAWCA_THEN_ZUS",
+      "when": [
+        {
+          "hospital_stay_min_5_days": true
+        },
+        {
+          "immediately_after_maternity": true
+        },
+        {
+          "one_parent_only": true
+        },
+        {
+          "application_at_least_21_days_before": true
+        }
+      ],
+      "forms": [
+        "wniosek (§ 14 rozp.wn.)",
+        "ZAM (gdy ZUS)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "C1",
+        "C2",
+        "C4",
+        "C6",
+        "G4",
+        "H1",
+        "H2",
+        "H3",
+        "H4",
+        "H5",
+        "H6",
+        "I4",
+        "D1",
+        "D2",
+        "D3",
+        "D5",
+        "J1",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3",
+        "B7"
+      ],
+      "fields_zus": [
+        "K4"
+      ],
+      "documents": [
+        "DOC05",
+        "DOC09",
+        "DOC12",
+        "DOC28"
+      ],
+      "duration": "1 tyg. za każdy tyg. hospitalizacji, do 15 tyg. / 8 tyg.",
+      "amount": "100%",
+      "basis": "art. 180² k.p.; § 26–27 rozp.zas.; § 14 rozp.wn.",
+      "deadlines": [
+        "T2"
+      ],
+      "critical_fields": [
+        "H6"
+      ],
+      "notes": "brak terminu zakończenia urlopu macierzyńskiego (H6) = wniosek wadliwy (art. 180² § 6 k.p.)"
+    },
+    {
+      "id": "VAR10",
+      "benefit": "W5",
+      "title": "Rezygnacja matki po 14 tyg. — krok 1: wniosek matki",
+      "applicant": "matka",
+      "channel": "PRACODAWCA_THEN_ZUS",
+      "when": [
+        {
+          "used_at_least_14_weeks_after_birth": true
+        },
+        {
+          "father_takes_over": true
+        }
+      ],
+      "forms": [
+        "wniosek (§ 3 rozp.wn.)",
+        "wniosek (§ 18 rozp.zas.)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "I16",
+        "J7"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3"
+      ],
+      "documents": [
+        "DOC14",
+        "DOC15"
+      ],
+      "basis": "art. 180 § 4 pkt 1, § 8 k.p.; § 3 i § 18 rozp.wn./rozp.zas.",
+      "deadlines": [
+        "T7"
+      ]
+    },
+    {
+      "id": "VAR11",
+      "benefit": "W5",
+      "title": "Rezygnacja matki po 14 tyg. — krok 2: przejęcie przez ojca",
+      "applicant": "ojciec",
+      "channel": "PRACODAWCA_THEN_ZUS",
+      "when": [
+        {
+          "mother_used_at_least_14_weeks": true
+        },
+        {
+          "application_at_least_14_days_before": true
+        },
+        {
+          "father_has_chorobowe": true
+        }
+      ],
+      "forms": [
+        "wniosek (§ 5 rozp.wn.)",
+        "ZAM (gdy ZUS)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "I17",
+        "I4",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3",
+        "B7"
+      ],
+      "fields_zus": [
+        "K4"
+      ],
+      "documents": [
+        "DOC05",
+        "DOC16",
+        "DOC27",
+        "DOC28"
+      ],
+      "duration": "pozostała część urlopu macierzyńskiego",
+      "amount": "100%",
+      "basis": "art. 180 § 4–5, § 9 k.p.; art. 29 ust. 3 u.z.; § 20 rozp.zas.",
+      "deadlines": [
+        "T8"
+      ],
+      "notes": "ZUS bada ubezpieczenie chorobowe ojca"
+    },
+    {
+      "id": "VAR12",
+      "benefit": "W6",
+      "title": "Rezygnacja po 8 tyg. — orzeczenie o niezdolności do samodzielnej egzystencji",
+      "applicant": "ojciec",
+      "allies": "inny_czlonek",
+      "channel": "PRACODAWCA_THEN_ZUS",
+      "when": [
+        {
+          "mother_has_disability_certificate": true
+        },
+        {
+          "used_at_least_8_weeks_after_birth": true
+        }
+      ],
+      "forms": [
+        "wniosek (§ 4 rozp.wn.)",
+        "wniosek (§ 5 ust. 3 rozp.wn.)",
+        "wniosek (§ 21–22 rozp.zas.)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "C1",
+        "C2",
+        "C4",
+        "I16",
+        "I15",
+        "J7",
+        "J17",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3"
+      ],
+      "documents": [
+        "DOC05",
+        "DOC14",
+        "DOC16",
+        "DOC17",
+        "DOC27",
+        "DOC29"
+      ],
+      "duration": "pozostała część",
+      "amount": "100%",
+      "basis": "art. 180 § 6–7 k.p.; art. 29 ust. 5 u.z.; § 21–22 rozp.zas.",
+      "deadlines": []
+    },
+    {
+      "id": "VAR13",
+      "benefit": "W7",
+      "title": "Matka w szpitalu — przejęcie czasowe (po 8 tyg.)",
+      "applicant": "ojciec",
+      "allies": "inny_czlonek",
+      "channel": "PRACODAWCA_THEN_ZUS",
+      "when": [
+        {
+          "mother_in_hospital": true
+        },
+        {
+          "used_at_least_8_weeks_after_birth": true
+        },
+        {
+          "health_prevents_care": true
+        }
+      ],
+      "forms": [
+        "wniosek (§ 6 lub § 7 rozp.wn.)",
+        "wniosek (§ 5 ust. 3 rozp.wn.)",
+        "wniosek (§ 23–24 rozp.zas.)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "I15",
+        "J17",
+        "J18",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3"
+      ],
+      "documents": [
+        "DOC05",
+        "DOC10",
+        "DOC11",
+        "DOC27",
+        "DOC29"
+      ],
+      "duration": "okres hospitalizacji",
+      "amount": "100%",
+      "basis": "art. 180 § 10–11 k.p.; art. 29 ust. 6 u.z.; § 23–24 rozp.zas.",
+      "deadlines": []
+    },
+    {
+      "id": "VAR14",
+      "benefit": "W8",
+      "title": "Zgon / porzucenie przez matkę",
+      "applicant": "ojciec",
+      "allies": "inny_czlonek",
+      "channel": "PRACODAWCA_THEN_ZUS",
+      "when": [
+        {
+          "mother_dead_or_abandoned": true
+        },
+        {
+          "if_abandoned__used_at_least_8_weeks": true
+        }
+      ],
+      "forms": [
+        "wniosek (§ 8 / § 9 / § 10 / § 11 rozp.wn.)",
+        "wniosek (§ 20 ust. 3–4 rozp.zas.)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "J5",
+        "J4",
+        "J17",
+        "I15",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3"
+      ],
+      "documents": [
+        "DOC05",
+        "DOC27",
+        "DOC18"
+      ],
+      "duration": "część po zdarzeniu",
+      "amount": "100%",
+      "basis": "art. 180 § 12–13 k.p.; art. 29 ust. 7 u.z.",
+      "deadlines": []
+    },
+    {
+      "id": "VAR15",
+      "benefit": "W9",
+      "title": "Matka nieubezpieczona — prawo ojca / innego członka",
+      "applicant": "ojciec",
+      "allies": "inny_czlonek",
+      "channel": "PRACODAWCA_THEN_ZUS",
+      "when": [
+        {
+          "mother_uninsured_or_no_title": true
+        },
+        "case in [zgon, porzucenie, niezdolnosc_do_samodzielnej_egzystencji, podjecie_zatrudnienia]"
+      ],
+      "forms": [
+        "wniosek (§ 12 / § 13 rozp.wn.)",
+        "wniosek (§ 22 ust. 2 / § 25 / § 32 rozp.zas.)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "I15",
+        "J8",
+        "J9",
+        "J10",
+        "J11",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3"
+      ],
+      "documents": [
+        "DOC05",
+        "DOC17",
+        "DOC19",
+        "DOC20"
+      ],
+      "duration": "od zdarzenia / w okresie zatrudnienia matki",
+      "amount": "100%",
+      "basis": "art. 180 § 15, § 17 k.p.; art. 29 ust. 9–10 u.z.",
+      "deadlines": [],
+      "notes": "próg: zatrudnienie matki ≥ połowa pełnego wymiaru czasu pracy"
+    },
+    {
+      "id": "VAR16",
+      "benefit": "W10",
+      "title": "Urodzenie martwego dziecka / zgon dziecka",
+      "applicant": "matka",
+      "channel": "PLATNIK_OR_ZUS",
+      "when": [
+        {
+          "stillbirth": true
+        },
+        {
+          "or_death_within_8_weeks": true
+        }
+      ],
+      "forms": [
+        "ZAM",
+        "wniosek o urlop macierzyński",
+        "Z-3"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "C6",
+        "C7",
+        "G2",
+        "G5",
+        "G6",
+        "I1",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "B5",
+        "B6",
+        "B7",
+        "I5",
+        "I6",
+        "I7"
+      ],
+      "fields_zus": [
+        "K4"
+      ],
+      "documents": [
+        "DOC05",
+        "DOC06",
+        "DOC07",
+        "DOC08",
+        "DOC39",
+        "DOC45"
+      ],
+      "duration": "8 tyg. po porodzie (min. 7 dni od zgonu) / 7 dni od zgonu po 8. tyg.",
+      "amount": "100%",
+      "basis": "art. 180¹ § 1–2 k.p.; Poradnik ZUS 2026",
+      "deadlines": [],
+      "usc_option": true,
+      "critical_fields": [
+        "C7",
+        "G5",
+        "G6"
+      ]
+    },
+    {
+      "id": "VAR17",
+      "benefit": "W25",
+      "title": "Urlop rodzicielski — matka lub ojciec",
+      "applicant": "either",
+      "channel": "PRACODAWCA_THEN_ZUS",
+      "when": [
+        {
+          "application_at_least_21_days_before": true
+        },
+        {
+          "parts_used_lt_5": true
+        },
+        {
+          "before_end_of_year_child_turns_6": true
+        }
+      ],
+      "forms": [
+        "wniosek (§ 15 rozp.wn.)",
+        "ZAM (gdy ZUS)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "I2",
+        "I3",
+        "I4",
+        "I8",
+        "I9",
+        "I11",
+        "J2",
+        "D1",
+        "D2",
+        "D3",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3",
+        "B5",
+        "B6",
+        "B7"
+      ],
+      "fields_zus": [
+        "K4"
+      ],
+      "documents": [
+        "DOC05",
+        "DOC13",
+        "DOC25",
+        "DOC26",
+        "DOC27",
+        "DOC28"
+      ],
+      "duration": "41/43 tyg. (65/67 z „Za życiem”); 9 tyg. nieprzenoszalne",
+      "amount": "70% / 81,5%",
+      "basis": "art. 182¹a–182¹d k.p.; art. 31 ust. 2 u.z.; § 29–30 rozp.zas.",
+      "deadlines": [
+        "T3"
+      ],
+      "optional_fields": [
+        "I8",
+        "I9"
+      ]
+    },
+    {
+      "id": "VAR18",
+      "benefit": "W12",
+      "title": "Łączenie urlopu rodzicielskiego z pracą",
+      "applicant": "either",
+      "channel": "PRACODAWCA_THEN_ZUS",
+      "when": [
+        {
+          "work_dimension_max_half": true
+        },
+        {
+          "application_at_least_21_days_before": true
+        }
+      ],
+      "forms": [
+        "wniosek (§ 16 rozp.wn.)",
+        "wniosek (§ 29 pkt 2 / § 30 / § 32 rozp.zas.)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "I12",
+        "I13",
+        "I14",
+        "J27",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3",
+        "B7"
+      ],
+      "documents": [
+        "DOC30"
+      ],
+      "duration": "wydłużenie do 82/86 tyg. (130/134 z „Za życiem”)",
+      "amount": "obniżony proporcjonalnie do wymiaru pracy",
+      "basis": "art. 182¹e–182¹f k.p.; art. 31 ust. 4a u.z.; § 16 rozp.wn.",
+      "deadlines": [
+        "T4",
+        "T5"
+      ],
+      "notes": "wzór: okres wydłużenia = liczba tygodni łączenia × wymiar etatu (art. 182¹f § 2 k.p.)"
+    },
+    {
+      "id": "VAR19",
+      "benefit": "W21",
+      "title": "Urlop ojcowski",
+      "applicant": "ojciec",
+      "channel": "PRACODAWCA_THEN_ZUS",
+      "when": [
+        "insurance_title in [etat, powolanie]",
+        {
+          "child_under_12_months": true
+        },
+        {
+          "application_at_least_7_days_before": true
+        }
+      ],
+      "forms": [
+        "wniosek (§ 17 rozp.wn.)",
+        "ZAM (gdy ZUS)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "I4",
+        "I11",
+        "J14",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3",
+        "B5",
+        "B6",
+        "B7"
+      ],
+      "fields_zus": [
+        "K4"
+      ],
+      "documents": [
+        "DOC05",
+        "DOC24",
+        "DOC44"
+      ],
+      "document_optional_for_adopted": [
+        "DOC24"
+      ],
+      "duration": "2 tyg. (14 dni), 1 lub 2 części ≥ 1 tyg.",
+      "amount": "100%",
+      "basis": "art. 182³ k.p.; art. 31 ust. 1 u.z.; § 33 rozp.zas.; § 17 rozp.wn.",
+      "deadlines": [
+        "T6"
+      ],
+      "exclusive_to": "ojciec"
+    },
+    {
+      "id": "VAR20",
+      "benefit": "W28",
+      "title": "Urlop na warunkach urlopu macierzyńskiego — adopcja / rodzina zastępcza",
+      "applicant": "either",
+      "channel": "PRACODAWCA_THEN_ZUS",
+      "when": [
+        {
+          "child_adopted_or_foster": true
+        },
+        {
+          "not_professional_foster_family": true
+        },
+        {
+          "child_age_within_limit": true
+        },
+        {
+          "application_within_7_days": true
+        }
+      ],
+      "forms": [
+        "wniosek (§ 18 rozp.wn.)",
+        "ZAM (gdy ZUS)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "C1",
+        "C2",
+        "C4",
+        "C8",
+        "C9",
+        "I4",
+        "J3",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3",
+        "B7"
+      ],
+      "fields_zus": [
+        "K4"
+      ],
+      "documents": [
+        "DOC21",
+        "DOC22",
+        "DOC23",
+        "DOC29",
+        "DOC42",
+        "DOC43"
+      ],
+      "duration": "20–37 tyg. (min. 9 tyg.); limit wieku 7/10/14 lat",
+      "amount": "100%",
+      "basis": "art. 183 § 1, § 1¹, § 3, § 6 k.p.; § 16 rozp.zas.",
+      "deadlines": [
+        "T9"
+      ],
+      "notes": "uzupełniający urlop przy adopcji: art. 183 § 3¹ k.p. — pobyt w szpitalu po przyjęciu dziecka"
+    },
+    {
+      "id": "VAR21",
+      "benefit": "W41",
+      "title": "Wniosek o wariant uśredniony 81,5%",
+      "applicant": "matka",
+      "channel": "PLATNIK_OR_ZUS",
+      "when": [
+        {
+          "application_within_21_days_after_birth": true
+        },
+        {
+          "full_dimension_requested": true
+        }
+      ],
+      "forms": [
+        "pisemny wniosek (art. 30a ust. 1 u.z.)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "G2",
+        "I8",
+        "C6",
+        "I9"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3",
+        "B6"
+      ],
+      "documents": [],
+      "duration": "cały okres macierzyński + rodzicielski",
+      "amount": "81,5%",
+      "basis": "art. 30a ust. 1–2; art. 31 ust. 3 u.z.",
+      "deadlines": [
+        "T10"
+      ],
+      "is_option": true,
+      "notes": "z wyłączeniem 9 tyg. przysługujących ojcu (art. 182¹a § 4 k.p.)"
+    },
+    {
+      "id": "VAR22",
+      "benefit": "W42",
+      "title": "Jednorazowe wyrównanie zasiłku do 100%",
+      "applicant": "matka",
+      "channel": "PLATNIK_OR_ZUS",
+      "when": [
+        {
+          "no_day_of_parental_leave_in_first_year": true
+        }
+      ],
+      "forms": [
+        "wniosek ubezpieczonego (art. 31 ust. 4 u.z.)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "C4",
+        "I2",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3"
+      ],
+      "documents": [],
+      "duration": "jednorazowo",
+      "amount": "wyrównanie zasiłku za urlop macierzyński do 100%",
+      "basis": "art. 31 ust. 3g–4 u.z.",
+      "deadlines": [],
+      "is_option": true,
+      "notes": "nie działa z urzędu — wymagany wniosek"
+    },
+    {
+      "id": "VAR23",
+      "benefit": "W44",
+      "title": "Podwyższenie zasiłku macierzyńskiego do świadczenia rodzicielskiego",
+      "applicant": "either",
+      "channel": "PLATNIK_OR_ZUS",
+      "when": [
+        {
+          "monthly_benefit_below_parental_credit": true
+        },
+        {
+          "multiple_titles": true
+        }
+      ],
+      "forms": [
+        "wniosek (§ 28 rozp.zas.)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "J15",
+        "J30",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3"
+      ],
+      "documents": [],
+      "amount": "do wysokości świadczenia rodzicielskiego (proporcjonalnie za część miesiąca)",
+      "basis": "art. 31 ust. 3a–3c u.z.; § 28 rozp.zas.; art. 62 ust. 5–6 u.z.",
+      "deadlines": []
+    },
+    {
+      "id": "VAR24",
+      "benefit": "W17",
+      "title": "Zasiłek opiekuńczy",
+      "applicant": "either",
+      "channel": "PLATNIK_OR_ZUS",
+      "when": [
+        {
+          "no_waiting_period": true
+        },
+        "reason in [zamkniecie_placowki, izolacja, choroba_niani, choroba_rodzica, szpital_rodzica, dziecko_niepelnosprawne, chore_dziecko_do_14, chory_czlonek_rodziny]",
+        {
+          "no_other_carer": true
+        },
+        {
+          "annual_cap_not_exceeded": true
+        }
+      ],
+      "forms": [
+        "Z-15A",
+        "Z-15B",
+        "wniosek (zał. 7)"
+      ],
+      "fields_p": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "F1",
+        "F2",
+        "J21",
+        "J22",
+        "J23",
+        "J24",
+        "K1"
+      ],
+      "fields_pl": [
+        "B1",
+        "B2",
+        "B3",
+        "B5"
+      ],
+      "fields_zus": [
+        "K4"
+      ],
+      "documents": [
+        "DOC40",
+        "DOC41",
+        "DOC01"
+      ],
+      "duration": "60 / 30 / 14 dni; łącznie max 60 dni w roku",
+      "amount": "80%",
+      "basis": "art. 2 pkt 6, art. 32, 32a u.z.; § 34–40 rozp.zas.; zał. 7",
+      "deadlines": [],
+      "critical_fields": [
+        "J21",
+        "J22"
+      ],
+      "notes": "zasiłek NIE jest wypłacany automatycznie — wymagany wniosek; okresu nie wlicza się do okresu zasiłkowego z tytułu własnej choroby"
+    }
+  ],
+  "validation_rules": [
+    {
+      "id": "V1",
+      "severity": "BLOCKER",
+      "condition": "insurance_title == 'brak' AND date == birth_date",
+      "message": "Nie przysługuje zasiłek macierzyński. Sprawdź świadczenie rodzicielskie.",
+      "benefit": "W19"
+    },
+    {
+      "id": "V2",
+      "severity": "WARNING",
+      "condition": "insurance_kind == 'voluntary' AND insurance_days < 90",
+      "message": "Prawo do zasiłku chorobowego powstaje po 90 dniach. Zgłoszenie nie działa wstecz.",
+      "basis": "art. 4 ust. 1 pkt 2 u.z."
+    },
+    {
+      "id": "V3",
+      "severity": "WARNING",
+      "condition": "insurance_kind == 'obligatory' AND insurance_days < 30 AND not waiting_period_exemption",
+      "message": "Prawo powstaje po 30 dniach, chyba że zachodzi wyjątek z art. 4 ust. 3.",
+      "basis": "art. 4 ust. 1 pkt 1 u.z."
+    },
+    {
+      "id": "V4",
+      "severity": "BLOCKER",
+      "condition": "variant == VAR21 AND days_since_birth > 21",
+      "message": "Nie można już wybrać 81,5%. Zasiłek: 100% / 70%.",
+      "basis": "art. 30a ust. 1 u.z."
+    },
+    {
+      "id": "V5",
+      "severity": "BLOCKER",
+      "condition": "variant == VAR19 AND child_age_months > 12",
+      "message": "Prawo do urlopu ojcowskiego wygasło.",
+      "basis": "art. 182³ § 1 pkt 1 k.p."
+    },
+    {
+      "id": "V6",
+      "severity": "BLOCKER",
+      "condition": "variant == VAR11 AND mother_used_weeks < 14 AND not exception_180_6_17",
+      "message": "Ojciec nie może przejąć części urlopu (wyjątki: art. 180 § 6–7, 10–13, 15, 17).",
+      "basis": "art. 180 § 4 k.p."
+    },
+    {
+      "id": "V7",
+      "severity": "BLOCKER",
+      "condition": "mother_used_weeks < 8 AND reason in [disability, hospital]",
+      "message": "Wymagane co najmniej 8 tygodni urlopu po porodzie.",
+      "basis": "art. 180 § 6, § 10 k.p."
+    },
+    {
+      "id": "V8",
+      "severity": "BLOCKER",
+      "condition": "variant == VAR17 AND (parts_used >= 5 OR after_year_child_turns_6)",
+      "message": "Limit 5 części / do końca roku kalendarzowego, w którym dziecko kończy 6 lat.",
+      "basis": "art. 182¹c k.p."
+    },
+    {
+      "id": "V9",
+      "severity": "WARNING",
+      "condition": "variant == VAR17 AND second_parent_9_weeks_unused",
+      "message": "9 tygodni przepada — nie można przenieść.",
+      "basis": "art. 182¹a § 4 k.p."
+    },
+    {
+      "id": "V10",
+      "severity": "BLOCKER",
+      "condition": "variant == VAR18 AND work_dimension > 0.5",
+      "message": "Maksymalnie połowa pełnego wymiaru czasu pracy.",
+      "basis": "art. 182¹e § 1 k.p."
+    },
+    {
+      "id": "V11",
+      "severity": "BLOCKER",
+      "condition": "variant == VAR18 AND extension_weeks > limit(82|86|130|134)",
+      "message": "Przekroczono limit wydłużenia urlopu rodzicielskiego.",
+      "basis": "art. 182¹f § 1 k.p."
+    },
+    {
+      "id": "V12",
+      "severity": "BLOCKER",
+      "condition": "variant == VAR09 AND H6 is null",
+      "message": "Wniosek będzie wadliwy — brak terminu zakończenia urlopu macierzyńskiego.",
+      "basis": "art. 180² § 6 k.p."
+    },
+    {
+      "id": "V13",
+      "severity": "BLOCKER",
+      "condition": "variant == VAR09 AND hospital_days < 5",
+      "message": "Warunek co najmniej 5 dni hospitalizacji nie jest spełniony.",
+      "basis": "Poradnik ZUS 2026"
+    },
+    {
+      "id": "V14",
+      "severity": "BLOCKER",
+      "condition": "variant == VAR09 AND days_before_end_of_maternity < 21",
+      "message": "Termin wniosku: co najmniej 21 dni przed zakończeniem urlopu macierzyńskiego.",
+      "basis": "art. 180² § 4 k.p."
+    },
+    {
+      "id": "V15",
+      "severity": "BLOCKER",
+      "condition": "variant == VAR19 AND days_before_start < 7",
+      "message": "Termin wniosku: co najmniej 7 dni przed rozpoczęciem urlopu.",
+      "basis": "art. 182³ § 2 k.p."
+    },
+    {
+      "id": "V16",
+      "severity": "BLOCKER",
+      "condition": "variant == VAR08 AND days_before_start < 14",
+      "message": "Termin wniosku: co najmniej 14 dni przed rozpoczęciem urlopu.",
+      "basis": "Poradnik ZUS 2026"
+    },
+    {
+      "id": "V17",
+      "severity": "BLOCKER",
+      "condition": "variant == VAR08 AND weeks_before_pdp > 6",
+      "message": "Maksymalnie 6 tygodni przed przewidywaną datą porodu.",
+      "basis": "art. 180 § 2 k.p."
+    },
+    {
+      "id": "V18",
+      "severity": "BLOCKER",
+      "condition": "variant in [VAR17, VAR20] AND days_before_start < 21",
+      "message": "Termin wniosku nie zachowany (21 dni dla rodzicielskiego).",
+      "basis": "art. 182¹d § 1 k.p."
+    },
+    {
+      "id": "V19",
+      "severity": "BLOCKER",
+      "condition": "variant == VAR20 AND days_since_adoption > 7",
+      "message": "Wniosek w terminie 7 dni od przyjęcia dziecka na wychowanie.",
+      "basis": "art. 183 § 6 k.p."
+    },
+    {
+      "id": "V20",
+      "severity": "BLOCKER",
+      "condition": "foster_family_type == 'zawodowa'",
+      "message": "Brak prawa do urlopu na warunkach urlopu macierzyńskiego (rodzina zastępcza zawodowa).",
+      "basis": "art. 183 § 1 k.p.; art. 29 ust. 1 pkt 3 u.z."
+    },
+    {
+      "id": "V21",
+      "severity": "BLOCKER",
+      "condition": "variant == VAR20 AND child_age > limit(7|10|14)",
+      "message": "Limit wieku dziecka przekroczony.",
+      "basis": "art. 183 § 1, § 1¹ k.p."
+    },
+    {
+      "id": "V22",
+      "severity": "BLOCKER",
+      "condition": "debt_amount > 48.06",
+      "message": "Brak prawa do zasiłku do czasu spłaty. Po 6 miesiącach prawo przedawnia się.",
+      "basis": "art. 2a u.z."
+    },
+    {
+      "id": "V23",
+      "severity": "WARNING",
+      "condition": "work_dimension_changed_within_12_months",
+      "message": "Podstawa wymiaru liczona od nowego wymiaru — zasiłek może być niższy.",
+      "basis": "art. 40 u.z."
+    },
+    {
+      "id": "V24",
+      "severity": "WARNING",
+      "condition": "base_increased_during_pregnancy",
+      "message": "Ryzyko decyzji o niższej podstawie. ZUS bada pozorność.",
+      "basis": "Poradnik ZUS 2026 s. 8"
+    },
+    {
+      "id": "V25",
+      "severity": "BLOCKER",
+      "condition": "contract_simulated",
+      "message": "Umowa zawarta dla pozoru nie rodzi skutków — decyzja o niepodleganiu ubezpieczeniom.",
+      "basis": "Poradnik ZUS 2026 s. 8, 11"
+    },
+    {
+      "id": "V26",
+      "severity": "BLOCKER",
+      "condition": "voluntary_registration_retroactive",
+      "message": "Nie jest możliwe. Objęcie od dnia złożenia ZUA.",
+      "basis": "Poradnik ZUS 2026 s. 9, 13"
+    },
+    {
+      "id": "V27",
+      "severity": "BLOCKER",
+      "condition": "months_since_period_end > 6 AND not payer_error",
+      "message": "Roszczenie przedawnione (3 lata przy błędzie ZUS/płatnika).",
+      "basis": "art. 67 u.z."
+    },
+    {
+      "id": "V28",
+      "severity": "BLOCKER",
+      "condition": "earned_work_during_sick_leave",
+      "message": "Utrata zasiłku za cały okres zwolnienia + zwrot z odsetkami.",
+      "basis": "art. 17 ust. 1 u.z."
+    },
+    {
+      "id": "V29",
+      "severity": "WARNING",
+      "condition": "zla_code == 'C'",
+      "message": "Brak zasiłku za pierwsze 5 dni niezdolności.",
+      "basis": "art. 16 u.z."
+    },
+    {
+      "id": "V30",
+      "severity": "BLOCKER",
+      "condition": "period in [urlop_bezplatny, urlop_wychowawczy, urlop_opiekunczy]",
+      "message": "Brak zasiłku i brak wliczenia do okresu zasiłkowego.",
+      "basis": "art. 12 ust. 2 i 3 u.z."
+    },
+    {
+      "id": "V31",
+      "severity": "INFO",
+      "condition": "pregnancy AND sick_period_calculated == 182",
+      "message": "Ciąża wydłuża okres zasiłkowy do 270 dni — sprawdź kod B.",
+      "basis": "art. 8 ust. 1 u.z."
+    },
+    {
+      "id": "V32",
+      "severity": "INFO",
+      "condition": "prior_absence_without_B AND current_B",
+      "message": "Możesz zresetować okres zasiłkowy (art. 9 ust. 2) — sprawdź.",
+      "basis": "art. 9 ust. 2 u.z."
+    },
+    {
+      "id": "V33",
+      "severity": "WARNING",
+      "condition": "care_zla_present AND no_care_application",
+      "message": "Zasiłek nie jest wypłacany automatycznie — złóż Z-15A/Z-15B.",
+      "basis": "Poradnik ZUS 2026 s. 38"
+    },
+    {
+      "id": "V34",
+      "severity": "BLOCKER",
+      "condition": "care_days_used + requested > 60",
+      "message": "Limit łączny 60 dni w roku kalendarzowym.",
+      "basis": "Poradnik ZUS 2026 s. 38"
+    },
+    {
+      "id": "V35",
+      "severity": "INFO",
+      "condition": "sickness_period_exhausted AND no_recovery_prospect",
+      "message": "Brak przesłanek świadczenia rehabilitacyjnego.",
+      "basis": "art. 18 ust. 1 u.z."
+    },
+    {
+      "id": "V36",
+      "severity": "WARNING",
+      "condition": "applicant == 'ojciec' AND insurance_title == 'brak'",
+      "message": "Brak prawa do przejęcia urlopu. Możliwe: zasiłek opiekuńczy / świadczenie rodzicielskie."
+    },
+    {
+      "id": "V37",
+      "severity": "BLOCKER",
+      "condition": "multiple_titles AND uplift_payer_not_selected",
+      "message": "Wskaż płatnika wypłacającego podwyższenie do świadczenia rodzicielskiego.",
+      "basis": "art. 62 ust. 5 u.z."
+    },
+    {
+      "id": "V38",
+      "severity": "BLOCKER",
+      "condition": "insurance_title == 'ulga_na_start'",
+      "message": "Brak ubezpieczenia chorobowego — brak prawa do zasiłków.",
+      "basis": "Poradnik ZUS 2026 s. 15"
+    },
+    {
+      "id": "V39",
+      "severity": "BLOCKER",
+      "condition": "foreign_document AND not from UE/EFTA/CH AND no_translation",
+      "message": "Wymagane tłumaczenie na język polski.",
+      "basis": "§ 7–8 rozp.zas."
+    },
+    {
+      "id": "V40",
+      "severity": "BLOCKER",
+      "condition": "ZUS_cannot_fetch_birth_certificate",
+      "message": "Wezwanie do przedstawienia aktu — min. 14 dni; brak → odmowa wszczęcia postępowania.",
+      "basis": "§ 13 ust. 4 rozp.zas."
+    }
+  ],
+  "deadlines": [
+    {
+      "id": "T1",
+      "action": "Wniosek o urlop macierzyński przed porodem",
+      "days": 14,
+      "before_after": "przed",
+      "reference": "planowane rozpoczęcie urlopu",
+      "basis": "Poradnik ZUS 2026"
+    },
+    {
+      "id": "T2",
+      "action": "Wniosek o uzupełniający urlop macierzyński",
+      "days": 21,
+      "before_after": "przed",
+      "reference": "zakończenie urlopu macierzyńskiego",
+      "basis": "art. 180² § 4 k.p."
+    },
+    {
+      "id": "T3",
+      "action": "Wniosek o urlop rodzicielski",
+      "days": 21,
+      "before_after": "przed",
+      "reference": "rozpoczęcie korzystania z urlopu",
+      "basis": "art. 182¹d § 1 k.p."
+    },
+    {
+      "id": "T4",
+      "action": "Wniosek o łączenie urlopu rodzicielskiego z pracą",
+      "days": 21,
+      "before_after": "przed",
+      "reference": "rozpoczęcie wykonywania pracy",
+      "basis": "art. 182¹e § 2 k.p."
+    },
+    {
+      "id": "T5",
+      "action": "Informacja pracodawcy o odmowie uwzględnienia wniosku o łączenie",
+      "days": 7,
+      "before_after": "po",
+      "reference": "otrzymanie wniosku",
+      "basis": "art. 182¹e § 2 k.p."
+    },
+    {
+      "id": "T6",
+      "action": "Wniosek o urlop ojcowski",
+      "days": 7,
+      "before_after": "przed",
+      "reference": "rozpoczęcie korzystania z urlopu",
+      "basis": "art. 182³ § 2 k.p."
+    },
+    {
+      "id": "T7",
+      "action": "Wniosek matki o rezygnację z części urlopu macierzyńskiego",
+      "days": 7,
+      "before_after": "przed",
+      "reference": "przystąpienie do pracy",
+      "basis": "art. 180 § 8 k.p."
+    },
+    {
+      "id": "T8",
+      "action": "Wniosek ojca o część urlopu macierzyńskiego",
+      "days": 14,
+      "before_after": "przed",
+      "reference": "rozpoczęcie korzystania z części urlopu",
+      "basis": "art. 180 § 9 k.p."
+    },
+    {
+      "id": "T9",
+      "action": "Wniosek o urlop na warunkach urlopu macierzyńskiego",
+      "days": 7,
+      "before_after": "po",
+      "reference": "przyjęcie dziecka na wychowanie",
+      "basis": "art. 183 § 6 k.p.",
+      "additional": "urlop rozpoczyna się w terminie ze wniosku, nie później niż 21 dni od przyjęcia"
+    },
+    {
+      "id": "T10",
+      "action": "Wniosek o zasiłek w wariancie 81,5%",
+      "days": 21,
+      "before_after": "po",
+      "reference": "poród / przyjęcie dziecka na wychowanie",
+      "basis": "art. 30a ust. 1–2 u.z."
+    },
+    {
+      "id": "T11",
+      "action": "Płatnik przekazuje wniosek do ZUS",
+      "days": 7,
+      "before_after": "maks.",
+      "reference": "otrzymanie wniosku",
+      "basis": "art. 61b ust. 5 u.z."
+    },
+    {
+      "id": "T12",
+      "action": "ZUS wypłaca zasiłek",
+      "days": 30,
+      "before_after": "maks.",
+      "reference": "wyjaśnienie ostatniej okoliczności",
+      "basis": "art. 64 ust. 1 u.z."
+    },
+    {
+      "id": "T13",
+      "action": "ZUS wypłaca zasiłek po spłacie zadłużenia",
+      "days": 60,
+      "before_after": "maks.",
+      "reference": "spłata całości zadłużenia",
+      "basis": "art. 64 ust. 3 u.z."
+    },
+    {
+      "id": "T14",
+      "action": "Termin na przedstawienie aktu urodzenia na wezwanie ZUS",
+      "days": 14,
+      "before_after": "min.",
+      "reference": "otrzymanie wezwania",
+      "basis": "§ 13 ust. 4 rozp.zas."
+    },
+    {
+      "id": "T15",
+      "action": "Wniosek o zasiłek pogrzebowy",
+      "days": 365,
+      "before_after": "po",
+      "reference": "dzień pochówku",
+      "basis": "Poradnik ZUS 2026 (12 miesięcy)"
+    },
+    {
+      "id": "T16",
+      "action": "Przedawnienie roszczenia o wypłatę zasiłku",
+      "days": 182,
+      "before_after": "po",
+      "reference": "ostatni dzień okresu, za który zasiłek przysługuje",
+      "basis": "art. 67 ust. 1 u.z.",
+      "alternative": "3 lata (1095 dni) przy błędzie płatnika lub ZUS"
+    },
+    {
+      "id": "T17",
+      "action": "Ustalenie płatnika zasiłku (liczba ubezpieczonych)",
+      "reference": "stan na 30 listopada roku poprzedniego",
+      "basis": "art. 61 ust. 2 u.z."
+    },
+    {
+      "id": "T18",
+      "action": "Płatnik bez profilu informacyjnego informuje ubezpieczonego",
+      "reference": "pierwszy dzień podlegania ubezpieczeniu chorobowemu",
+      "basis": "art. 58 ust. 5 u.z."
+    },
+    {
+      "id": "T19",
+      "action": "Informacja o utworzeniu profilu informacyjnego płatnika",
+      "days": 7,
+      "before_after": "po",
+      "reference": "utworzenie profilu",
+      "basis": "art. 58 ust. 6 u.z."
+    },
+    {
+      "id": "T20",
+      "action": "Przekazanie e-ZLA wystawionego papierowo",
+      "days": 3,
+      "before_after": "maks.",
+      "reference": "wystawienie zaświadczenia",
+      "basis": "art. 55a ust. 9 u.z.",
+      "unit": "dni robocze"
+    },
+    {
+      "id": "T21",
+      "action": "Sprostowanie błędu w e-ZLA",
+      "days": 3,
+      "before_after": "maks.",
+      "reference": "stwierdzenie błędu",
+      "basis": "art. 58a ust. 1 u.z.",
+      "unit": "dni robocze"
+    }
+  ],
+  "missing_in_material": [
+    {
+      "id": "M01",
+      "what": "art. 32 u.z. — zasiłek opiekuńczy (pełny tekst)",
+      "impact": "tylko fragmenty przez § 34–40 rozp.zas. i Poradnik"
+    },
+    {
+      "id": "M02",
+      "what": "art. 2 pkt 3 u.z. — zasiłek wyrównawczy (rozdział)",
+      "impact": "świadczenie wymienione, brak warunków"
+    },
+    {
+      "id": "M03",
+      "what": "art. 176–179 k.p. — ochrona pracy kobiet w ciąży",
+      "impact": "wyciąg k.p. zawiera tylko art. 185"
+    },
+    {
+      "id": "M04",
+      "what": "Ustawa o ubezpieczeniu społecznym z tytułu wypadków przy pracy i chorób zawodowych",
+      "impact": "świadczenia wypadkowe tylko przez odesłanie art. 1 ust. 2 u.z."
+    },
+    {
+      "id": "M05",
+      "what": "Przepisy o uposażeniu macierzyńskim funkcjonariuszy",
+      "impact": "tylko wzmianka w Poradniku"
+    },
+    {
+      "id": "M06",
+      "what": "Ustawa o świadczeniach rodzinnych — świadczenie rodzicielskie (warunki, kwota)",
+      "impact": "tylko odesłanie; kwota konieczna dla progu podwyższenia"
+    },
+    {
+      "id": "M07",
+      "what": "Ustawa o emeryturach i rentach z FUS — zasiłek pogrzebowy (art.)",
+      "impact": "kwota 7000 zł tylko z Poradnika"
+    },
+    {
+      "id": "M08",
+      "what": "algorytm ustalania podstawy wymiaru — pełne zasady uzupełniania",
+      "impact": "w materiale tylko skrót + załącznik DOCX"
+    },
+    {
+      "id": "M09",
+      "what": "art. 186–186⁸ k.p. — urlop wychowawczy (pełny tekst)",
+      "impact": "tylko wniosek (§ 19 rozp.wn.) i Poradnik"
+    },
+    {
+      "id": "M10",
+      "what": "Zestawy przykładowych spraw ZUS",
+      "impact": "wspomniane w zadaniu, nieudostępnione w materiałach"
+    }
+  ],
+  "discrepancies": [
+    {
+      "id": "R01",
+      "topic": "Status formularzy Z-3b / ZUR / ZAO",
+      "sources": [
+        {
+          "src": "Poradnik ZUS 2026 (stan 1.04.2026)",
+          "says": "Z-3b, ZAM, ZUR, ZAO jako odrębne formularze"
+        },
+        {
+          "src": "Treść zadania (przypisy 3–5)",
+          "says": "ZUR, ZAO i Z-3b zlikwidowane od 24.10.2026; wszystko w ZAM"
+        }
+      ],
+      "resolution": "Przyjąć stan od 24.10.2026 → ZAM"
+    },
+    {
+      "id": "R02",
+      "topic": "Zakres podmiotowy uzupełniającego urlopu macierzyńskiego",
+      "sources": [
+        {
+          "src": "art. 180² k.p. + § 26–27 rozp.zas.",
+          "says": "ubezpieczony (matka albo ojciec)"
+        },
+        {
+          "src": "Poradnik ZUS 2026",
+          "says": "zatrudnieni na podstawie umowy o pracę"
+        },
+        {
+          "src": "art. 183 § 3¹ k.p.",
+          "says": "wprost dopuszcza przy przyjęciu dziecka na wychowanie (adopcja)"
+        }
+      ],
+      "resolution": "Rozstrzygać na korzyść ubezpieczonego; w narzędziu pokazywać z adnotacją weryfikacji"
+    },
+    {
+      "id": "R03",
+      "topic": "Numer Dz.U. rozporządzenia zasiłkowego",
+      "sources": [
+        {
+          "src": "Poradnik ZUS 2026",
+          "says": "Dz.U. 2025 poz. 616 / 2026 poz. 890"
+        },
+        {
+          "src": "Wyciąg rozporządzenia",
+          "says": "Dz.U. 2026 poz. 1316; § 42 uchyla poprzednie"
+        }
+      ],
+      "resolution": "Właściwe: Dz.U. 2026 poz. 1316"
+    },
+    {
+      "id": "R04",
+      "topic": "Próg zatrudnienia matki w art. 29 ust. 10 u.z.",
+      "sources": [
+        {
+          "src": "Wyciąg u.z.",
+          "says": "wymiarze nieniższym niż połowa (literówka)"
+        },
+        {
+          "src": "art. 180 § 17 k.p. / § 25 rozp.zas.",
+          "says": "nie niższym niż połowa pełnego wymiaru"
+        }
+      ],
+      "resolution": "Próg = połowa etatu; do weryfikacji w ISAP"
+    },
+    {
+      "id": "R05",
+      "topic": "Limit uzupełniającego urlopu macierzyńskiego",
+      "sources": [
+        {
+          "src": "Poradnik ZUS 2026 / załącznik DOCX",
+          "says": "do 15 tyg. / do 8 tyg."
+        },
+        {
+          "src": "art. 180² § 1 k.p.",
+          "says": "tydzień za każdy tydzień hospitalizacji z limitem czasowym"
+        }
+      ],
+      "resolution": "Maksymalny wymiar: 15 tyg. (przypadki 1–3) albo limit 8 tyg. (przypadki 4–5)"
+    },
+    {
+      "id": "R06",
+      "topic": "Zasiłek opiekuńczy — limit dni",
+      "sources": [
+        {
+          "src": "Poradnik ZUS 2026",
+          "says": "60 / 30 / 14 dni; łącznie max 60 dni"
+        },
+        {
+          "src": "art. 32 u.z.",
+          "says": "brak pełnego tekstu w wyciągu"
+        }
+      ],
+      "resolution": "Przyjąć Poradnik; zweryfikować art. 32 u.z. w ISAP"
+    }
+  ]
+}
