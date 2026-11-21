@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import AppHeader from "../components/AppHeader.jsx";
 import { useProfile } from "../profile.js";
+import { api } from "../api.js";
 import { CFG } from "../calculators/config.js";
 import { przygotujDruk, ocenWniosek, wariantById } from "../engine/index.js";
 import { D } from "../engine/wnioski/druki.js";
@@ -41,7 +42,14 @@ export default function Druk() {
   const [params] = useSearchParams();
   const wariantId = params.get("v");
   const [wartosci, setWartosci] = useState({});
-  const ustaw = (id, v) => setWartosci((w) => ({ ...w, [id]: v }));
+  const ustaw = (id, v) => {
+    setWartosci((w) => ({ ...w, [id]: v }));
+    setWyslany(null); // po zmianie danych trzeba wysłać od nowa
+  };
+  const [potwierdzenie, setPotwierdzenie] = useState(false);
+  const [wysylanie, setWysylanie] = useState(false);
+  const [wyslany, setWyslany] = useState(null);
+  const [bladWysylki, setBladWysylki] = useState("");
 
   const druk = useMemo(
     () => (profile ? przygotujDruk(profile, wariantId, { params: CFG, wartosci }) : null),
@@ -71,6 +79,40 @@ export default function Druk() {
   }
 
   const bledy = druk.ostrzezenia.filter((o) => o.poziom === "blad");
+  const pole = (id) => druk.pola.find((p) => p.id === id)?.wartosc || null;
+  // Wysłać można tylko kompletny wniosek bez błędów – wydrukować zawsze (puste pola zostają do wpisania ręcznie).
+  const blokada = bledy.length > 0 ? "Popraw błędy we wniosku (wyżej)."
+    : druk.brakujace.length > 0 ? `Uzupełnij: ${druk.brakujace.join(", ")}.`
+    : ocena?.status === "niedostepny" ? "Według „Moje dane” ten wariant Ci nie przysługuje."
+    : null;
+
+  const wyslij = async () => {
+    setWysylanie(true);
+    setBladWysylki("");
+    try {
+      const d = await api("/api/wnioski/wyslij", {
+        method: "POST",
+        body: {
+          wariantId: druk.id,
+          tryb: druk.tryb,
+          tytul: druk.tytul,
+          adresat: druk.naglowek.adresat[0],
+          tresc: druk.tryb === "zam"
+            ? druk.pola.filter((p) => String(p.wartosc).trim()).map((p) => `${p.etykieta}: ${p.typ === "date" ? D(p.wartosc) : p.wartosc}`)
+            : druk.tresc,
+          zalaczniki: druk.zalaczniki,
+          od: pole("od"),
+          do: pole("do"),
+          potwierdzenie,
+        },
+      });
+      setWyslany(d.wniosek);
+    } catch (err) {
+      setBladWysylki(err.message);
+    } finally {
+      setWysylanie(false);
+    }
+  };
 
   return (
     <div className="app">
@@ -139,6 +181,37 @@ export default function Druk() {
             </button>
             {bledy.length > 0 && <span className="note"> – we wniosku są błędy (wyżej), popraw je przed złożeniem.</span>}
           </p>
+
+          <section className="result-card" aria-labelledby="druk-wyslij">
+            <h2 className="result-title" id="druk-wyslij">
+              <span className="badge b-warn">SYMULACJA</span>{" "}
+              {druk.tryb === "zam" ? "Wyślij do ZUS przez PUE/eZUS" : "Wyślij do pracodawcy elektronicznie"}
+            </h2>
+            {wyslany ? (
+              <div role="status">
+                <p><b>Wysłano.</b> Numer wniosku: <b>{wyslany.numer}</b>{wyslany.upo && <> · UPO: <b>{wyslany.upo}</b></>}</p>
+                <p>Status: {wyslany.status}. Kolejne etapy zobaczysz w <Link to="/zus">„Dane z ZUS” → „Twoje wnioski”</Link>.</p>
+                <p className="note">W symulacji status zmienia się sam po ok. 20 s i 1 min. Nic nie trafia do prawdziwego pracodawcy ani do ZUS.</p>
+              </div>
+            ) : (
+              <>
+                <p className="note">
+                  {druk.tryb === "zam"
+                    ? "W docelowej wersji wniosek trafi do PUE/eZUS podpisany profilem zaufanym, a ZUS odeśle Urzędowe Poświadczenie Odbioru (UPO)."
+                    : "W docelowej wersji pismo trafi do pracodawcy przez jego system kadrowy albo e-mail, z potwierdzeniem doręczenia."}
+                </p>
+                <label className="check-row">
+                  <input type="checkbox" checked={potwierdzenie} onChange={(e) => setPotwierdzenie(e.target.checked)} />{" "}
+                  Potwierdzam, że dane we wniosku są zgodne z prawdą.
+                </label>
+                {blokada && <p className="field-error">{blokada}</p>}
+                {bladWysylki && <p className="field-error" role="alert">{bladWysylki}</p>}
+                <button type="button" className="btn btn-outline" disabled={!!blokada || !potwierdzenie || wysylanie} onClick={wyslij}>
+                  {wysylanie ? "Wysyłanie…" : druk.tryb === "zam" ? "Wyślij do ZUS (symulacja)" : "Wyślij do pracodawcy (symulacja)"}
+                </button>
+              </>
+            )}
+          </section>
           <h2>Podgląd</h2>
         </div>
 
