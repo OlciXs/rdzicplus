@@ -30,12 +30,29 @@ function load() {
 
 const data = load();
 
+// Płeć z PESEL-u: 10. cyfra parzysta = kobieta ("K"), nieparzysta = mężczyzna ("M").
+// Kalkulatory (useProfileDefaults) na tej podstawie wpisują dane w pola matki albo ojca.
+const plecZPesel = (pesel) => (/^\d{11}$/.test(pesel ?? "") ? (Number(pesel[9]) % 2 ? "M" : "K") : "");
+
+// Data urodzenia z PESEL-u (RRMMDD; do miesiąca dodaje się 80/0/20/40/60 dla lat 1800/1900/2000/2100/2200).
+const dataUrodzeniaZPesel = (pesel) => {
+  if (!/^\d{11}$/.test(pesel ?? "")) return "";
+  const rr = Number(pesel.slice(0, 2));
+  const mm = Number(pesel.slice(2, 4));
+  const dd = pesel.slice(4, 6);
+  const [wiek, odjac] = mm > 80 ? [1800, 80] : mm > 60 ? [2200, 60] : mm > 40 ? [2100, 40] : mm > 20 ? [2000, 20] : [1900, 0];
+  return `${wiek + rr}-${String(mm - odjac).padStart(2, "0")}-${dd}`;
+};
+
+// Pola wyliczane z PESEL-u (z mObywatela) – nie da się ich nadpisać z formularza.
+const zPesel = (user) => ({ plec: plecZPesel(user?.pesel), dataUrodzenia: dataUrodzeniaZPesel(user?.pesel) });
+
 const emptyProfile = (user) => ({
   ubezpieczony: {
     imie: user?.imie || "",
     nazwisko: user?.nazwisko || "",
     peselMasked: user ? "*".repeat(7) + user.pesel.slice(-4) : "",
-    dataUrodzenia: "",
+    ...zPesel(user),
     adres: "",
     rachunek: "",
     statusUbezpieczenia: "",
@@ -79,6 +96,8 @@ export const db = {
     const user = data.users.find((u) => u.id === userId);
     if (!user) return null;
     if (!user.profile) user.profile = emptyProfile(user);
+    // profile zapisane wcześniej nie miały płci i daty urodzenia – uzupełniamy z PESEL-u
+    Object.assign(user.profile.ubezpieczony, zPesel(user));
     if (!user.profileUpdatedAt) user.profileUpdatedAt = null;
     save();
     return { profile: user.profile, updatedAt: user.profileUpdatedAt };
@@ -100,6 +119,7 @@ export const db = {
     user.profile.ubezpieczony.imie = user.imie;
     user.profile.ubezpieczony.nazwisko = user.nazwisko;
     user.profile.ubezpieczony.peselMasked = "*".repeat(7) + user.pesel.slice(-4);
+    Object.assign(user.profile.ubezpieczony, zPesel(user)); // nie da się nadpisać z formularza
     user.profileUpdatedAt = new Date().toISOString();
     save();
     return { profile: user.profile, updatedAt: user.profileUpdatedAt };
