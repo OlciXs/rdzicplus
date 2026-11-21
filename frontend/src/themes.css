@@ -143,6 +143,8 @@ h2 { font-size: 1.1rem; margin: 0 0 8px; color: var(--color-navy); }
 .info-card-heading h2 { margin: 0; }
 .text-link { color: var(--color-navy); font-weight: 600; text-decoration: none; }
 .text-link:hover { text-decoration: underline; }
+.official-page .result-stack { margin-bottom: 24px; }
+.official-page .info-card { margin-top: 8px; }
 
 
 /* pasek górny – akcje */

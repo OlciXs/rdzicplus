@@ -26,6 +26,8 @@ export default function AppHeader({ actions = null, children = null }) {
                 <Link to="/zus">Dane z ZUS</Link>
                 <Link to="/odpis-aktu">Odpis aktu urodzenia</Link>
                 <Link to="/wnioski">Wnioski</Link>
+                <Link to="/wsparcie">Wsparcie i sytuacje szczególne</Link>
+                <Link to="/informacje">Informacje urzędowe i linki</Link>
               </>
             ) : (
               <Link to="/logowanie">Zaloguj się</Link>

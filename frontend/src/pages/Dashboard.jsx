@@ -151,6 +151,24 @@ export default function Dashboard() {
           </span>
           <span className="calc-cta-arrow" aria-hidden="true">→</span>
         </Link>
+
+        <Link className="calc-cta" to="/wsparcie">
+          <span className="calc-cta-icon" aria-hidden="true">🤝</span>
+          <span className="calc-cta-body">
+            <span className="calc-cta-title">Wsparcie w sytuacjach szczególnych</span>
+            <span className="calc-cta-desc">Hospicja i fundacje dla wcześniaków oraz rodzin po stracie dziecka.</span>
+          </span>
+          <span className="calc-cta-arrow" aria-hidden="true">→</span>
+        </Link>
+
+        <Link className="calc-cta" to="/informacje">
+          <span className="calc-cta-icon" aria-hidden="true">ℹ️</span>
+          <span className="calc-cta-body">
+            <span className="calc-cta-title">Informacje urzędowe i przekierowania</span>
+            <span className="calc-cta-desc">ZUS, gov.pl, Ministerstwo Rodziny i Państwowa Inspekcja Pracy.</span>
+          </span>
+          <span className="calc-cta-arrow" aria-hidden="true">→</span>
+        </Link>
       </main>
     </div>
   );
