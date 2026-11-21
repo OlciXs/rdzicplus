@@ -60,6 +60,7 @@ jobs:
             --zone=${{ secrets.GCE_ZONE }} \
             --tunnel-through-iap \
             --command="
+              sudo mkdir -p /opt/app &&
               sudo mv /tmp/docker-compose.yml /opt/app/docker-compose.yml &&
               sudo docker compose -f /opt/app/docker-compose.yml pull &&
               sudo docker compose -f /opt/app/docker-compose.yml up -d --remove-orphans &&
