@@ -145,7 +145,13 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-const isNum = (v) => typeof v === "number" && Number.isFinite(v);
+// Wszystkie parametry kalkulatorów są nieujemne. Stawki i potrącenie to procenty (≤ 100),
+// wymiar etatu to ułamek (≤ 1), pozostałe (kwoty, dni, tygodnie) – rozsądny górny limit.
+// Bez tego panel admina przyjmował np. stawkę −5% albo 1e9 i psuł wyliczenia wszystkim.
+const MAX_PARAM = (k) => (/^st[A-Z]/.test(k) || k === "potracenie" ? 100 : k === "maksEtuLaczenie" ? 1 : 1_000_000);
+const isNum = (v, max) => typeof v === "number" && Number.isFinite(v) && v >= 0 && v <= max;
+const ZAKAZANE_KLUCZE = new Set(["__proto__", "constructor", "prototype"]);
+const kluczOk = (k, len) => !ZAKAZANE_KLUCZE.has(k) && new RegExp(`^[\\p{L}\\d_]{1,${len}}$`, "u").test(k);
 
 // Dozwolone: { klucz: liczba } albo { klucz: { podklucz: liczba } }.
 function validOverrides(o) {
@@ -153,10 +159,10 @@ function validOverrides(o) {
   const entries = Object.entries(o);
   if (entries.length > 200) return false;
   return entries.every(([k, v]) =>
-    /^[\p{L}\d_]{1,60}$/u.test(k) &&
-    (isNum(v) ||
+    kluczOk(k, 60) &&
+    (isNum(v, MAX_PARAM(k)) ||
       (v && typeof v === "object" && !Array.isArray(v) &&
-        Object.entries(v).every(([sk, sv]) => /^[\p{L}\d_]{1,30}$/u.test(sk) && isNum(sv))))
+        Object.entries(v).every(([sk, sv]) => kluczOk(sk, 30) && isNum(sv, MAX_PARAM(k)))))
   );
 }
 
@@ -167,7 +173,7 @@ app.get("/api/params", (req, res) => {
 app.put("/api/params", requireAdmin, (req, res) => {
   const { overrides } = req.body ?? {};
   if (!validOverrides(overrides)) {
-    return res.status(400).json({ error: "Parametry muszą być liczbami." });
+    return res.status(400).json({ error: "Parametry muszą być nieujemnymi liczbami (stawki do 100%, etat do 1)." });
   }
   res.json({ overrides: db.setParamOverrides(overrides) });
 });
@@ -178,6 +184,15 @@ app.delete("/api/params", requireAdmin, (req, res) => {
 
 /* ---------- Symulacje usług ZUS i USC (dane fikcyjne) – backend/zus-mock.js ---------- */
 registerZusMockRoutes(app, requireAuth);
+
+// Błędy parsowania (zepsuty JSON, za duże zapytanie) – krótka odpowiedź JSON zamiast HTML-a
+// ze stack trace'em w logach i w odpowiedzi.
+app.use((err, req, res, next) => {
+  if (err?.type === "entity.parse.failed") return res.status(400).json({ error: "Niepoprawny JSON w zapytaniu." });
+  if (err?.type === "entity.too.large") return res.status(413).json({ error: "Zapytanie jest zbyt duże." });
+  console.error(err);
+  res.status(500).json({ error: "Błąd serwera." });
+});
 
 app.listen(PORT, () => {
   console.log(`Backend działa na http://localhost:${PORT}`);

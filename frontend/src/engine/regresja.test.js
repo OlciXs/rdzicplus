@@ -83,15 +83,32 @@ describe("B-02 · uzupełniający urlop wymaga co najmniej 5 dni hospitalizacji"
   it("30 dni → 5 tygodni", () => expect(hosp(30)).toBe(5));
 });
 
-describe("B-03 · część urlopu przejęta przez ojca to zawsze 70%", () => {
+// B-03 (skorygowane): 70% z art. 31 ust. 3f dotyczy 9 tygodni URLOPU RODZICIELSKIEGO drugiego
+// rodzica (patrz oboje.js / test „9 tyg. ojca po 70%”). Przejęta przez ojca część URLOPU
+// MACIERZYŃSKIEGO to zasiłek 100% od podstawy ojca (art. 31 ust. 1 u.z.; katalog W5/W22).
+describe("B-03 · część urlopu MACIERZYŃSKIEGO przejęta przez ojca – 100%", () => {
   const r = zasilekMacierzynski({
     dzieci: 1, porod: "2026-03-01", podstawaMatki: 5000, podstawaOjca: 4000,
     wniosek815: true, tygodnieDlaOjca: 3,
   });
 
   it("matka pozostaje w wariancie 81,5%", () => expect(r.stMac).toBe(81.5));
-  it("ojciec ma 70% (art. 31 ust. 3f u.z.)", () => {
-    expect(r.wiersze.find((w) => w.id === "ojciecMac")?.stawka).toBe(70);
+  it("ojciec ma 100% za przejęty urlop macierzyński", () => {
+    expect(r.wiersze.find((w) => w.id === "ojciecMac")?.stawka).toBe(100);
+  });
+});
+
+describe("przejęcie ponad limit nie daje ujemnych kwot (fuzz)", () => {
+  const r = zasilekMacierzynski({ dzieci: 1, porod: "2026-03-01", podstawaMatki: 5000, podstawaOjca: 4000, tygodnieDlaOjca: 30 });
+  it("błąd zgłoszony, ojciec przycięty do 6 tyg., matka 14 tyg.", () => {
+    expect(r.bladOjca).toBe(true);
+    expect(r.dlaOjcaWpisane).toBe(30);
+    expect(r.dlaOjca).toBe(6);
+    expect(r.wiersze.find((w) => w.id === "po").dni).toBe(98);
+    expect(r.sumaMatka).toBeGreaterThan(0);
+  });
+  it("martwe urodzenie: maksimum dla ojca nie jest ujemne", () => {
+    expect(zasilekMacierzynski({ sytuacja: "martwe", porod: "2026-03-01", podstawaMatki: 5000, tygodnieDlaOjca: 3 }).maxDlaOjca).toBe(0);
   });
 });
 

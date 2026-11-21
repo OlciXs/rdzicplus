@@ -102,6 +102,7 @@ Rodzic wypełnia „Moje dane”, wybiera wniosek, a silnik ocenia **każdy wari
 | `engine/regresja.test.js` | testy regresyjne do każdego naprawionego błędu z `RAPORT_BLEDOW.md` (B-01…B-24) |
 | `engine/wnioski/spojnosc.test.js` | spójność rejestru z `engine/dane/zus_dane_2026.json` (podstawy prawne, unikalność ID, pokrycie wniosków) |
 | `engine/walidacja.js` | sanityzacja wejścia silnika (`NaN`/`Infinity`/wartości ujemne nie wchodzą do wyliczeń) |
+| `engine/fuzz.test.js` | testy losowe (stałe ziarno, powtarzalne): 3000 losowych/„śmieciowych” profili przez wszystkie wnioski i 3000 wejść kalkulatorów – bez wyjątków, bez `NaN`/`undefined`/ujemnych kwot w tekstach, spójne statusy (np. `dostepny` ⇒ wszystkie warunki spełnione) i reguły biznesowe (limit łączenia, suma macierzyńskiego, 70% ojca ≤ 9 tyg.) |
 | `engine/wnioski/wnioski.test.js` | testy na rodzinach: etat w ciąży, działalność z długiem, zlecenie (90 dni), studentka, utrata pracy w ciąży, ojciec przejmujący urlop (14 tyg., szpital, zgon, matka nieubezpieczona), wcześniak, martwe urodzenie, adopcja, 81,5%, rodzicielski, opiekuńczy |
 
 Ekran: `frontend/src/pages/Wnioski.jsx` (`/wnioski`) – kafelki wniosków z licznikami (najpierw to, co przysługuje),

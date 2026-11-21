@@ -57,9 +57,13 @@ export function zasilekMacierzynski(input, P = DEFAULT_PARAMS) {
   }
 
   /* podział z ojcem (po 14 tyg. matki) */
-  const dlaOjca = Math.max(0, tygodnieDlaOjca);
-  const maxDlaOjca = tygMac - przed - P.wylaczneMacierzynskieMatki;
-  const bladOjca = sytuacja === "brak" && dlaOjca > maxDlaOjca;
+  const dlaOjcaWpisane = Math.max(0, tygodnieDlaOjca);
+  // Ojciec może przejąć tylko to, co zostaje po 14 tygodniach matki (i części przed porodem).
+  const maxDlaOjca = Math.max(0, tygMac - przed - P.wylaczneMacierzynskieMatki);
+  const bladOjca = sytuacja === "brak" && dlaOjcaWpisane > maxDlaOjca;
+  // Do wyliczeń przycinamy do maksimum – wcześniej nadmiar dawał matce ujemne dni i ujemną kwotę
+  // (wykryte testem fuzz). Komunikat o błędzie pokazuje UI na podstawie `bladOjca`.
+  const dlaOjca = Math.min(dlaOjcaWpisane, maxDlaOjca);
 
   /* urlop uzupełniający (wcześniak / hospitalizacja, KP art. 180²) */
   let tygUzup = 0;
@@ -94,10 +98,11 @@ export function zasilekMacierzynski(input, P = DEFAULT_PARAMS) {
     const dniPo = (tygMac - przed - dlaOjca) * 7;
     dodaj({ id: "po", opis: "Urlop macierzyński po porodzie", kto: "matka", dni: Math.round(dniPo), stawka: stMac, kwota: zasilek(podstawaMatki, stMac, dniPo, P) });
     if (dlaOjca > 0) {
-      // B-03: art. 31 ust. 3f u.z. — zasiłek za część urlopu przejętą przez ojca wynosi
-      // ZAWSZE 70% podstawy, także przy wariancie uśrednionym 81,5% (art. 30a ust. 1 u.z.
-      // wyłącza 9 tygodni drugiego rodzica z wniosku o 81,5%).
-      dodaj({ id: "ojciecMac", opis: "Część urlopu macierzyńskiego przejęta", kto: "ojciec", dni: dlaOjca * 7, stawka: P.stRodzicielski, kwota: zasilek(podstawaOjca, P.stRodzicielski, dlaOjca * 7, P) });
+      // Przejęta przez ojca część URLOPU MACIERZYŃSKIEGO: zasiłek 100% od podstawy ojca
+      // (art. 31 ust. 1 u.z.; katalog W5/W22). Stawka 70% z art. 31 ust. 3f dotyczy wyłącznie
+      // 9 tygodni URLOPU RODZICIELSKIEGO drugiego rodzica (liczy je oboje.js), nie tej części.
+      // (Wcześniejsza „poprawka B-03” ustawiała tu 70% – to pomyliło oba urlopy.)
+      dodaj({ id: "ojciecMac", opis: "Część urlopu macierzyńskiego przejęta", kto: "ojciec", dni: dlaOjca * 7, stawka: P.stMacierzynski, kwota: zasilek(podstawaOjca, P.stMacierzynski, dlaOjca * 7, P) });
     }
     if (tygUzup > 0) {
       dodaj({ id: "uzupelniajacy", opis: "Uzupełniający urlop macierzyński", kto: "matka", dni: tygUzup * 7, stawka: P.stMacierzynski, kwota: zasilek(podstawaMatki, P.stMacierzynski, tygUzup * 7, P) });
@@ -117,7 +122,7 @@ export function zasilekMacierzynski(input, P = DEFAULT_PARAMS) {
   return {
     tygMac,
     przed,
-    poPorodzie: tygMac - przed,
+    poPorodzie: Math.max(0, tygMac - przed), // przy martwym urodzeniu wymiar bywa krótszy niż część „przed porodem”
     stMac,
     stRodz,
     // B-04: brak podstawy wymiaru (np. matka nieubezpieczona) — sygnalizujemy zamiast
@@ -125,7 +130,8 @@ export function zasilekMacierzynski(input, P = DEFAULT_PARAMS) {
     brakPodstawy: !(podstawaMatki > 0),
     brakPodstawyOjca: !(podstawaOjca > 0),
     martwe,
-    dlaOjca,
+    dlaOjca, // przycięte do maksimum (użyte w kwotach)
+    dlaOjcaWpisane, // tyle, ile wpisał użytkownik (do komunikatu o błędzie)
     maxDlaOjca,
     bladOjca,
     wczesniak,

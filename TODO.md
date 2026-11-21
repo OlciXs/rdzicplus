@@ -16,6 +16,23 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 > **Następne:** generator samego wniosku do druku / PDF dla najczęstszych wariantów (W1, W2, W21, W25, W22, W4, W28) – dane z profilu wstawione w pola, oświadczenia jako checkboxy; drobne: `db.json` – cofnąć `mob-mariuszz` (test Enarda) i dodać plik do `.gitignore`.
 > **Do weryfikacji (oznaczone w kodzie `do_potwierdzenia`):** W4 uzupełniający dla nie-pracowników, W12 łączenie z pracą (wydłużona część, pole I14), W44 podwyższenie (szacunek podatku), W47 chorobowy po ustaniu (14 dni), W11 staż 6 mies., W19 świadczenie rodzicielskie (poza ZUS). W dokumentach Mistrala jest też nieaktualny **Z-3b** (zlikwidowany 24.10.2026) – w rejestrze go nie używamy.
 
+### Przegląd i testy zaawansowane (Claude, sobota 21.11 wieczorem, bez commita)
+Sprawdzone: **171 testów** (5 plików, w tym nowy `fuzz.test.js` – 6000 losowych przypadków), build, 34 testy brzegowe API (bezpośrednio i przez proxy frontu w Dockerze), Docker (`docker compose up --build`: oba kontenery healthy, wszystkie strony 200), przeglądarka (logowanie, panel, profil, ZUS, odpis, 12 wniosków, kalkulator macierzyński, admin) – bez `NaN`/`undefined`, bez błędów w konsoli.
+
+**Naprawione:**
+- [x] **b) Macierzyński: ujemne dni i kwoty**, gdy ojcu wpisano więcej tygodni, niż może przejąć (np. 30 → matka „−112 dni”, ujemna kwota). Teraz kwoty liczą maksimum (6 tyg.), a UI pokazuje „Wpisano 30 tyg., a ojciec może przejąć max 6 tyg.”. `poPorodzie` przy martwym urodzeniu nie spada poniżej 0 (wykryte testem fuzz)
+- [x] **Cofnięta „poprawka B-03”** z `RAPORT_BLEDOW.md`: przejęta przez ojca część **urlopu macierzyńskiego** znowu po **100%** (art. 31 ust. 1 u.z.). 70% z art. 31 ust. 3f dotyczy tylko 9 tygodni **urlopu rodzicielskiego** drugiego rodzica – to liczy `oboje.js`
+- [x] **Rejestr wniosków niespójny z kalkulatorami po zmianach Montarexa:** pula rodzicielska 38 tyg. (rodzina zastępcza) liczyła się też przy przysposobieniu (ma być 41); W4 (uzupełniający) nie sprawdzał minimum 5 dni w szpitalu; odwrócone daty szpitala dawały ujemną liczbę dni
+- [x] **Backend:** obiekty/tablice w polach profilu zapisywały się jako „[object Object]”; panel admina przyjmował stawkę −5% albo 1e9 (teraz: nieujemne, stawki ≤ 100, etat ≤ 1, ochrona `__proto__`); odpis aktu przyjmował 30 lutego i datę urodzenia z przyszłości; zepsuty JSON zwracał HTML ze stack trace'em (teraz JSON 400/413)
+
+**Do decyzji / potwierdzenia (nie zmieniałem):**
+- [ ] **B-05 (łączenie z pracą):** tabela w raporcie się nie zgadza (dosłownie „× etat” przy ½ etatu daje 61,5, nie 82). Nasz wzór `urlop ÷ (1 − etat)` zakłada pracę także w wydłużonej części (pole I14) – to dwa warianty, oba opisane w `laczenie.js`
+- [ ] **B-01:** „poprawka” jest matematycznie identyczna z oryginałem – bez skutków, ale niepotrzebna
+- [ ] `minPodstawaPracownik` = **4 147,10** (Montarex) vs **4 147,09** (ZUS zaokrągla składki osobno) – potwierdzić, które
+- [ ] 38 / 62 tyg. rodzicielskiego dla rodziny zastępczej – `do_potwierdzenia`
+- [ ] Logowanie przy `DEMO_MODE=0`: kod nie wraca do klienta, więc nie da się go potwierdzić (brak prawdziwej aplikacji mObywatel). Domyślnie `DEMO_MODE=1`, na demo OK; na produkcji i tak zastępuje to prawdziwe mObywatel
+- [ ] `engine/terminy.js` używany tylko w testach – podpiąć w UI albo usunąć
+
 > **Serwer znów działa.** Deploy #10 (PR #2) padł, bo przy merge'u do `backend/server.js` trafiły znaczniki konfliktu (`<<<<<<<`) i backend nie startował. Naprawione w commicie „backend fix”; od tamtej pory deploye **#11–#17 są zielone**.
 > **Żeby się nie powtórzyło:** po rozwiązaniu konfliktu `git grep -n "<<<<<<<"` przed commitem, a w deployu krok z testami (niżej).
 
@@ -46,7 +63,7 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 - [ ] **Lokalnie „Sesja wygasła” bez powodu:** `npm run dev` w backendzie to `node --watch`, który restartuje serwer, gdy Windows/antywirus/Docker dotknie plików w `node_modules`; sesje są w pamięci, więc znikają. Tylko w trybie deweloperskim (serwer używa `npm start`). Poprawka: w `backend/package.json` `"dev": "node --watch-path=server.js --watch-path=db.js --watch-path=zus-mock.js server.js"`
 - [ ] „Dane z ZUS” → „Przenieś do »Moje dane«” wypełnia na razie tytuł, podstawę i płatnika. Nowy profil ma też `platnik.liczbaUbezpieczonych`, `ubezpieczony.ubezpieczenieOd`, `zdrowie.zla*` – warto je też przenosić (e-ZLA, okres ubezpieczenia)
 - [ ] Nowe pola profilu (np. `dziecko.liczbaZyjacych`, `dziecko.tydzienCiazy`, `urlopy.*`) nie są jeszcze podstawiane w kalkulatorach (`useProfileDefaults.js`) – do zrobienia razem z osobą od kalkulatorów
-- [ ] Backend zapisuje w profilu dowolne wartości (bez sprawdzania typów/długości) – na demo OK, przed wdrożeniem walidacja
+- [x] ~~Backend zapisuje w profilu dowolne wartości~~ – tylko tekst (≤ 1000 znaków), liczby i tak/nie (Claude, 21.11 wieczorem)
 
 **Jeszcze nie ma:** uploadu PDF / przykładowych spraw („Sprawdź mój przypadek”), jednego podsumowania „co mi przysługuje”, planera osi czasu, generatora wniosków urlopowych do pracodawcy.
 
