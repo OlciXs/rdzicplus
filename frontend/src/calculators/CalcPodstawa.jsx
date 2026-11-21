@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useAuth } from "../auth.js";
 import { CFG, num, zl } from "./config.js";
 import {
   Badge, Field, NumberInput, Select, Section, ResultTable, Bullets,
 } from "./ui.jsx";
+import { useProfileDefaults } from "./useProfileDefaults.js";
 
 const defaultMonths = () => Array.from({ length: 12 }, () => "5000");
 
@@ -10,6 +12,9 @@ export default function CalcPodstawa() {
   const [s, set] = useState({ status: "pracownik", ileMies: "12", kwartalne: "0", roczna: "0" });
   const [months, setMonths] = useState(defaultMonths);
   const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
+  const { profile, save } = useProfileDefaults(set, "podstawa");
+  const { user } = useAuth();
+  const [saveMsg, setSaveMsg] = useState("");
   const setMonth = (i) => (v) => setMonths((prev) => prev.map((m, j) => (j === i ? v : m)));
 
   const status = s.status;
@@ -73,6 +78,14 @@ export default function CalcPodstawa() {
     }
   }
 
+  const saveToProfile = async () => {
+    const res = await save({
+      ...profile,
+      ubezpieczony: { ...profile.ubezpieczony, podstawaWymiaru: Math.round(podstawa * 100) / 100 },
+    });
+    setSaveMsg(res.ok ? "Zapisano w „Moje dane” - inne kalkulatory podstawią tę kwotę." : "Nie udało się zapisać.");
+  };
+
   return (
     <div className="calc">
       <div className="calc-cols">
@@ -110,6 +123,14 @@ export default function CalcPodstawa() {
               { cells: ["Zasiłek 100% / mies.", zl((podstawa * CFG.stMacierzynski) / 100)], total: true },
             ]}
           />
+          {user && profile && (
+            <div className="summary-card">
+              <button type="button" className="btn btn-outline" onClick={saveToProfile}>
+                Zapisz jako moją podstawę w profilu
+              </button>
+              {saveMsg && <p className="note" role="status">{saveMsg}</p>}
+            </div>
+          )}
         </div>
       </div>
 

@@ -4,6 +4,7 @@ import {
   Badge, Field, NumberInput, DateInput, Select, Check, Section,
   ResultTable, Bullets,
 } from "./ui.jsx";
+import { useProfileDefaults } from "./useProfileDefaults.js";
 
 export default function CalcAdopcja() {
   const [s, set] = useState({
@@ -18,6 +19,7 @@ export default function CalcAdopcja() {
     ojcowski: false,
   });
   const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
+  useProfileDefaults(set, "adopcja");
 
   const n = num(s.dzieci);
   const ur = s.ur ? new Date(s.ur) : null;

@@ -97,6 +97,17 @@ app.post("/api/auth/logout", requireAuth, (req, res) => {
   res.json({ ok: true });
 });
 
+app.get("/api/profile", requireAuth, (req, res) => {
+  const result = db.getOrCreateProfile(req.user.id);
+  res.json(result);
+});
+
+app.put("/api/profile", requireAuth, (req, res) => {
+  const result = db.saveProfile(req.user.id, req.body);
+  if (!result) return res.status(404).json({ error: "Nie znaleziono profilu." });
+  res.json({ ok: true, ...result });
+});
+
 app.listen(PORT, () => {
   console.log(`Backend działa na http://localhost:${PORT}`);
 });

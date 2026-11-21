@@ -4,6 +4,7 @@ import {
   Badge, Field, NumberInput, DateInput, Select, Check, Section,
   ResultTable, Bullets, List,
 } from "./ui.jsx";
+import { useProfileDefaults } from "./useProfileDefaults.js";
 
 export default function CalcOboje() {
   const [s, set] = useState({
@@ -20,6 +21,7 @@ export default function CalcOboje() {
     pO: "5500",
   });
   const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
+  useProfileDefaults(set, "oboje");
 
   const n = num(s.dzieci) >= 2 ? 2 : 1;
   const zaZ = s.zaZyciem;

@@ -1,10 +1,13 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import AppHeader from "../components/AppHeader.jsx";
+import { useAuth } from "../auth.js";
 import { CALCULATORS, calculatorPath, getCalculator } from "../calculators/registry.jsx";
 import NotFound from "./NotFound.jsx";
 
 export default function Kalkulator() {
   const { slug } = useParams();
+  const { user } = useAuth();
+  const location = useLocation();
   const active = getCalculator(slug);
 
   // Nieznany adres kalkulatora → strona 404.
@@ -31,6 +34,17 @@ export default function Kalkulator() {
             <p className="lead">{active.short}</p>
           </div>
         </div>
+
+        {user ? (
+          <p className="alert-inline">
+            Podstawiamy dane z <Link to="/profil">Moje dane</Link> - w kalkulatorze możesz je dowolnie zmienić.
+          </p>
+        ) : (
+          <p className="alert-inline">
+            <Link to="/logowanie" state={{ from: location }}>Zaloguj się</Link> i uzupełnij „Moje dane”, a kalkulator sam
+            wypełni pola.
+          </p>
+        )}
 
         <div className="calc-body">
           <Component />

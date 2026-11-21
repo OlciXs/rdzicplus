@@ -13,10 +13,10 @@
       "pesel": "87090371522"
     },
     {
-      "id": "mob-katarzyna",
-      "imie": "Katarzyna",
-      "nazwisko": "Zielińska",
-      "pesel": "94122530846"
+      "id": "mob-mariusz",
+      "imie": "Mariusz",
+      "nazwisko": "Zieliński",
+      "pesel": "94122530836"
     }
   ],
   "users": [
@@ -27,6 +27,56 @@
       "nazwisko": "Wiśniewska",
       "createdAt": "2026-11-21T13:58:06.311Z",
       "lastLoginAt": "2026-11-21T13:58:06.311Z"
+    },
+    {
+      "id": "b0cb48cf-1ef8-4a18-8a0a-3e3723b134dd",
+      "pesel": "91041748260",
+      "imie": "Bożena",
+      "nazwisko": "Nowak",
+      "createdAt": "2026-11-21T15:23:43.653Z",
+      "lastLoginAt": "2026-11-21T15:26:52.721Z"
+    },
+    {
+      "id": "cbc2c19c-52ca-4376-8474-fd7b26d9a545",
+      "pesel": "94122530836",
+      "imie": "Mariusz",
+      "nazwisko": "Zieliński",
+      "createdAt": "2026-11-21T15:29:32.308Z",
+      "lastLoginAt": "2026-11-21T15:29:32.308Z",
+      "profile": {
+        "ubezpieczony": {
+          "imie": "Mariusz",
+          "nazwisko": "Zieliński",
+          "peselMasked": "*******0836",
+          "dataUrodzenia": "",
+          "adres": "",
+          "rachunek": "",
+          "statusUbezpieczenia": "",
+          "podstawaWymiaru": ""
+        },
+        "platnik": {
+          "nazwa": "",
+          "adres": "",
+          "nip": "",
+          "regon": ""
+        },
+        "drugiRodzic": {
+          "imie": "",
+          "nazwisko": "",
+          "pesel": "",
+          "podstawaWymiaru": ""
+        },
+        "dziecko": {
+          "imie": "",
+          "nazwisko": "",
+          "pesel": "",
+          "dataUrodzenia": "",
+          "miejsceUrodzenia": "",
+          "liczbaDzieci": "",
+          "zaZyciem": false
+        }
+      },
+      "profileUpdatedAt": null
     }
   ]
 }

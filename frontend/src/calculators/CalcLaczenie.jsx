@@ -4,6 +4,7 @@ import {
   Badge, Field, NumberInput, Select, Check, Section,
   ResultTable, Bullets,
 } from "./ui.jsx";
+import { useProfileDefaults } from "./useProfileDefaults.js";
 
 export default function CalcLaczenie() {
   const [s, set] = useState({
@@ -14,6 +15,7 @@ export default function CalcLaczenie() {
     stawka: "81.5",
   });
   const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
+  useProfileDefaults(set, "laczenie");
 
   const n = num(s.dzieci) >= 2 ? 2 : 1;
   const zaZ = s.zaZyciem;

@@ -85,8 +85,8 @@ export default function Login() {
   return (
     <main className="login">
       <header className="brand brand-center">
-        <span className="brand-mark" aria-hidden="true">R+</span>
-        <span className="brand-name">RodzicPlus</span>
+        <span className="brand-mark" aria-hidden="true">RP</span>
+        <span className="brand-name">Rodzic Plus</span>
       </header>
 
       {step === "start" && (

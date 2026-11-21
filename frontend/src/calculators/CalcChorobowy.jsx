@@ -4,6 +4,7 @@ import {
   Badge, Field, NumberInput, DateInput, Select, Check, Section,
   ResultTable, Bullets, Result,
 } from "./ui.jsx";
+import { useProfileDefaults } from "./useProfileDefaults.js";
 
 export default function CalcChorobowy() {
   const [s, set] = useState({
@@ -21,6 +22,7 @@ export default function CalcChorobowy() {
     utrata: "brak",
   });
   const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
+  useProfileDefaults(set, "chorobowy");
 
   const dUb = num(s.dniUb);
   const kodB = s.kodB;
