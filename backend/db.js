@@ -47,28 +47,56 @@ const dataUrodzeniaZPesel = (pesel) => {
 // Pola wyliczane z PESEL-u (z mObywatela) – nie da się ich nadpisać z formularza.
 const zPesel = (user) => ({ plec: plecZPesel(user?.pesel), dataUrodzenia: dataUrodzeniaZPesel(user?.pesel) });
 
+// Sekcje profilu edytowalne z formularza (kolejność bez znaczenia).
+const SECTIONS = ["ubezpieczony", "sytuacja", "platnik", "drugiRodzic", "dziecko", "zdrowie", "urlopy"];
+
+// Pola tekstowe / tak-nie zapisujemy jako "" gdy brak odpowiedzi; "tak" | "nie" dla pytań tak/nie.
+const blank = (names) => Object.fromEntries(names.map((n) => [n, ""]));
+
 const emptyProfile = (user) => ({
   ubezpieczony: {
     imie: user?.imie || "",
     nazwisko: user?.nazwisko || "",
     peselMasked: user ? "*".repeat(7) + user.pesel.slice(-4) : "",
     ...zPesel(user),
-    adres: "",
-    rachunek: "",
-    statusUbezpieczenia: "",
-    podstawaWymiaru: "",
+    ...blank([
+      "adres", "rachunek", "statusUbezpieczenia", "podstawaWymiaru",
+      "ubezpieczenieOd", "ulgaWyczekiwania", "wymiarEtatu", "zmianaWymiaru12m", "zatrudnionyOd",
+      "pracaZaGranica", "pracaTymczasowa", "zaleglosci", "wiecejNizJedenTytul",
+      "emeryturaRenta", "zasilekBezrobotnych", "rolnik",
+      "ubezpieczenieUstalo", "dataUstania", "przyczynaUstania", "zapewnionoInnaPrace",
+    ]),
   },
-  platnik: { nazwa: "", adres: "", nip: "", regon: "" },
-  drugiRodzic: { imie: "", nazwisko: "", pesel: "", podstawaWymiaru: "" },
+  sytuacja: blank(["etap", "rola", "typPrzyjecia"]),
+  platnik: blank(["nazwa", "adres", "nip", "regon", "liczbaUbezpieczonych"]),
+  drugiRodzic: {
+    ...blank([
+      "imie", "nazwisko", "pesel", "rola", "adres", "statusUbezpieczenia", "podstawaWymiaru",
+      "platnikNazwa", "platnikNip", "okolicznosc", "dataOkolicznosci",
+    ]),
+    brak: false,
+  },
   dziecko: {
-    imie: "",
-    nazwisko: "",
-    pesel: "",
-    dataUrodzenia: "",
-    miejsceUrodzenia: "",
-    liczbaDzieci: "",
+    ...blank([
+      "imie", "nazwisko", "pesel", "dataUrodzenia", "miejsceUrodzenia", "liczbaDzieci",
+      "przewidywanaDataPorodu", "martwe", "zmarlo", "dataZgonu", "liczbaZyjacych", "zaGranica", "kraj",
+      "pobytWSzpitalu", "tydzienCiazy", "masaUrodzenia", "szpitalOd", "szpitalDo",
+      "dataPrzyjecia", "odroczonySzkolny", "niepelnosprawne",
+    ]),
     zaZyciem: false,
   },
+  zdrowie: blank([
+    "zwolnienie", "zlaNumer", "zlaOd", "zlaDo", "wczesniejszeZwolnienia",
+    "okresZasilkowyWyczerpany", "rokowaniaPoprawy", "wypadekWDrodze",
+  ]),
+  urlopy: blank([
+    "urlopPrzedPorodemOd", "zamiarPelnyWymiar", "macierzynskiWykorzystanoTyg", "matkaRezygnuje",
+    "planUzupelniajacy", "terminKoncaMacierzynskiego", "drugiRodzicUzupelniajacy",
+    "planOjcowski", "ojcowskiZInnegoTytulu", "planRodzicielski", "rodzicielskieCzesci",
+    "rodzicielskiWykorzystanoTyg", "rodzicielskiOd", "rodzicielskiDo", "drugiRodzicRodzicielski",
+    "laczenieZPraca", "wymiarPracyPrzyLaczeniu", "planWychowawczy", "wychowawczyWykorzystanoMies",
+    "potrzebaOpieki", "domownikMozeOpiekowac", "opiekunczyDniWRoku",
+  ]),
 });
 
 function save() {
@@ -95,8 +123,12 @@ export const db = {
   getOrCreateProfile(userId) {
     const user = data.users.find((u) => u.id === userId);
     if (!user) return null;
-    if (!user.profile) user.profile = emptyProfile(user);
-    // profile zapisane wcześniej nie miały płci i daty urodzenia – uzupełniamy z PESEL-u
+    // Profile zapisane wcześniej nie mają nowych sekcji/pól - dokładamy puste, istniejące wartości zostają.
+    const base = emptyProfile(user);
+    const old = user.profile ?? {};
+    for (const section of SECTIONS) base[section] = { ...base[section], ...(old[section] ?? {}) };
+    user.profile = base;
+    // płeć i data urodzenia zawsze z PESEL-u
     Object.assign(user.profile.ubezpieczony, zPesel(user));
     if (!user.profileUpdatedAt) user.profileUpdatedAt = null;
     save();
@@ -108,7 +140,7 @@ export const db = {
     if (!user) return null;
     user.profile = emptyProfile(user);
 
-    for (const section of ["ubezpieczony", "platnik", "drugiRodzic", "dziecko"]) {
+    for (const section of SECTIONS) {
       const source = nextProfile?.[section];
       if (!source || typeof source !== "object") continue;
       for (const key of Object.keys(user.profile[section])) {
