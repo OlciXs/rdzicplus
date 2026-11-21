@@ -1,0 +1,542 @@
+{
+  "schema": "zus-szablony-pism/1",
+  "meta": {
+    "tytul": "Szablony pism i wniosków — świadczenia rodzicielskie ZUS",
+    "wersja": "1.0",
+    "stan_prawny": "2026",
+    "zrodlo_zrodlowe": "Materiały dodatkowe ZUS/Sprawy/Sprawy (89 spraw)",
+    "liczba_spraw_zrodlowych": 89,
+    "uwaga": "Treści odtworzono ze skanów spraw. Rękopiśmienne uzupełnienia i dane\nosobowe są zanonimizowane. Szablony NIE zastępują oficjalnych\nformularzy ZUS (ZAM, Z-3, Z-3a…) — pisma pracownicze mają dowolną formę\n(rozporządzenie MRPiPS o wnioskach), a wnioski do ZUS składa się na\nformularzu. Dla każdego szablonu podano, czy wolno go użyć jako pisma\nwłasnego, czy trzeba przenieść dane na formularz.\n",
+    "podstawy_prawne_globalne": [
+      "ustawa z 25.06.1999 o świadczeniach pieniężnych z ubezpieczenia społecznego w razie choroby i macierzyństwa (ustawa zasiłkowa)",
+      "ustawa z 26.06.1974 — Kodeks pracy (art. 177–189¹)",
+      "rozporządzenie MRPiPS w sprawie wniosków dotyczących uprawnień pracowników związanych z rodzicielstwem",
+      "ustawa z 4.11.2016 o wspieraniu kobiet w ciąży i rodzin „Za życiem”"
+    ]
+  },
+  "placeholdery": {
+    "imie": {
+      "opis": "Imię i nazwisko ubezpieczonego",
+      "typ": "string"
+    },
+    "pesel": {
+      "opis": "PESEL",
+      "typ": "string",
+      "format": "11 cyfr"
+    },
+    "adres": {
+      "opis": "Ulica, numer, kod pocztowy, miejscowość",
+      "typ": "string"
+    },
+    "telefon": {
+      "opis": "Numer telefonu kontaktowego",
+      "typ": "string"
+    },
+    "platnik_nazwa": {
+      "opis": "Nazwa pracodawcy / płatnika składek",
+      "typ": "string"
+    },
+    "platnik_nip": {
+      "opis": "NIP płatnika",
+      "typ": "string",
+      "format": "10 cyfr"
+    },
+    "platnik_adres": {
+      "opis": "Adres płatnika",
+      "typ": "string"
+    },
+    "data_pisma": {
+      "opis": "Data sporządzenia pisma",
+      "typ": "date"
+    },
+    "data_porodu": {
+      "opis": "Data porodu (albo przewidywana data porodu)",
+      "typ": "date"
+    },
+    "pdp": {
+      "opis": "Przewidywana data porodu",
+      "typ": "date"
+    },
+    "dziecko_imie": {
+      "opis": "Imię i nazwisko dziecka",
+      "typ": "string"
+    },
+    "dziecko_pesel": {
+      "opis": "PESEL dziecka (jeśli nadany)",
+      "typ": "string"
+    },
+    "liczba_dzieci": {
+      "opis": "Liczba dzieci z jednego porodu",
+      "typ": "integer",
+      "min": 1,
+      "max": 5
+    },
+    "urlop_od": {
+      "opis": "Data rozpoczęcia urlopu",
+      "typ": "date"
+    },
+    "urlop_do": {
+      "opis": "Data zakończenia urlopu",
+      "typ": "date"
+    },
+    "tygodnie": {
+      "opis": "Wymiar urlopu w tygodniach",
+      "typ": "integer"
+    },
+    "tygodnie_matka": {
+      "opis": "Tygodnie wykorzystane przez matkę",
+      "typ": "integer"
+    },
+    "tygodnie_ojciec": {
+      "opis": "Tygodnie przejmowane przez ojca",
+      "typ": "integer"
+    },
+    "podstawa": {
+      "opis": "Podstawa wymiaru zasiłku (zł)",
+      "typ": "money"
+    },
+    "kwota": {
+      "opis": "Kwota zasiłku (zł)",
+      "typ": "money"
+    },
+    "data_zdarzenia": {
+      "opis": "Data zdarzenia (zgon, szpital, rezygnacja)",
+      "typ": "date"
+    },
+    "drugi_rodzic": {
+      "opis": "Imię i nazwisko drugiego rodzica",
+      "typ": "string"
+    },
+    "liczba_dzieci_pl": {
+      "opis": "Odmieniona forma liczebnika: jednego/dwojga/trojga dziecka",
+      "typ": "string"
+    },
+    "adres_miejscowosc": {
+      "opis": "Miejscowość z adresu (do daty pisma)",
+      "typ": "string",
+      "zrodlo": "wyliczane z adres"
+    },
+    "wymiar_etatu": {
+      "opis": "Wymiar czasu pracy (np. 1/2, 3/4, pełny)",
+      "typ": "string"
+    },
+    "tydzien_ciazy": {
+      "opis": "Tydzień ciąży w chwili porodu",
+      "typ": "integer",
+      "zakres": "22-42"
+    },
+    "masa": {
+      "opis": "Masa urodzeniowa dziecka (g)",
+      "typ": "integer"
+    },
+    "szpital_od": {
+      "opis": "Początek pobytu dziecka w szpitalu",
+      "typ": "date"
+    },
+    "szpital_do": {
+      "opis": "Koniec pobytu dziecka w szpitalu",
+      "typ": "date"
+    },
+    "dni_hospitalizacji": {
+      "opis": "Liczba dni pobytu dziecka w szpitalu",
+      "typ": "integer",
+      "zrodlo": "szpitalDo - szpitalOd"
+    },
+    "oddzial": {
+      "opis": "Oddział ZUS (np. Warszawa I)",
+      "typ": "string"
+    },
+    "znak_sprawy": {
+      "opis": "Znak sprawy / sygnatura decyzji ZUS",
+      "typ": "string"
+    },
+    "benefit": {
+      "opis": "Nazwa świadczenia, którego dotyczy decyzja",
+      "typ": "string"
+    },
+    "od": {
+      "opis": "Początek okresu objętego decyzją",
+      "typ": "date"
+    },
+    "do": {
+      "opis": "Koniec okresu objętego decyzją",
+      "typ": "date"
+    },
+    "art": {
+      "opis": "Przywołany artykuł ustawy",
+      "typ": "string"
+    },
+    "data_decyzji": {
+      "opis": "Data wydania decyzji ZUS",
+      "typ": "date"
+    },
+    "stan_faktyczny": {
+      "opis": "Opis stanu faktycznego ustalonego przez ZUS",
+      "typ": "text"
+    },
+    "uzasadnienie_odwolania": {
+      "opis": "Treść uzasadnienia odwołania od decyzji",
+      "typ": "text"
+    },
+    "dystrybutor": {
+      "opis": "Osoba upoważniona do wydania decyzji (imię, nazwisko, stanowisko)",
+      "typ": "string"
+    }
+  },
+  "szablony": [
+    {
+      "id": "P01",
+      "nazwa": "Wniosek o udzielenie urlopu macierzyńskiego",
+      "kanal": "pismo_pracodawca",
+      "wariant": "VAR06",
+      "formularz_zus": "ZAM",
+      "podstawa_prawna": "art. 180 § 1 k.p.",
+      "zrodlo": "Sprawy: Anna War_01 (martwe urodzenie), Agata Go_1, Alicja Cho_3, Zofia Lu_1",
+      "tresc": "{{imie}}\n{{adres}}\nPESEL: {{pesel}}\n\n{{platnik_nazwa}}\n{{platnik_adres}}\nNIP: {{platnik_nip}}\n\n{{data_pisma}}, {{adres_miejscowosc}}\n\nWNIOSEK O UDZIELENIE URLOPU MACIERZYŃSKIEGO\n\nZgodnie z art. 180 § 1 Kodeksu pracy wnoszę o udzielenie mi urlopu\nmacierzyńskiego w wymiarze {{tygodnie}} tygodni, przysługującego w związku\nz urodzeniem {{liczba_dzieci_pl}} dziecka (dzieci) przy jednym porodzie.\n\nPoród nastąpił dnia {{data_porodu}}.\nUrlop macierzyński ma trwać od dnia {{urlop_od}} do dnia {{urlop_do}}.\n\n{{#jesli_dziecko}}\nDziecko: {{dziecko_imie}}, PESEL {{dziecko_pesel}}.\n{{/jesli_dziecko}}\n\n{{#jesli_martwe}}\nDo wniosku załączam zaświadczenie szpitalne, że dziecko urodziło się martwe.\n{{/jesli_martwe}}\n\n{{#jesli_pelny_wymiar}}\nJednocześnie, na podstawie art. 179¹ Kodeksu pracy, wnoszę o udzielenie mi\nbezpośrednio po urlopie macierzyńskim urlopu rodzicielskiego w pełnym wymiarze.\nOświadczam, że zasiłek macierzyński za cały okres będzie wynosił 81,5% podstawy.\n{{/jesli_pelny_wymiar}}\n\n{{imie}}\n......................................\n(podpis pracownika)\n",
+      "pola": [
+        {
+          "placeholder": "tygodnie",
+          "zrodlo": "wyliczane: 20 tyg. (1 dziecko), 31 (2), 33 (3), 35 (4), 37 (5)"
+        },
+        {
+          "placeholder": "liczba_dzieci_pl",
+          "zrodlo": "odmiana liczebnika od dziecko.liczbaDzieci"
+        },
+        {
+          "placeholder": "data_porodu",
+          "zrodlo": "dziecko.dataUrodzenia | dziecko.przewidywanaDataPorodu"
+        }
+      ],
+      "zalaczniki_typowe": [
+        "Odpis skrócony aktu urodzenia (albo zgoda, by płatnik pobrał dane z rejestru stanu cywilnego)"
+      ],
+      "uwagi": "Przed porodem wpisuje się przewidywaną datę porodu i uzupełnia po porodzie.\nUrlopy macierzyński i rodzicielski łącznie liczą się do limitu art. 180 § 1 k.p.\n"
+    },
+    {
+      "id": "P02",
+      "nazwa": "Wniosek o część urlopu macierzyńskiego przed przewidywaną datą porodu",
+      "kanal": "pismo_pracodawca",
+      "wariant": "VAR08",
+      "formularz_zus": "ZAM",
+      "podstawa_prawna": "art. 180 § 2 k.p.",
+      "zrodlo": "Sprawy: Natalia Ko_5 (zasiłek przed przewidywaną datą porodu)",
+      "tresc": "WNIOSEK O UDZIELENIE CZĘŚCI URLOPU MACIERZYŃSKIEGO\nPRZED PRZEWIDYWANĄ DATĄ PORODU\n\nNa podstawie art. 180 § 2 Kodeksu pracy proszę o udzielenie mi części urlopu\nmacierzyńskiego przypadającej przed przewidywaną datą porodu, od dnia {{urlop_od}}.\n\nPrzewidywana data porodu: {{pdp}}.\nWykorzystuję {{tygodnie}} tygodni z puli urlopu macierzyńskiego.\n\n{{imie}}, {{data_pisma}}\n.....................................\n(podpis)\n",
+      "pola": [
+        {
+          "placeholder": "urlop_od",
+          "zrodlo": "urlopy.urlopPrzedPorodemOd",
+          "walidacja": "najwcześniej 6 tyg. przed PDP"
+        }
+      ],
+      "zalaczniki_typowe": [
+        "Kopia zaświadczenia lekarskiego o przewidywanej dacie porodu"
+      ],
+      "uwagi": "Przed porodem można wykorzystać maksymalnie 6 tygodni urlopu macierzyńskiego."
+    },
+    {
+      "id": "P03",
+      "nazwa": "Wniosek o zasiłek macierzyński za okres urlopu rodzicielskiego (formularz ZUR)",
+      "kanal": "formularz_zus",
+      "wariant": "VAR17",
+      "formularz_zus": "ZUR (do 24.10.2026), potem ZAM",
+      "podstawa_prawna": "art. 182¹d k.p.; art. 29–31 ustawy zasiłkowej",
+      "zrodlo": "Sprawy: Helena Gd_5, Natalia Kr_2, Wojciech Lu_4, Ryszard Ra_5",
+      "tresc": "[FORMULARZ ZUS — ZUR / ZAM]\nWniosek o zasiłek macierzyński za okres urlopu rodzicielskiego\n\nWypełnij ten wniosek, jeśli ubiegasz się o wypłatę zasiłku macierzyńskiego\nza okres urlopu rodzicielskiego albo urlopu na warunkach urlopu macierzyńskiego.\n\nZAKRES WNIOSKU\n  Proszę o wypłatę zasiłku macierzyńskiego za okres od {{urlop_od}} do {{urlop_do}}.\n\nWnioskuję o zasiłek macierzyński za okres urlopu rodzicielskiego z powodu:\n  [ ] urodzenia się dziecka/dzieci\n  [ ] przyjęcia na wychowanie dziecka/dzieci w celu przysposobienia\n  [ ] przyjęcia na wychowanie dziecka/dzieci w ramach rodziny zastępczej\n  [ ] przerwania przez matkę dziecka okresu wypłaty zasiłku macierzyńskiego\n  [ ] posiadania przez matkę orzeczenia o niezdolności do samodzielnej egzystencji\n  [ ] porzucenia dziecka przez matkę\n  [ ] śmierci matki dziecka/dzieci\n  [ ] podjęcia przez matkę pracy w wymiarze nie niższym niż połowa pełnego etatu\n  [ ] urodzenia dziecka/dzieci po {{data_porodu}}\n\nDANE DZIECKA/DZIECI\n  {{dziecko_imie}}, {{data_porodu}}, {{adres_miejscowosc}}\n\nDANE DRUGIEGO RODZICA\n  {{drugi_rodzic}}, PESEL {{pesel}}\n\nŚWIADCZENIA PROSZĘ PRZEKAZYWAĆ\n  [ ] w Polsce na rachunek bankowy\n  [ ] za granicę — na rachunek bankowy (oprócz USA)\n",
+      "pola": [
+        {
+          "placeholder": "urlop_od",
+          "zrodlo": "urlopy.dataStartuUrlopu"
+        },
+        {
+          "placeholder": "urlop_do",
+          "zrodlo": "urlop_od + wymiar"
+        }
+      ],
+      "uwagi": "Zgodnie z art. 30 ustawy zasiłkowej wniosek o zasiłek za okres urlopu\nrodzicielskiego składa się w terminie do 21 dni po porodzie, jeśli chce się\nzasiłek za cały okres; późniejsze wnioski — za okres od dnia złożenia.\n"
+    },
+    {
+      "id": "P04",
+      "nazwa": "Oświadczenie drugiego rodzica o niekorzystaniu z urlopu rodzicielskiego",
+      "kanal": "oswiadczenie",
+      "wariant": "VAR17",
+      "podstawa_prawna": "art. 31 ust. 3a ustawy zasiłkowej",
+      "zrodlo": "Sprawy: Agata Go_1 (oświadczenie ojca), Anna Lu_2",
+      "tresc": "ZAKŁAD UBEZPIECZEŃ SPOŁECZNYCH\n\nOŚWIADCZENIE\n\nOświadczam, że jako ojciec dziecka {{dziecko_imie}}, urodzonego dnia\n{{data_porodu}}, nie będę korzystał z przysługującego mi urlopu\nrodzicielskiego w okresie, za jaki zasiłek macierzyński pobiera matka\ndziecka — {{drugi_rodzic}}.\n\nJestem świadomy odpowiedzialności karnej za złożenie fałszywego oświadczenia.\n\n{{data_pisma}}\n.....................................\n(podpis)\n",
+      "pola": [],
+      "uwagi": "Oświadczenie jest wymagane, gdy jeden z rodziców pobiera zasiłek za okres\nurlopu rodzicielskiego, a drugi z tego urlopu w tym czasie nie korzysta.\n"
+    },
+    {
+      "id": "P05",
+      "nazwa": "Wniosek o udzielenie urlopu ojcowskiego",
+      "kanal": "pismo_pracodawca",
+      "wariant": "VAR19",
+      "formularz_zus": "ZAM",
+      "podstawa_prawna": "art. 182³ § 1 k.p.; art. 83 ustawy zasiłkowej",
+      "zrodlo": "Sprawy: Dariusz Go_3, Józef Lu_3, Konrad Wa I_2, Piotr Rze_1, Jacek War_04",
+      "tresc": "{{imie}}\n{{adres}}\nPESEL: {{pesel}}\n\n{{platnik_nazwa}}\n\n{{data_pisma}}\n\nWNIOSEK O UDZIELENIE URLOPU OJCOWSKIEGO\n\nNa podstawie art. 182³ § 1 Kodeksu pracy wnoszę o udzielenie mi urlopu\nojcowskiego w wymiarze {{tygodnie}} tygodni, w okresie od {{urlop_od}} do {{urlop_do}}.\n\nUrlopu ojcowskiego udziela się na pisemny wniosek ojca, składany w terminie\nnie krótszym niż 7 dni przed rozpoczęciem urlopu.\n\nDziecko: {{dziecko_imie}}, urodzone {{data_porodu}}.\n\n.....................................\n(podpis pracownika)\n",
+      "pola": [
+        {
+          "placeholder": "tygodnie",
+          "zrodlo": "2 tyg. (standardowo), 9 tyg. przy przejęciu części urlopu matki"
+        }
+      ],
+      "zalaczniki_typowe": [
+        "Odpis skrócony aktu urodzenia dziecka"
+      ],
+      "uwagi": "Urlop ojcowski przysługuje w wymiarze 2 tygodni, nie dłużej niż do ukończenia\nprzez dziecko 12 miesięcy (art. 182³ § 1 i 4 k.p.). Można go dzielić na dwie\nczęści. Ojcowie adopcyjni i zastępczy mają odrębne zasady (art. 182⁴ k.p.).\n"
+    },
+    {
+      "id": "P06",
+      "nazwa": "Wniosek ojca o przejęcie części urlopu rodzicielskiego — 9 tygodni",
+      "kanal": "pismo_pracodawca",
+      "wariant": "VAR17",
+      "formularz_zus": "ZAM",
+      "podstawa_prawna": "art. 182¹a § 2 k.p.; art. 30 ust. 1 ustawy zasiłkowej",
+      "zrodlo": "Sprawy: Anna Ol_2, Andrzej El_5, Marek Wro_3, Ryszard Ra_5 (9 tygodni dla ojca)",
+      "tresc": "WNIOSEK O UDZIELENIE URLOPU RODZICIELSKIEGO (CZĘŚĆ NIEPRZENOSZALNA)\n\nNa podstawie art. 182¹a § 2 Kodeksu pracy wnoszę o udzielenie mi urlopu\nrodzicielskiego w wymiarze {{tygodnie}} tygodni, w okresie od {{urlop_od}} do {{urlop_do}}.\n\nMatka dziecka, {{drugi_rodzic}}, wykorzystała {{tygodnie_matka}} tygodni urlopu\nmacierzyńskiego, a z pozostałej części urlopu rodzicielskiego rezygnuje na\nmoją rzecz. Rezygnacja matki z urlopu rodzicielskiego na rzecz ojca wymaga:\n\n  [ ] pisemnego wniosku matki o rezygnację z urlopu rodzicielskiego w tej części,\n  [ ] mojego wniosku o udzielenie urlopu rodzicielskiego.\n\n{{#jesli_matka_nieubezpieczona}}\nMatka dziecka nie jest objęta ubezpieczeniem chorobowym, dlatego przysługuje\nmi urlop rodzicielski na podstawie art. 182¹a § 2¹ Kodeksu pracy.\n{{/jesli_matka_nieubezpieczona}}\n\nDziecko: {{dziecko_imie}}, urodzone {{data_porodu}}.\n\n{{data_pisma}}\n.....................................\n(podpis pracownika)\n",
+      "pola": [
+        {
+          "placeholder": "tygodnie",
+          "domyslnie": 9,
+          "opis": "część nieprzenoszalna urlopu rodzicielskiego ojca"
+        }
+      ],
+      "uwagi": "Każdy z rodziców ma prawo do 9 tygodni urlopu rodzicielskiego, których nie\nmożna przenieść na drugiego rodzica (art. 182¹a § 2 k.p.). Matka musi złożyć\nwniosek o rezygnację z odpowiedniej części urlopu (P07).\n"
+    },
+    {
+      "id": "P07",
+      "nazwa": "Wniosek matki o rezygnację z urlopu rodzicielskiego na rzecz ojca",
+      "kanal": "pismo_pracodawca",
+      "wariant": "VAR17",
+      "podstawa_prawna": "art. 182¹a § 2 k.p.; § 4 rozporządzenia o wnioskach",
+      "zrodlo": "Sprawy: Anna Ol_2, Karol Go_2, Dariusz Łód_4",
+      "tresc": "WNIOSEK O REZYGNACJĘ Z URLOPU RODZICIELSKIEGO\n\nNa podstawie art. 182¹a § 2 Kodeksu pracy oświadczam, że rezygnuję z urlopu\nrodzicielskiego w wymiarze {{tygodnie}} tygodni, w okresie od {{urlop_od}} do {{urlop_do}},\nna rzecz ojca dziecka — {{drugi_rodzic}}.\n\n{{#jesli_po_14_tyg}}\nMacierzyński urlop został przez mnie wykorzystany w wymiarze co najmniej\n14 tygodni po porodzie, a ojciec dziecka złożył wniosek o przyznanie mu\nprawa do zasiłku macierzyńskiego za pozostały okres.\n{{/jesli_po_14_tyg}}\n\n{{#jesli_po_8_tyg}}\nPosiadam orzeczenie o niezdolności do samodzielnej egzystencji, dlatego\nmogę zrezygnować z urlopu macierzyńskiego po wykorzystaniu 8 tygodni.\n{{/jesli_po_8_tyg}}\n\n{{data_pisma}}\n.....................................\n(podpis)\n",
+      "pola": [],
+      "uwagi": "Matka może zrezygnować z urlopu macierzyńskiego po 14 tygodniach od porodu\n(art. 180 § 4 k.p.), a w przypadku orzeczenia o niezdolności do samodzielnej\negzystencji — po 8 tygodniach (art. 180 § 6 k.p.).\n"
+    },
+    {
+      "id": "P08",
+      "nazwa": "Wniosek o wypłatę zasiłku chorobowego w ciąży (Z-3)",
+      "kanal": "formularz_zus",
+      "wariant": "VAR01",
+      "formularz_zus": "Z-3 / Z-3a / Z-3b",
+      "podstawa_prawna": "art. 8, art. 11 ustawy zasiłkowej",
+      "zrodlo": "Sprawy: Anna Ko_4, Pola Rze_4, Zuzanna Go_4, Dagmara Chrz_2 (odmowa)",
+      "tresc": "[FORMULARZ ZUS — Z-3 / Z-3a / Z-3b]\nZaświadczenie płatnika składek\n\nPracownik występuje o:\n  [ ] zasiłek chorobowy            od {{data_zdarzenia}} do {{urlop_do}}\n  [ ] zasiłek opiekuńczy\n  [ ] zasiłek macierzyński\n  [ ] zasiłek w wysokości zasiłku macierzyńskiego\n  [ ] zasiłek wyrównawczy\n  [ ] świadczenie rehabilitacyjne\n\nINFORMACJE O PRACOWNIKU\n  1. Zatrudniony od: {{data_zdarzenia}}     w wymiarze czasu pracy: {{wymiar_etatu}}\n  2. Czy zatrudniony na podstawie umowy o pracę tymczasową: TAK / NIE\n  3. Czy wykonuje pracę za granicą: TAK / NIE\n  4. Czy niezdolność do pracy powstała z powodu: choroby zawodowej / wypadku\n     przy pracy / wypadku w drodze do pracy lub z pracy / NIE\n  5. Czy w okresie niezdolności do pracy korzysta z urlopu bezpłatnego /\n     wychowawczego: TAK / NIE\n  6. Pracownikowi udzielono (jeśli występuje o zasiłek macierzyński):\n     [ ] urlopu macierzyńskiego      [ ] urlopu rodzicielskiego\n     [ ] uzupełniającego urlopu       [ ] urlopu na warunkach urlopu macierzyńskiego\n     [ ] urlopu ojcowskiego\n     od {{urlop_od}} do {{urlop_do}}\n  7. Czy pracownik w czasie urlopu rodzicielskiego wykonuje pracę: TAK / NIE\n",
+      "pola": [],
+      "uwagi": "Zasiłek chorobowy w ciąży przysługuje w pierwszym dniu niezdolności do pracy\nw 100% podstawy (art. 11 ust. 2 pkt 1 ustawy zasiłkowej). Formularz Z-3\nwypełnia płatnik; zwolnienie lekarskie oznacza się kodem B (ciąża).\n"
+    },
+    {
+      "id": "P09",
+      "nazwa": "Wniosek o urlop macierzyński — urodzenie martwego dziecka",
+      "kanal": "pismo_pracodawca",
+      "wariant": "VAR16",
+      "formularz_zus": "ZAM",
+      "podstawa_prawna": "art. 180 § 4 pkt 3 k.p.; art. 29a ustawy zasiłkowej",
+      "zrodlo": "Sprawy: Anna War_01, Alina Wa I_1, Ewa Wro_5, Jolanta Ko_2, Krystyna Poz_1",
+      "tresc": "WNIOSEK O UDZIELENIE URLOPU MACIERZYŃSKIEGO\n\nZgodnie z art. 180 § 1 Kodeksu pracy zwracam się z wnioskiem o udzielenie mi\nurlopu macierzyńskiego w wymiarze 8 tygodni od dnia porodu, przysługującego\nw związku z urodzeniem martwego dziecka w dniu {{data_porodu}}.\n\nUrlop macierzyński będzie trwał od dnia {{urlop_od}} do dnia {{urlop_do}}.\n\nDo wniosku załączam zaświadczenie szpitalne, że dziecko urodziło się martwe.\n\n{{data_pisma}}\n.....................................\n(podpis)\n",
+      "pola": [
+        {
+          "placeholder": "tygodnie",
+          "domyslnie": 8,
+          "opis": "martwe urodzenie — 8 tygodni"
+        }
+      ],
+      "zalaczniki_typowe": [
+        "Zaświadczenie szpitalne, że dziecko urodziło się martwe (art. 29a ust. 1 ustawy zasiłkowej)"
+      ],
+      "uwagi": "Przy urodzeniu martwego dziecka urlop macierzyński wynosi 8 tygodni\n(art. 180 § 4 pkt 3 k.p.). Przysługuje też zasiłek pogrzebowy na dziecko\nmartwo urodzone (art. 79 ust. 1 pkt 1 lit. b ustawy zasiłkowej).\n"
+    },
+    {
+      "id": "P10",
+      "nazwa": "Wniosek o urlop macierzyński po zgonie dziecka",
+      "kanal": "pismo_pracodawca",
+      "wariant": "VAR16",
+      "formularz_zus": "ZAM",
+      "podstawa_prawna": "art. 180 § 4 pkt 3 k.p.; art. 29a ustawy zasiłkowej",
+      "zrodlo": "Sprawy: Marta... / sprawy z zasiłkami po zgonie",
+      "tresc": "WNIOSEK O UDZIELENIE URLOPU MACIERZYŃSKIEGO\n\nZgodnie z art. 180 § 4 pkt 3 Kodeksu pracy wnoszę o udzielenie mi urlopu\nmacierzyńskiego w wymiarze {{tygodnie}} tygodni, przysługującego w związku\nz urodzeniem dziecka, które zmarło w dniu {{data_zdarzenia}}.\n\nUrlop macierzyński ma trwać od dnia {{urlop_od}} do dnia {{urlop_do}}.\n\nDo wniosku załączam skrócony odpis aktu urodzenia z adnotacją o zgonie dziecka.\n\n{{data_pisma}}\n.....................................\n(podpis)\n",
+      "pola": [
+        {
+          "placeholder": "tygodnie",
+          "domyslnie": 8
+        }
+      ],
+      "uwagi": "Urlop wynosi 8 tygodni, nie krócej niż do 8 tygodni po porodzie."
+    },
+    {
+      "id": "P11",
+      "nazwa": "Wniosek o zasiłek w wysokości zasiłku macierzyńskiego (likwidacja / upadłość)",
+      "kanal": "formularz_zus",
+      "wariant": "VAR04",
+      "formularz_zus": "ZAM",
+      "podstawa_prawna": "art. 30 ust. 4, art. 31 ust. 1 ustawy zasiłkowej",
+      "zrodlo": "Sprawy: Anna Wro_6, Dorota Wa I_3, Joanna Łód_3, Katarzyna Łó 4",
+      "tresc": "[FORMULARZ ZUS — ZAM]\nWniosek o zasiłek w wysokości zasiłku macierzyńskiego\n\nWnoszę o wypłatę zasiłku w wysokości zasiłku macierzyńskiego za okres\nurlopu macierzyńskiego / rodzicielskiego od {{urlop_od}} do {{urlop_do}}\nw związku z niewypłaceniem przez pracodawcę świadczeń, których obowiązek\nwypłaty przeszedł na Zakład Ubezpieczeń Społecznych z powodu:\n\n  [ ] ogłoszenia upadłości pracodawcy\n  [ ] likwidacji pracodawcy\n  [ ] śmierci pracodawcy\n\nPracodawca: {{platnik_nazwa}}, NIP {{platnik_nip}}.\n",
+      "pola": [],
+      "uwagi": "Zasiłek wypłaca ZUS, gdy pracodawca nie wypłaca świadczeń z powodu upadłości,\nlikwidacji lub śmierci pracodawcy (art. 30 ust. 4 ustawy zasiłkowej).\n"
+    },
+    {
+      "id": "P12",
+      "nazwa": "Wniosek o urlop na warunkach urlopu macierzyńskiego (przysposobienie)",
+      "kanal": "pismo_pracodawca",
+      "wariant": "VAR20",
+      "formularz_zus": "ZAM",
+      "podstawa_prawna": "art. 183 § 1 k.p.; art. 29a, art. 30 ustawy zasiłkowej",
+      "zrodlo": "Sprawy: Julia Gd._01 (przysposobienie), Agnieszka War_02, Jolanta Go_5 (rodzina zastępcza)",
+      "tresc": "WNIOSEK O UDZIELENIE URLOPU NA WARUNKACH URLOPU MACIERZYŃSKIEGO\n\nNa podstawie art. 183 § 1 Kodeksu pracy wnoszę o udzielenie mi urlopu na\nwarunkach urlopu macierzyńskiego w wymiarze {{tygodnie}} tygodni, w okresie\nod {{urlop_od}} do {{urlop_do}}, w związku z:\n\n  [ ] przyjęciem dziecka na wychowanie w celu przysposobienia,\n  [ ] przyjęciem dziecka na wychowanie w ramach rodziny zastępczej\n      (innej niż zawodowa).\n\nDziecko: {{dziecko_imie}}, urodzone {{data_porodu}}.\nPrzyjęcie dziecka na wychowanie nastąpiło dnia {{data_zdarzenia}}.\n\n{{#jesli_przysposobienie}}\nUrlop przysługuje mi w wymiarze 20 tygodni (przy jednym dziecku), a przy\nprzyjęciu dziecka w wieku do 3 lat — do ukończenia przez dziecko 4 lat.\n{{/jesli_przysposobienie}}\n\n{{#jesli_zastępca}}\nUrlop przysługuje mi w wymiarze wynikającym z art. 183 § 1 k.p.;\nrodzina zastępcza zawodowa nie ma prawa do tego urlopu.\n{{/jesli_zastępca}}\n\n{{data_pisma}}\n.....................................\n(podpis)\n",
+      "pola": [
+        {
+          "placeholder": "tygodnie",
+          "zrodlo": "przysposobienie: 20/31/33/35/37; rodzina zastępcza: 20; 9 tyg. przy 'Za życiem'"
+        }
+      ],
+      "zalaczniki_typowe": [
+        "Odpis skrócony aktu urodzenia dziecka",
+        "Orzeczenie/postanowienie o przysposobieniu albo umowa o pełnienie funkcji rodziny zastępczej"
+      ],
+      "uwagi": "Adopcja i rodzina zastępcza mają RÓŻNE wymiary urlopu. „Za życiem”\n(art. 183 § 4 pkt 3 i § 4¹ k.p.) dotyczy rodziny zastępczej, nie przysposobienia.\n"
+    },
+    {
+      "id": "P13",
+      "nazwa": "Wniosek o zasiłek opiekuńczy (Z-15A)",
+      "kanal": "formularz_zus",
+      "wariant": "VAR24",
+      "formularz_zus": "Z-15A / Z-15B",
+      "podstawa_prawna": "art. 32–35 ustawy zasiłkowej",
+      "zrodlo": "Sprawy: sprawy z zasiłkiem opiekuńczym",
+      "tresc": "[FORMULARZ ZUS — Z-15A / Z-15B]\nWniosek o zasiłek opiekuńczy\n\nWnoszę o wypłatę zasiłku opiekuńczego z powodu opieki nad:\n\n  [ ] dzieckiem zdrowym w wieku do 8 lat (art. 32 ustawy zasiłkowej)\n  [ ] chorym dzieckiem w wieku do 14 lat\n  [ ] chorym dzieckiem w wieku do 18 lat (z orzeczeniem o niepełnosprawności)\n  [ ] innym chorym członkiem rodziny\n\nOkres opieki: od {{urlop_od}} do {{urlop_do}}.\n\nZasiłek opiekuńczy przysługuje w wymiarze:\n  - 60 dni w roku kalendarzowym (dzieci),\n  - 14 dni w roku kalendarzowym (inni członkowie rodziny).\n",
+      "pola": [],
+      "uwagi": "Zasiłek opiekuńczy za opiekę nad dzieckiem: 80% podstawy. Nie wlicza się\ndo okresu zasiłkowego 182 dni (art. 34 ustawy zasiłkowej).\n"
+    },
+    {
+      "id": "P14",
+      "nazwa": "Wniosek o łączenie urlopu rodzicielskiego z pracą",
+      "kanal": "pismo_pracodawca",
+      "wariant": "VAR18",
+      "formularz_zus": "ZAM",
+      "podstawa_prawna": "art. 182¹f k.p.; art. 31 ust. 3a ustawy zasiłkowej",
+      "zrodlo": "Sprawy: Agnieszka Wa_05 (łączenie z pracą), Jolanta Poz_9",
+      "tresc": "WNIOSEK O WYRAŻENIE ZGODY NA ŁĄCZENIE URLOPU RODZICIELSKIEGO Z PRACĄ\n\nNa podstawie art. 182¹f Kodeksu pracy wnoszę o wyrażenie zgody na wykonywanie\npracy w czasie urlopu rodzicielskiego, w okresie od {{urlop_od}} do {{urlop_do}},\nw wymiarze {{wymiar_etatu}} etatu.\n\nŁączenie urlopu rodzicielskiego z pracą jest możliwe przez cały okres\nprzysługującego urlopu, z tym że praca może być wykonywana w wymiarze\nnie wyższym niż 1/2 pełnego wymiaru (a w szczególnych przypadkach — wyższym).\n\nPracodawca może odmówić wyrażenia zgody, jeżeli praca w niepełnym wymiarze\nnie jest możliwa; odmowa wymaga uzasadnienia.\n\n{{data_pisma}}\n.....................................\n(podpis)\n",
+      "pola": [
+        {
+          "placeholder": "wymiar_etatu",
+          "zrodlo": "urlopy.wymiarPracyPrzyLaczeniu"
+        }
+      ],
+      "uwagi": "Przy łączeniu urlopu z pracą zasiłek macierzyński ulega proporcjonalnemu\nzmniejszeniu. Przepis obowiązuje od 1 lipca 2026 r.\n"
+    },
+    {
+      "id": "P15",
+      "nazwa": "Wniosek o zmianę wymiaru urlopu rodzicielskiego (korekta łączenia)",
+      "kanal": "pismo_pracodawca",
+      "wariant": "VAR18",
+      "podstawa_prawna": "art. 182¹b k.p.; art. 30, art. 32 ustawy zasiłkowej",
+      "zrodlo": "Sprawy: Agnieszka Wa_15, Natalia Kr_2, Kinga Wro_4, Marek Wro_3",
+      "tresc": "WNIOSEK O ZMIANĘ WYMIARU WYKORZYSTANIA URLOPU RODZICIELSKIEGO\n\nNa podstawie § 4 pkt 1 lit. b) i c) rozporządzenia MRPiPS w sprawie wniosków\ndotyczących uprawnień pracowników związanych z rodzicielstwem wnoszę o zmianę\nwymiaru wykonywania pracy w trakcie urlopu rodzicielskiego:\n\n  [ ] z {{tygodnie_matka}} tygodni na {{tygodnie}} tygodni od {{urlop_od}}\n  [ ] z {{tygodnie_matka}} tygodni na {{tygodnie}} tygodni od {{urlop_do}}\n\n{{data_pisma}}\n.....................................\n(podpis)\n",
+      "pola": [],
+      "uwagi": "Zmianę wymiaru urlopu (bez zmiany jego łącznego wymiaru) dopuszcza art. 182¹b § 1 k.p."
+    },
+    {
+      "id": "P16",
+      "nazwa": "Wniosek o uzupełniający urlop macierzyński (wcześniak / szpital)",
+      "kanal": "pismo_pracodawca",
+      "wariant": "VAR09",
+      "formularz_zus": "ZAM",
+      "podstawa_prawna": "art. 180¹ k.p.; art. 29 ust. 5 ustawy zasiłkowej",
+      "zrodlo": "Sprawy: Agnieszka Poz._zas.mac. (wcześniak < 1000 g), Justyna Toruńska_5, Jolanta Poz_9",
+      "tresc": "WNIOSEK O UDZIELENIE UZUPEŁNIAJĄCEGO URLOPU MACIERZYŃSKIEGO\n\nNa podstawie art. 183¹ § 1 pkt 1 Kodeksu pracy wnoszę o udzielenie mi\nuzupełniającego urlopu macierzyńskiego w wymiarze stanowiącym różnicę\nmiędzy 41 tygodniami a wymiarami urlopów wykorzystanych, w okresie\nod {{urlop_od}} do {{urlop_do}}.\n\nUzupełniający urlop macierzyński przysługuje w wymiarze:\n\n  dzień porodu do 28. tygodnia ciąży        = 41 tygodni − wykorzystane tygodnie\n  od 28. do 36. tygodnia ciąży             = 41 tygodni − wykorzystane tygodnie\n\nTydzień ciąży w chwili porodu: {{tydzien_ciazy}}\nMasa urodzeniowa dziecka: {{masa}} g\nPobyt dziecka w szpitalu: od {{szpital_od}} do {{szpital_do}}  ({{dni_hospitalizacji}} dni)\n\n{{data_pisma}}\n.....................................\n(podpis)\n",
+      "pola": [
+        {
+          "placeholder": "dni_hospitalizacji",
+          "zrodlo": "szpitalDo - szpitalOd"
+        }
+      ],
+      "zalaczniki_typowe": [
+        "Zaświadczenie szpitalne o urodzeniu dziecka (tydzień ciąży, masa)",
+        "Karta wypisu ze szpitala / zaświadczenie o pobycie dziecka w szpitalu"
+      ],
+      "uwagi": "Uzupełniający urlop macierzyński przysługuje w razie urodzenia wcześniaka\nalbo gdy dziecko wymagało hospitalizacji po porodzie (art. 183¹ § 1 pkt 1–2 k.p.).\n"
+    }
+  ],
+  "decyzje_zus": [
+    {
+      "id": "D01",
+      "typ": "Decyzja przyznająca",
+      "struktura": [
+        "Nagłówek: Zakład Ubezpieczeń Społecznych, Oddział w {{oddzial}}",
+        "Znak sprawy / sygnatura: {{znak_sprawy}}",
+        "Nazwa i adres ubezpieczonego",
+        "Rozstrzygnięcie: przysługuje / przyznaję świadczenie {{benefit}} za okres od {{od}} do {{do}}",
+        "Podstawa prawna rozstrzygnięcia: {{podstawa}}",
+        "Uzasadnienie faktyczne: stan faktyczny sprawy",
+        "Uzasadnienie prawne: art. {{art}} ustawy zasiłkowej",
+        "Kwota zasiłku: {{kwota}} zł",
+        "Pouczenie o terminie odwołania (14 dni, art. 63 ustawy zasiłkowej do ZUS, potem do sądu pracy)",
+        "Pieczęć i podpis {{dystrybutor}}"
+      ],
+      "zrodlo": "Sprawy: Agnieszka Poz._decyzja przyznająca, Jolanta Poz_9, Joanna Łód_3",
+      "uwagi": "DECYZJA POZOSTAJE NARZĘDZIEM ZUS — nie generujemy jej za użytkownika.\nStruktura służy do zrozumienia pisma i przygotowania odwołania.\n"
+    },
+    {
+      "id": "D02",
+      "typ": "Odmowa / decyzja odmowna",
+      "struktura": [
+        "Rozstrzygnięcie: odmawiam przyznania {{benefit}}",
+        "Uzasadnienie faktyczne: {{stan_faktyczny}}",
+        "Uzasadnienie prawne: art. {{art}} ustawy zasiłkowej",
+        "Pouczenie o odwołaniu (14 dni do ZUS)"
+      ],
+      "zrodlo": "Sprawy: Katarzyna Lu_5 (odmowa), Ewa Łód_5, Helena Gd_5, Piotr Cho_5, Tomasz Po_11",
+      "tresc_odwolania": "ODWOŁANIE OD DECYZJI ZAKŁADU UBEZPIECZEŃ SPOŁECZNYCH\n\nNa podstawie art. 63 ustawy zasiłkowej odwołuję się od decyzji ZUS\nz dnia {{data_decyzji}}, znak {{znak_sprawy}}, odmawiającej mi prawa do {{benefit}}.\n\nUzasadnienie:\n{{uzasadnienie_odwolania}}\n\n{{data_pisma}}\n.....................................\n(podpis)\n"
+    }
+  ],
+  "mapowanie_wariantow": {
+    "VAR01": [
+      "P08"
+    ],
+    "VAR08": [
+      "P02"
+    ],
+    "VAR04": [
+      "P11"
+    ],
+    "VAR06": [
+      "P01",
+      "P02"
+    ],
+    "VAR09": [
+      "P16"
+    ],
+    "VAR16": [
+      "P09",
+      "P10"
+    ],
+    "VAR17": [
+      "P03",
+      "P04",
+      "P06",
+      "P07"
+    ],
+    "VAR18": [
+      "P14",
+      "P15"
+    ],
+    "VAR19": [
+      "P05"
+    ],
+    "VAR20": [
+      "P12"
+    ],
+    "VAR24": [
+      "P13"
+    ]
+  },
+  "ograniczenia": [
+    "Szablony pism pracowniczych (kanal: pismo_pracodawca) mają dowolną formę — można je drukować i składać.",
+    "WNIOSKÓW DO ZUS (kanal: formularz_zus) NIE podrabiamy — podajemy treść do przeniesienia na formularz ZAM/Z-3/Z-15A.",
+    "Decyzji ZUS nie generujemy — struktura służy do zrozumienia pisma i przygotowania odwołania.",
+    "Kwoty w polach money są wyliczane przez aplikację (engine), nie wpisywane ręcznie.",
+    "Terminy i wymiary urlopów mogą się zmienić w nowelizacji — przed wdrożeniem zweryfikować z poradnikiem ZUS 2026."
+  ]
+}

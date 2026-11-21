@@ -77,7 +77,7 @@ zbierają dane z formularza i wyświetlają wynik.
 | `engine/wnioski/` | **wnioski i ich warianty**: co przysługuje przy danym profilu (niżej) |
 | `calculators/useProfileDefaults.js` | **podstawianie danych z „Moich danych”** do kalkulatorów: komplet pól (podstawa, daty, staż ubezpieczenia, kod B, liczba ubezpieczonych, zaległość, wymiar etatu, tydzień ciąży, dni hospitalizacji) + pasek „Z PROFILU” pokazujący, co zostało wstawione |
 
-Testy (249: kalkulatory, podstawianie profilu, logika formularza (płeć/rola), warianty wniosków, regresje do `RAPORT_BLEDOW.md` i spójność z bazą wiedzy):
+Testy (265: kalkulatory, podstawianie profilu, logika formularza (płeć/rola), warianty wniosków, regresje do `RAPORT_BLEDOW.md`, spójność z bazą wiedzy oraz zgodność szablonów pism i LaTeX-a z YAML-em):
 
 ```bash
 cd frontend && npm test
@@ -166,6 +166,21 @@ const { warianty } = ocenWniosek(profil, "przejecie");
 
 Źródła: `docs/01-katalog-swiadczen-2026.md` i `docs/02-dane-do-wnioskow-2026.md` – szkic przygotowany
 z pomocą AI (Mistral) na podstawie materiałów ZUS; wymaga weryfikacji z przepisami.
+
+## Szablony pism (gotowe do druku, LaTeX)
+
+16 pism do ZUS/pracodawcy z `szablony_pism_2026.yaml` jest wygenerowanych do **LaTeX-a**:
+`latex/szablony/P01.tex … P16.tex` (każdy kompiluje się osobno), `latex/szablony_pism.tex`
+(wszystkie razem ze spisem treści) oraz `latex/decyzje_zus.tex` (struktura decyzji ZUS + wzór odwołania).
+Pola do wypełnienia to kropkowana linia z podpisem — drukuje się profesjonalnie.
+
+```bash
+python3 latex/gen_latex.py            # YAML → .tex (po każdej zmianie szablonów)
+tectonic -X compile latex/szablony/P01.tex   # albo xelatex
+```
+
+Kompilacja wymaga **XeLaTeX/Tectonic** (polskie znaki przez `fontspec`/`polyglossia`, nie `inputenc`).
+Szczegóły: `latex/README.md`. Test `latex.test.js` pilnuje, by pliki `.tex` nie rozjechały się z YAML-em.
 
 ## Symulacje usług ZUS i USC
 

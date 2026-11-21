@@ -1,0 +1,556 @@
+% =====================================================================
+%  Wspólna preambuła szablonów pism ZUS (świadczenia rodzicielskie 2026)
+%  Silnik: XeLaTeX albo Tectonic (pdflatex NIE obsłuży polskich znaków w fontspec).
+%  Kompilacja:  tectonic -X compile plik.tex
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{polish}
+\setotherlanguage{english}
+% font domyślny (Latin Modern) — Tectonic go dostarcza
+
+\usepackage[margin=2.5cm,a4paper]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+\definecolor{zus}{HTML}{007A33}      % zieleń ZUS
+\definecolor{szary}{HTML}{6B7280}
+\definecolor{ramka}{HTML}{9CA3AF}
+
+\hypersetup{colorlinks=true, linkcolor=zus, urlcolor=zus, pdftitle={Szablony pism ZUS}}
+
+% --- pole do wypełnienia odręcznego -----------------------------------
+% \Pole{nazwa} rysuje kropkowaną linię z podpisem pola pod spodem.
+% Pole do wypełnienia: kropkowana linia, pod nią drobny podpis pola.
+\newcommand{\Pole}[1]{%
+  \textcolor{szary}{\dotfill}\,%
+  {\scriptsize\textcolor{szary}{\textsc{#1}}}%
+}
+
+% --- blok warunkowy: treść pokazywana tylko, gdy pole prawdziwe --------
+\newenvironment{warunek}{%
+  \par\smallskip\noindent\begin{minipage}{\linewidth}%
+  \color{black}%
+}{%
+  \end{minipage}\par\smallskip%
+}
+
+% --- nagłówek pisma ---------------------------------------------------
+\newcommand{\NaglowekPisma}[1]{%
+  \par\vspace{0.8em}%
+  \begin{center}%
+    {\large\bfseries\MakeUppercase{#1}}%
+  \end{center}%
+  \vspace{0.4em}%
+}
+
+% --- blok nadawcy (pierwsze linie pisma) -------------------------------
+\newenvironment{nadawca}{%
+  \begin{flushleft}\small
+}{%
+  \end{flushleft}\normalsize
+}
+
+% --- stopka z numerem strony -----------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\textcolor{szary}{\small\thepage}}
+
+% --- metadane szablonu na początku pisma ------------------------------
+\newcommand{\Metadane}[3]{%
+  \begin{flushright}\footnotesize\textcolor{szary}%
+    \textbf{#1}\\[2pt] {\itshape #2}\\[2pt] #3%
+  \end{flushright}\vspace{0.5em}%
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+
+
+\begin{document}
+
+
+\begin{center}
+{\LARGE\bfseries Szablony pism ZUS}\\[4pt]
+{\large Świadczenia rodzicielskie --- stan prawny 2026}\\[2pt]
+{\small\color{szary}16 szablonów, źródło: 89 spraw wzorcowych}
+\end{center}
+
+
+\tableofcontents
+\clearpage
+
+
+\section{Wniosek o udzielenie urlopu macierzyńskiego}
+
+{\small\color{szary}Szablon P01 \textbullet{} art. 180 \S{} 1 k.p.}
+
+\Pole{imie}\\[-2pt]
+\Pole{adres}\\[-2pt]
+PESEL: \Pole{pesel}
+
+\Pole{platnik nazwa}
+\Pole{platnik adres}
+NIP: \Pole{platnik nip}
+
+\Pole{data pisma}, \Pole{adres miejscowosc}
+
+\NaglowekPisma{WNIOSEK O UDZIELENIE URLOPU MACIERZYŃSKIEGO}
+
+Zgodnie z art. 180 \S{} 1 Kodeksu pracy wnoszę o udzielenie mi urlopu
+macierzyńskiego w wymiarze \Pole{tygodnie} tygodni, przysługującego w związku
+z urodzeniem \Pole{liczba dzieci pl} dziecka (dzieci) przy jednym porodzie.
+
+Poród nastąpił dnia \Pole{data porodu}.
+Urlop macierzyński ma trwać od dnia \Pole{urlop od} do dnia \Pole{urlop do}.
+
+\begin{warunek}
+Dziecko: \Pole{dziecko imie}, PESEL \Pole{dziecko pesel}.
+\end{warunek}
+
+\begin{warunek}
+Do wniosku załączam zaświadczenie szpitalne, że dziecko urodziło się martwe.
+\end{warunek}
+
+\begin{warunek}
+Jednocześnie, na podstawie art. 179\textsuperscript{1} Kodeksu pracy, wnoszę o udzielenie mi\\[-2pt]
+bezpośrednio po urlopie macierzyńskim urlopu rodzicielskiego w pełnym wymiarze.\\[-2pt]
+Oświadczam, że zasiłek macierzyński za cały okres będzie wynosił 81,5\% podstawy.
+\end{warunek}
+
+\Pole{imie}
+......................................
+(podpis pracownika)
+
+\vfill
+{\footnotesize\color{szary}\itshape Przed porodem wpisuje się przewidywaną datę porodu i uzupełnia po porodzie. Urlopy macierzyński i rodzicielski łącznie liczą się do limitu art. 180 \S{} 1 k.p. }
+
+\clearpage
+
+\section{Wniosek o część urlopu macierzyńskiego przed przewidywaną datą porodu}
+
+{\small\color{szary}Szablon P02 \textbullet{} art. 180 \S{} 2 k.p.}
+
+WNIOSEK O UDZIELENIE CZĘŚCI URLOPU MACIERZYŃSKIEGO\\[-2pt]
+PRZED PRZEWIDYWANĄ DATĄ PORODU
+
+Na podstawie art. 180 \S{} 2 Kodeksu pracy proszę o udzielenie mi części urlopu
+macierzyńskiego przypadającej przed przewidywaną datą porodu, od dnia \Pole{urlop od}.
+
+Przewidywana data porodu: \Pole{pdp}.
+Wykorzystuję \Pole{tygodnie} tygodni z puli urlopu macierzyńskiego.
+
+\Pole{imie}, \Pole{data pisma}
+.....................................
+(podpis)
+
+\vfill
+{\footnotesize\color{szary}\itshape Przed porodem można wykorzystać maksymalnie 6 tygodni urlopu macierzyńskiego.}
+
+\clearpage
+
+\section{Wniosek o zasiłek macierzyński za okres urlopu rodzicielskiego (formularz ZUR)}
+
+{\small\color{szary}Szablon P03 \textbullet{} art. 182\textsuperscript{1}d k.p.; art. 29--31 ustawy zasiłkowej}
+
+[FORMULARZ ZUS --- ZUR / ZAM]\\[-2pt]
+Wniosek o zasiłek macierzyński za okres urlopu rodzicielskiego
+
+Wypełnij ten wniosek, jeśli ubiegasz się o wypłatę zasiłku macierzyńskiego
+za okres urlopu rodzicielskiego albo urlopu na warunkach urlopu macierzyńskiego.
+
+ZAKRES WNIOSKU
+Proszę o wypłatę zasiłku macierzyńskiego za okres od \Pole{urlop od} do \Pole{urlop do}.
+
+Wnioskuję o zasiłek macierzyński za okres urlopu rodzicielskiego z powodu:
+[ ] urodzenia się dziecka/dzieci
+[ ] przyjęcia na wychowanie dziecka/dzieci w celu przysposobienia
+[ ] przyjęcia na wychowanie dziecka/dzieci w ramach rodziny zastępczej
+[ ] przerwania przez matkę dziecka okresu wypłaty zasiłku macierzyńskiego
+[ ] posiadania przez matkę orzeczenia o niezdolności do samodzielnej egzystencji
+[ ] porzucenia dziecka przez matkę
+[ ] śmierci matki dziecka/dzieci
+[ ] podjęcia przez matkę pracy w wymiarze nie niższym niż połowa pełnego etatu
+[ ] urodzenia dziecka/dzieci po \Pole{data porodu}
+
+DANE DZIECKA/DZIECI
+\Pole{dziecko imie}, \Pole{data porodu}, \Pole{adres miejscowosc}
+
+DANE DRUGIEGO RODZICA
+\Pole{drugi rodzic}, PESEL \Pole{pesel}
+
+ŚWIADCZENIA PROSZĘ PRZEKAZYWAĆ
+[ ] w Polsce na rachunek bankowy
+[ ] za granicę --- na rachunek bankowy (oprócz USA)
+
+\vfill
+{\footnotesize\color{szary}\itshape Zgodnie z art. 30 ustawy zasiłkowej wniosek o zasiłek za okres urlopu rodzicielskiego składa się w terminie do 21 dni po porodzie, jeśli chce się zasiłek za cały okres; późniejsze wnioski --- za okres od dnia złożenia. }
+
+\clearpage
+
+\section{Oświadczenie drugiego rodzica o niekorzystaniu z urlopu rodzicielskiego}
+
+{\small\color{szary}Szablon P04 \textbullet{} art. 31 ust. 3a ustawy zasiłkowej}
+
+\NaglowekPisma{ZAKŁAD UBEZPIECZEŃ SPOŁECZNYCH}
+
+\NaglowekPisma{OŚWIADCZENIE}
+
+Oświadczam, że jako ojciec dziecka \Pole{dziecko imie}, urodzonego dnia
+\Pole{data porodu}, nie będę korzystał z przysługującego mi urlopu
+rodzicielskiego w okresie, za jaki zasiłek macierzyński pobiera matka
+dziecka --- \Pole{drugi rodzic}.
+
+Jestem świadomy odpowiedzialności karnej za złożenie fałszywego oświadczenia.
+
+\Pole{data pisma}
+.....................................
+(podpis)
+
+\vfill
+{\footnotesize\color{szary}\itshape Oświadczenie jest wymagane, gdy jeden z rodziców pobiera zasiłek za okres urlopu rodzicielskiego, a drugi z tego urlopu w tym czasie nie korzysta. }
+
+\clearpage
+
+\section{Wniosek o udzielenie urlopu ojcowskiego}
+
+{\small\color{szary}Szablon P05 \textbullet{} art. 182\textsuperscript{3} \S{} 1 k.p.; art. 83 ustawy zasiłkowej}
+
+\Pole{imie}\\[-2pt]
+\Pole{adres}\\[-2pt]
+PESEL: \Pole{pesel}
+
+\Pole{platnik nazwa}
+
+\Pole{data pisma}
+
+\NaglowekPisma{WNIOSEK O UDZIELENIE URLOPU OJCOWSKIEGO}
+
+Na podstawie art. 182\textsuperscript{3} \S{} 1 Kodeksu pracy wnoszę o udzielenie mi urlopu
+ojcowskiego w wymiarze \Pole{tygodnie} tygodni, w okresie od \Pole{urlop od} do \Pole{urlop do}.
+
+Urlopu ojcowskiego udziela się na pisemny wniosek ojca, składany w terminie
+nie krótszym niż 7 dni przed rozpoczęciem urlopu.
+
+Dziecko: \Pole{dziecko imie}, urodzone \Pole{data porodu}.
+
+.....................................
+(podpis pracownika)
+
+\vfill
+{\footnotesize\color{szary}\itshape Urlop ojcowski przysługuje w wymiarze 2 tygodni, nie dłużej niż do ukończenia przez dziecko 12 miesięcy (art. 182\textsuperscript{3} \S{} 1 i 4 k.p.). Można go dzielić na dwie części. Ojcowie adopcyjni i zastępczy mają odrębne zasady (art. 182\textsuperscript{4} k.p.). }
+
+\clearpage
+
+\section{Wniosek ojca o przejęcie części urlopu rodzicielskiego --- 9 tygodni}
+
+{\small\color{szary}Szablon P06 \textbullet{} art. 182\textsuperscript{1}a \S{} 2 k.p.; art. 30 ust. 1 ustawy zasiłkowej}
+
+\NaglowekPisma{WNIOSEK O UDZIELENIE URLOPU RODZICIELSKIEGO (CZĘŚĆ NIEPRZENOSZALNA)}
+
+Na podstawie art. 182\textsuperscript{1}a \S{} 2 Kodeksu pracy wnoszę o udzielenie mi urlopu
+rodzicielskiego w wymiarze \Pole{tygodnie} tygodni, w okresie od \Pole{urlop od} do \Pole{urlop do}.
+
+Matka dziecka, \Pole{drugi rodzic}, wykorzystała \Pole{tygodnie matka} tygodni urlopu
+macierzyńskiego, a z pozostałej części urlopu rodzicielskiego rezygnuje na
+moją rzecz. Rezygnacja matki z urlopu rodzicielskiego na rzecz ojca wymaga:
+
+[ ] pisemnego wniosku matki o rezygnację z urlopu rodzicielskiego w tej części,
+[ ] mojego wniosku o udzielenie urlopu rodzicielskiego.
+
+\begin{warunek}
+Matka dziecka nie jest objęta ubezpieczeniem chorobowym, dlatego przysługuje\\[-2pt]
+mi urlop rodzicielski na podstawie art. 182\textsuperscript{1}a \S{} 2\textsuperscript{1} Kodeksu pracy.
+\end{warunek}
+
+Dziecko: \Pole{dziecko imie}, urodzone \Pole{data porodu}.
+
+\Pole{data pisma}
+.....................................
+(podpis pracownika)
+
+\vfill
+{\footnotesize\color{szary}\itshape Każdy z rodziców ma prawo do 9 tygodni urlopu rodzicielskiego, których nie można przenieść na drugiego rodzica (art. 182\textsuperscript{1}a \S{} 2 k.p.). Matka musi złożyć wniosek o rezygnację z odpowiedniej części urlopu (P07). }
+
+\clearpage
+
+\section{Wniosek matki o rezygnację z urlopu rodzicielskiego na rzecz ojca}
+
+{\small\color{szary}Szablon P07 \textbullet{} art. 182\textsuperscript{1}a \S{} 2 k.p.; \S{} 4 rozporządzenia o wnioskach}
+
+\NaglowekPisma{WNIOSEK O REZYGNACJĘ Z URLOPU RODZICIELSKIEGO}
+
+Na podstawie art. 182\textsuperscript{1}a \S{} 2 Kodeksu pracy oświadczam, że rezygnuję z urlopu
+rodzicielskiego w wymiarze \Pole{tygodnie} tygodni, w okresie od \Pole{urlop od} do \Pole{urlop do},
+na rzecz ojca dziecka --- \Pole{drugi rodzic}.
+
+\begin{warunek}
+Macierzyński urlop został przez mnie wykorzystany w wymiarze co najmniej\\[-2pt]
+14 tygodni po porodzie, a ojciec dziecka złożył wniosek o przyznanie mu\\[-2pt]
+prawa do zasiłku macierzyńskiego za pozostały okres.
+\end{warunek}
+
+\begin{warunek}
+Posiadam orzeczenie o niezdolności do samodzielnej egzystencji, dlatego\\[-2pt]
+mogę zrezygnować z urlopu macierzyńskiego po wykorzystaniu 8 tygodni.
+\end{warunek}
+
+\Pole{data pisma}
+.....................................
+(podpis)
+
+\vfill
+{\footnotesize\color{szary}\itshape Matka może zrezygnować z urlopu macierzyńskiego po 14 tygodniach od porodu (art. 180 \S{} 4 k.p.), a w przypadku orzeczenia o niezdolności do samodzielnej egzystencji --- po 8 tygodniach (art. 180 \S{} 6 k.p.). }
+
+\clearpage
+
+\section{Wniosek o wypłatę zasiłku chorobowego w ciąży (Z-3)}
+
+{\small\color{szary}Szablon P08 \textbullet{} art. 8, art. 11 ustawy zasiłkowej}
+
+[FORMULARZ ZUS --- Z-3 / Z-3a / Z-3b]\\[-2pt]
+Zaświadczenie płatnika składek
+
+Pracownik występuje o:
+[ ] zasiłek chorobowy            od \Pole{data zdarzenia} do \Pole{urlop do}
+[ ] zasiłek opiekuńczy
+[ ] zasiłek macierzyński
+[ ] zasiłek w wysokości zasiłku macierzyńskiego
+[ ] zasiłek wyrównawczy
+[ ] świadczenie rehabilitacyjne
+
+INFORMACJE O PRACOWNIKU
+1. Zatrudniony od: \Pole{data zdarzenia}     w wymiarze czasu pracy: \Pole{wymiar etatu}
+2. Czy zatrudniony na podstawie umowy o pracę tymczasową: TAK / NIE
+3. Czy wykonuje pracę za granicą: TAK / NIE
+4. Czy niezdolność do pracy powstała z powodu: choroby zawodowej / wypadku
+przy pracy / wypadku w drodze do pracy lub z pracy / NIE
+5. Czy w okresie niezdolności do pracy korzysta z urlopu bezpłatnego /
+wychowawczego: TAK / NIE
+6. Pracownikowi udzielono (jeśli występuje o zasiłek macierzyński):
+[ ] urlopu macierzyńskiego      [ ] urlopu rodzicielskiego
+[ ] uzupełniającego urlopu       [ ] urlopu na warunkach urlopu macierzyńskiego
+[ ] urlopu ojcowskiego
+od \Pole{urlop od} do \Pole{urlop do}
+7. Czy pracownik w czasie urlopu rodzicielskiego wykonuje pracę: TAK / NIE
+
+\vfill
+{\footnotesize\color{szary}\itshape Zasiłek chorobowy w ciąży przysługuje w pierwszym dniu niezdolności do pracy w 100\% podstawy (art. 11 ust. 2 pkt 1 ustawy zasiłkowej). Formularz Z-3 wypełnia płatnik; zwolnienie lekarskie oznacza się kodem B (ciąża). }
+
+\clearpage
+
+\section{Wniosek o urlop macierzyński --- urodzenie martwego dziecka}
+
+{\small\color{szary}Szablon P09 \textbullet{} art. 180 \S{} 4 pkt 3 k.p.; art. 29a ustawy zasiłkowej}
+
+\NaglowekPisma{WNIOSEK O UDZIELENIE URLOPU MACIERZYŃSKIEGO}
+
+Zgodnie z art. 180 \S{} 1 Kodeksu pracy zwracam się z wnioskiem o udzielenie mi
+urlopu macierzyńskiego w wymiarze 8 tygodni od dnia porodu, przysługującego
+w związku z urodzeniem martwego dziecka w dniu \Pole{data porodu}.
+
+Urlop macierzyński będzie trwał od dnia \Pole{urlop od} do dnia \Pole{urlop do}.
+
+Do wniosku załączam zaświadczenie szpitalne, że dziecko urodziło się martwe.
+
+\Pole{data pisma}
+.....................................
+(podpis)
+
+\vfill
+{\footnotesize\color{szary}\itshape Przy urodzeniu martwego dziecka urlop macierzyński wynosi 8 tygodni (art. 180 \S{} 4 pkt 3 k.p.). Przysługuje też zasiłek pogrzebowy na dziecko martwo urodzone (art. 79 ust. 1 pkt 1 lit. b ustawy zasiłkowej). }
+
+\clearpage
+
+\section{Wniosek o urlop macierzyński po zgonie dziecka}
+
+{\small\color{szary}Szablon P10 \textbullet{} art. 180 \S{} 4 pkt 3 k.p.; art. 29a ustawy zasiłkowej}
+
+\NaglowekPisma{WNIOSEK O UDZIELENIE URLOPU MACIERZYŃSKIEGO}
+
+Zgodnie z art. 180 \S{} 4 pkt 3 Kodeksu pracy wnoszę o udzielenie mi urlopu
+macierzyńskiego w wymiarze \Pole{tygodnie} tygodni, przysługującego w związku
+z urodzeniem dziecka, które zmarło w dniu \Pole{data zdarzenia}.
+
+Urlop macierzyński ma trwać od dnia \Pole{urlop od} do dnia \Pole{urlop do}.
+
+Do wniosku załączam skrócony odpis aktu urodzenia z adnotacją o zgonie dziecka.
+
+\Pole{data pisma}
+.....................................
+(podpis)
+
+\vfill
+{\footnotesize\color{szary}\itshape Urlop wynosi 8 tygodni, nie krócej niż do 8 tygodni po porodzie.}
+
+\clearpage
+
+\section{Wniosek o zasiłek w wysokości zasiłku macierzyńskiego (likwidacja / upadłość)}
+
+{\small\color{szary}Szablon P11 \textbullet{} art. 30 ust. 4, art. 31 ust. 1 ustawy zasiłkowej}
+
+[FORMULARZ ZUS --- ZAM]\\[-2pt]
+Wniosek o zasiłek w wysokości zasiłku macierzyńskiego
+
+Wnoszę o wypłatę zasiłku w wysokości zasiłku macierzyńskiego za okres
+urlopu macierzyńskiego / rodzicielskiego od \Pole{urlop od} do \Pole{urlop do}
+w związku z niewypłaceniem przez pracodawcę świadczeń, których obowiązek
+wypłaty przeszedł na Zakład Ubezpieczeń Społecznych z powodu:
+
+[ ] ogłoszenia upadłości pracodawcy
+[ ] likwidacji pracodawcy
+[ ] śmierci pracodawcy
+
+Pracodawca: \Pole{platnik nazwa}, NIP \Pole{platnik nip}.
+
+\vfill
+{\footnotesize\color{szary}\itshape Zasiłek wypłaca ZUS, gdy pracodawca nie wypłaca świadczeń z powodu upadłości, likwidacji lub śmierci pracodawcy (art. 30 ust. 4 ustawy zasiłkowej). }
+
+\clearpage
+
+\section{Wniosek o urlop na warunkach urlopu macierzyńskiego (przysposobienie)}
+
+{\small\color{szary}Szablon P12 \textbullet{} art. 183 \S{} 1 k.p.; art. 29a, art. 30 ustawy zasiłkowej}
+
+\NaglowekPisma{WNIOSEK O UDZIELENIE URLOPU NA WARUNKACH URLOPU MACIERZYŃSKIEGO}
+
+Na podstawie art. 183 \S{} 1 Kodeksu pracy wnoszę o udzielenie mi urlopu na
+warunkach urlopu macierzyńskiego w wymiarze \Pole{tygodnie} tygodni, w okresie
+od \Pole{urlop od} do \Pole{urlop do}, w związku z:
+
+[ ] przyjęciem dziecka na wychowanie w celu przysposobienia,
+[ ] przyjęciem dziecka na wychowanie w ramach rodziny zastępczej
+(innej niż zawodowa).
+
+Dziecko: \Pole{dziecko imie}, urodzone \Pole{data porodu}.
+Przyjęcie dziecka na wychowanie nastąpiło dnia \Pole{data zdarzenia}.
+
+\begin{warunek}
+Urlop przysługuje mi w wymiarze 20 tygodni (przy jednym dziecku), a przy\\[-2pt]
+przyjęciu dziecka w wieku do 3 lat --- do ukończenia przez dziecko 4 lat.
+\end{warunek}
+
+\begin{warunek}
+Urlop przysługuje mi w wymiarze wynikającym z art. 183 \S{} 1 k.p.;\\[-2pt]
+rodzina zastępcza zawodowa nie ma prawa do tego urlopu.
+\end{warunek}
+
+\Pole{data pisma}
+.....................................
+(podpis)
+
+\vfill
+{\footnotesize\color{szary}\itshape Adopcja i rodzina zastępcza mają RÓŻNE wymiary urlopu. \quotedblbase{}Za życiem\textquotedblright{} (art. 183 \S{} 4 pkt 3 i \S{} 4\textsuperscript{1} k.p.) dotyczy rodziny zastępczej, nie przysposobienia. }
+
+\clearpage
+
+\section{Wniosek o zasiłek opiekuńczy (Z-15A)}
+
+{\small\color{szary}Szablon P13 \textbullet{} art. 32--35 ustawy zasiłkowej}
+
+[FORMULARZ ZUS --- Z-15A / Z-15B]\\[-2pt]
+Wniosek o zasiłek opiekuńczy
+
+Wnoszę o wypłatę zasiłku opiekuńczego z powodu opieki nad:
+
+[ ] dzieckiem zdrowym w wieku do 8 lat (art. 32 ustawy zasiłkowej)
+[ ] chorym dzieckiem w wieku do 14 lat
+[ ] chorym dzieckiem w wieku do 18 lat (z orzeczeniem o niepełnosprawności)
+[ ] innym chorym członkiem rodziny
+
+Okres opieki: od \Pole{urlop od} do \Pole{urlop do}.
+
+Zasiłek opiekuńczy przysługuje w wymiarze:
+- 60 dni w roku kalendarzowym (dzieci),
+- 14 dni w roku kalendarzowym (inni członkowie rodziny).
+
+\vfill
+{\footnotesize\color{szary}\itshape Zasiłek opiekuńczy za opiekę nad dzieckiem: 80\% podstawy. Nie wlicza się do okresu zasiłkowego 182 dni (art. 34 ustawy zasiłkowej). }
+
+\clearpage
+
+\section{Wniosek o łączenie urlopu rodzicielskiego z pracą}
+
+{\small\color{szary}Szablon P14 \textbullet{} art. 182\textsuperscript{1}f k.p.; art. 31 ust. 3a ustawy zasiłkowej}
+
+\NaglowekPisma{WNIOSEK O WYRAŻENIE ZGODY NA ŁĄCZENIE URLOPU RODZICIELSKIEGO Z PRACĄ}
+
+Na podstawie art. 182\textsuperscript{1}f Kodeksu pracy wnoszę o wyrażenie zgody na wykonywanie
+pracy w czasie urlopu rodzicielskiego, w okresie od \Pole{urlop od} do \Pole{urlop do},
+w wymiarze \Pole{wymiar etatu} etatu.
+
+Łączenie urlopu rodzicielskiego z pracą jest możliwe przez cały okres
+przysługującego urlopu, z tym że praca może być wykonywana w wymiarze
+nie wyższym niż 1/2 pełnego wymiaru (a w szczególnych przypadkach --- wyższym).
+
+Pracodawca może odmówić wyrażenia zgody, jeżeli praca w niepełnym wymiarze
+nie jest możliwa; odmowa wymaga uzasadnienia.
+
+\Pole{data pisma}
+.....................................
+(podpis)
+
+\vfill
+{\footnotesize\color{szary}\itshape Przy łączeniu urlopu z pracą zasiłek macierzyński ulega proporcjonalnemu zmniejszeniu. Przepis obowiązuje od 1 lipca 2026 r. }
+
+\clearpage
+
+\section{Wniosek o zmianę wymiaru urlopu rodzicielskiego (korekta łączenia)}
+
+{\small\color{szary}Szablon P15 \textbullet{} art. 182\textsuperscript{1}b k.p.; art. 30, art. 32 ustawy zasiłkowej}
+
+\NaglowekPisma{WNIOSEK O ZMIANĘ WYMIARU WYKORZYSTANIA URLOPU RODZICIELSKIEGO}
+
+Na podstawie \S{} 4 pkt 1 lit. b) i c) rozporządzenia MRPiPS w sprawie wniosków
+dotyczących uprawnień pracowników związanych z rodzicielstwem wnoszę o zmianę
+wymiaru wykonywania pracy w trakcie urlopu rodzicielskiego:
+
+[ ] z \Pole{tygodnie matka} tygodni na \Pole{tygodnie} tygodni od \Pole{urlop od}
+[ ] z \Pole{tygodnie matka} tygodni na \Pole{tygodnie} tygodni od \Pole{urlop do}
+
+\Pole{data pisma}
+.....................................
+(podpis)
+
+\vfill
+{\footnotesize\color{szary}\itshape Zmianę wymiaru urlopu (bez zmiany jego łącznego wymiaru) dopuszcza art. 182\textsuperscript{1}b \S{} 1 k.p.}
+
+\clearpage
+
+\section{Wniosek o uzupełniający urlop macierzyński (wcześniak / szpital)}
+
+{\small\color{szary}Szablon P16 \textbullet{} art. 180\textsuperscript{1} k.p.; art. 29 ust. 5 ustawy zasiłkowej}
+
+\NaglowekPisma{WNIOSEK O UDZIELENIE UZUPEŁNIAJĄCEGO URLOPU MACIERZYŃSKIEGO}
+
+Na podstawie art. 183\textsuperscript{1} \S{} 1 pkt 1 Kodeksu pracy wnoszę o udzielenie mi
+uzupełniającego urlopu macierzyńskiego w wymiarze stanowiącym różnicę
+między 41 tygodniami a wymiarami urlopów wykorzystanych, w okresie
+od \Pole{urlop od} do \Pole{urlop do}.
+
+Uzupełniający urlop macierzyński przysługuje w wymiarze:
+
+dzień porodu do 28. tygodnia ciąży        = 41 tygodni − wykorzystane tygodnie
+od 28. do 36. tygodnia ciąży             = 41 tygodni − wykorzystane tygodnie
+
+Tydzień ciąży w chwili porodu: \Pole{tydzien ciazy}
+Masa urodzeniowa dziecka: \Pole{masa} g
+Pobyt dziecka w szpitalu: od \Pole{szpital od} do \Pole{szpital do}  (\Pole{dni hospitalizacji} dni)
+
+\Pole{data pisma}
+.....................................
+(podpis)
+
+\vfill
+{\footnotesize\color{szary}\itshape Uzupełniający urlop macierzyński przysługuje w razie urodzenia wcześniaka albo gdy dziecko wymagało hospitalizacji po porodzie (art. 183\textsuperscript{1} \S{} 1 pkt 1--2 k.p.). }
+
+\clearpage
+
+\end{document}

@@ -1,0 +1,8 @@
+# artefakty kompilacji LaTeX-a (PDF-y zostawiamy — są gotowe do druku)
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk

@@ -1,0 +1,122 @@
+% =====================================================================
+%  Wspólna preambuła szablonów pism ZUS (świadczenia rodzicielskie 2026)
+%  Silnik: XeLaTeX albo Tectonic (pdflatex NIE obsłuży polskich znaków w fontspec).
+%  Kompilacja:  tectonic -X compile plik.tex
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{polish}
+\setotherlanguage{english}
+% font domyślny (Latin Modern) — Tectonic go dostarcza
+
+\usepackage[margin=2.5cm,a4paper]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+\definecolor{zus}{HTML}{007A33}      % zieleń ZUS
+\definecolor{szary}{HTML}{6B7280}
+\definecolor{ramka}{HTML}{9CA3AF}
+
+\hypersetup{colorlinks=true, linkcolor=zus, urlcolor=zus, pdftitle={Szablony pism ZUS}}
+
+% --- pole do wypełnienia odręcznego -----------------------------------
+% \Pole{nazwa} rysuje kropkowaną linię z podpisem pola pod spodem.
+% Pole do wypełnienia: kropkowana linia, pod nią drobny podpis pola.
+\newcommand{\Pole}[1]{%
+  \textcolor{szary}{\dotfill}\,%
+  {\scriptsize\textcolor{szary}{\textsc{#1}}}%
+}
+
+% --- blok warunkowy: treść pokazywana tylko, gdy pole prawdziwe --------
+\newenvironment{warunek}{%
+  \par\smallskip\noindent\begin{minipage}{\linewidth}%
+  \color{black}%
+}{%
+  \end{minipage}\par\smallskip%
+}
+
+% --- nagłówek pisma ---------------------------------------------------
+\newcommand{\NaglowekPisma}[1]{%
+  \par\vspace{0.8em}%
+  \begin{center}%
+    {\large\bfseries\MakeUppercase{#1}}%
+  \end{center}%
+  \vspace{0.4em}%
+}
+
+% --- blok nadawcy (pierwsze linie pisma) -------------------------------
+\newenvironment{nadawca}{%
+  \begin{flushleft}\small
+}{%
+  \end{flushleft}\normalsize
+}
+
+% --- stopka z numerem strony -----------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\textcolor{szary}{\small\thepage}}
+
+% --- metadane szablonu na początku pisma ------------------------------
+\newcommand{\Metadane}[3]{%
+  \begin{flushright}\footnotesize\textcolor{szary}%
+    \textbf{#1}\\[2pt] {\itshape #2}\\[2pt] #3%
+  \end{flushright}\vspace{0.5em}%
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+
+\begin{document}
+
+\begin{flushright}
+{\footnotesize\color{szary}
+\textbf{Szablon P03}\\
+{\itshape Wniosek o zasiłek macierzyński za okres urlopu rodzicielskiego (formularz ZUR)}\\
+art. 182\textsuperscript{1}d k.p.; art. 29--31 ustawy zasiłkowej -- Formularz: ZUR (do 24.10.2026), potem ZAM}\
+\end{flushright}
+
+\vspace{0.5em}
+{\color{ramka}\hrule height 0.4pt}
+\vspace{0.8em}
+
+[FORMULARZ ZUS --- ZUR / ZAM]\\[-2pt]
+Wniosek o zasiłek macierzyński za okres urlopu rodzicielskiego
+
+Wypełnij ten wniosek, jeśli ubiegasz się o wypłatę zasiłku macierzyńskiego
+za okres urlopu rodzicielskiego albo urlopu na warunkach urlopu macierzyńskiego.
+
+ZAKRES WNIOSKU
+Proszę o wypłatę zasiłku macierzyńskiego za okres od \Pole{urlop od} do \Pole{urlop do}.
+
+Wnioskuję o zasiłek macierzyński za okres urlopu rodzicielskiego z powodu:
+[ ] urodzenia się dziecka/dzieci
+[ ] przyjęcia na wychowanie dziecka/dzieci w celu przysposobienia
+[ ] przyjęcia na wychowanie dziecka/dzieci w ramach rodziny zastępczej
+[ ] przerwania przez matkę dziecka okresu wypłaty zasiłku macierzyńskiego
+[ ] posiadania przez matkę orzeczenia o niezdolności do samodzielnej egzystencji
+[ ] porzucenia dziecka przez matkę
+[ ] śmierci matki dziecka/dzieci
+[ ] podjęcia przez matkę pracy w wymiarze nie niższym niż połowa pełnego etatu
+[ ] urodzenia dziecka/dzieci po \Pole{data porodu}
+
+DANE DZIECKA/DZIECI
+\Pole{dziecko imie}, \Pole{data porodu}, \Pole{adres miejscowosc}
+
+DANE DRUGIEGO RODZICA
+\Pole{drugi rodzic}, PESEL \Pole{pesel}
+
+ŚWIADCZENIA PROSZĘ PRZEKAZYWAĆ
+[ ] w Polsce na rachunek bankowy
+[ ] za granicę --- na rachunek bankowy (oprócz USA)
+
+\vfill
+{\footnotesize\textcolor{szary}\itshape Zgodnie z art. 30 ustawy zasiłkowej wniosek o zasiłek za okres urlopu rodzicielskiego składa się w terminie do 21 dni po porodzie, jeśli chce się zasiłek za cały okres; późniejsze wnioski --- za okres od dnia złożenia. }
+
+\end{document}

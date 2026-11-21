@@ -1,0 +1,118 @@
+% =====================================================================
+%  Wspólna preambuła szablonów pism ZUS (świadczenia rodzicielskie 2026)
+%  Silnik: XeLaTeX albo Tectonic (pdflatex NIE obsłuży polskich znaków w fontspec).
+%  Kompilacja:  tectonic -X compile plik.tex
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{polish}
+\setotherlanguage{english}
+% font domyślny (Latin Modern) — Tectonic go dostarcza
+
+\usepackage[margin=2.5cm,a4paper]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+\definecolor{zus}{HTML}{007A33}      % zieleń ZUS
+\definecolor{szary}{HTML}{6B7280}
+\definecolor{ramka}{HTML}{9CA3AF}
+
+\hypersetup{colorlinks=true, linkcolor=zus, urlcolor=zus, pdftitle={Szablony pism ZUS}}
+
+% --- pole do wypełnienia odręcznego -----------------------------------
+% \Pole{nazwa} rysuje kropkowaną linię z podpisem pola pod spodem.
+% Pole do wypełnienia: kropkowana linia, pod nią drobny podpis pola.
+\newcommand{\Pole}[1]{%
+  \textcolor{szary}{\dotfill}\,%
+  {\scriptsize\textcolor{szary}{\textsc{#1}}}%
+}
+
+% --- blok warunkowy: treść pokazywana tylko, gdy pole prawdziwe --------
+\newenvironment{warunek}{%
+  \par\smallskip\noindent\begin{minipage}{\linewidth}%
+  \color{black}%
+}{%
+  \end{minipage}\par\smallskip%
+}
+
+% --- nagłówek pisma ---------------------------------------------------
+\newcommand{\NaglowekPisma}[1]{%
+  \par\vspace{0.8em}%
+  \begin{center}%
+    {\large\bfseries\MakeUppercase{#1}}%
+  \end{center}%
+  \vspace{0.4em}%
+}
+
+% --- blok nadawcy (pierwsze linie pisma) -------------------------------
+\newenvironment{nadawca}{%
+  \begin{flushleft}\small
+}{%
+  \end{flushleft}\normalsize
+}
+
+% --- stopka z numerem strony -----------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\textcolor{szary}{\small\thepage}}
+
+% --- metadane szablonu na początku pisma ------------------------------
+\newcommand{\Metadane}[3]{%
+  \begin{flushright}\footnotesize\textcolor{szary}%
+    \textbf{#1}\\[2pt] {\itshape #2}\\[2pt] #3%
+  \end{flushright}\vspace{0.5em}%
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+
+\begin{document}
+
+\begin{flushright}
+{\footnotesize\color{szary}
+\textbf{Szablon P08}\\
+{\itshape Wniosek o wypłatę zasiłku chorobowego w ciąży (Z-3)}\\
+art. 8, art. 11 ustawy zasiłkowej -- Formularz: Z-3 / Z-3a / Z-3b}\
+\end{flushright}
+
+\vspace{0.5em}
+{\color{ramka}\hrule height 0.4pt}
+\vspace{0.8em}
+
+[FORMULARZ ZUS --- Z-3 / Z-3a / Z-3b]\\[-2pt]
+Zaświadczenie płatnika składek
+
+Pracownik występuje o:
+[ ] zasiłek chorobowy            od \Pole{data zdarzenia} do \Pole{urlop do}
+[ ] zasiłek opiekuńczy
+[ ] zasiłek macierzyński
+[ ] zasiłek w wysokości zasiłku macierzyńskiego
+[ ] zasiłek wyrównawczy
+[ ] świadczenie rehabilitacyjne
+
+INFORMACJE O PRACOWNIKU
+1. Zatrudniony od: \Pole{data zdarzenia}     w wymiarze czasu pracy: \Pole{wymiar etatu}
+2. Czy zatrudniony na podstawie umowy o pracę tymczasową: TAK / NIE
+3. Czy wykonuje pracę za granicą: TAK / NIE
+4. Czy niezdolność do pracy powstała z powodu: choroby zawodowej / wypadku
+przy pracy / wypadku w drodze do pracy lub z pracy / NIE
+5. Czy w okresie niezdolności do pracy korzysta z urlopu bezpłatnego /
+wychowawczego: TAK / NIE
+6. Pracownikowi udzielono (jeśli występuje o zasiłek macierzyński):
+[ ] urlopu macierzyńskiego      [ ] urlopu rodzicielskiego
+[ ] uzupełniającego urlopu       [ ] urlopu na warunkach urlopu macierzyńskiego
+[ ] urlopu ojcowskiego
+od \Pole{urlop od} do \Pole{urlop do}
+7. Czy pracownik w czasie urlopu rodzicielskiego wykonuje pracę: TAK / NIE
+
+\vfill
+{\footnotesize\textcolor{szary}\itshape Zasiłek chorobowy w ciąży przysługuje w pierwszym dniu niezdolności do pracy w 100\% podstawy (art. 11 ust. 2 pkt 1 ustawy zasiłkowej). Formularz Z-3 wypełnia płatnik; zwolnienie lekarskie oznacza się kodem B (ciąża). }
+
+\end{document}
