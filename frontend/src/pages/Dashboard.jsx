@@ -59,6 +59,26 @@ export default function Dashboard() {
           </Link>
         )}
 
+        <Link className="calc-cta" to="/zus">
+          <span className="calc-cta-icon" aria-hidden="true">🏛️</span>
+          <span className="calc-cta-body">
+            <span className="calc-cta-title">Moje dane z ZUS</span>
+            <span className="calc-cta-desc">
+              Ubezpieczenie, podstawa wymiaru, zwolnienia e-ZLA, zaświadczenie o niezaleganiu i wnioski w PUE (symulacja).
+            </span>
+          </span>
+          <span className="calc-cta-arrow" aria-hidden="true">→</span>
+        </Link>
+
+        <Link className="calc-cta" to="/odpis-aktu">
+          <span className="calc-cta-icon" aria-hidden="true">📄</span>
+          <span className="calc-cta-body">
+            <span className="calc-cta-title">Odpis aktu urodzenia</span>
+            <span className="calc-cta-desc">Wniosek z danymi dziecka z „Moje dane” (symulacja usługi gov.pl).</span>
+          </span>
+          <span className="calc-cta-arrow" aria-hidden="true">→</span>
+        </Link>
+
         <section className="info-card" aria-label="Twoje dane">
           <h2>Twoje dane z mObywatela</h2>
           <dl className="data-list">

@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import crypto from "node:crypto";
 import { db } from "./db.js";
+import { registerZusMockRoutes } from "./zus-mock.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -154,6 +155,9 @@ app.put("/api/params", requireAdmin, (req, res) => {
 app.delete("/api/params", requireAdmin, (req, res) => {
   res.json({ overrides: db.setParamOverrides({}) });
 });
+
+/* ---------- Symulacje usług ZUS i USC (dane fikcyjne) – backend/zus-mock.js ---------- */
+registerZusMockRoutes(app, requireAuth);
 
 app.listen(PORT, () => {
   console.log(`Backend działa na http://localhost:${PORT}`);
