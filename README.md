@@ -75,12 +75,32 @@ zbierają dane z formularza i wyświetlają wynik.
 | `engine/platnik.js` | g) płatnik (> 20 ubezpieczonych) czy ZUS |
 | `engine/engine.test.js` | testy z ręcznie policzonymi wartościami |
 | `engine/wnioski/` | **wnioski i ich warianty**: co przysługuje przy danym profilu (niżej) |
+| `calculators/useProfileDefaults.js` | **podstawianie danych z „Moich danych”** do kalkulatorów: komplet pól (podstawa, daty, staż ubezpieczenia, kod B, liczba ubezpieczonych, zaległość, wymiar etatu, tydzień ciąży, dni hospitalizacji) + pasek „Z PROFILU” pokazujący, co zostało wstawione |
 
-Testy (161: kalkulatory, warianty wniosków, regresje do `RAPORT_BLEDOW.md` i spójność z bazą wiedzy):
+Testy (200: kalkulatory, podstawianie profilu, warianty wniosków, regresje do `RAPORT_BLEDOW.md` i spójność z bazą wiedzy):
 
 ```bash
 cd frontend && npm test
 ```
+
+## Kalkulatory a „Moje dane”
+
+Kalkulatory nie każą niczego przepisywać. Po zalogowaniu dane lecą z profilu:
+
+| Kalkulator | Co podstawia z profilu |
+| --- | --- |
+| a) chorobowy | tytuł ubezpieczenia (obowiązkowe/dobrowolne), podstawa, data urodzenia, **staż ubezpieczenia** (liczony z daty), **liczba ubezpieczonych u płatnika**, początek zwolnienia, **kod B** (ze `zdrowie.zwolnienie`), zaległość (kwota powyżej progu = blokada) |
+| b) macierzyński | data porodu/PDP, podstawy obojga rodziców, „Za życiem”, martwe urodzenie/zgon, wniosek 81,5%, **dni hospitalizacji** (liczone z dat), tydzień ciąży, masa, plan ojcowski |
+| c) łączenie z pracą | podstawa, liczba dzieci, **wymiar pracy**, stawka 81,5%/70% |
+| d) oboje rodzice | podstawy obojga, wykorzystane tygodnie macierzyńskiego i rodzicielskiego, liczba części, wniosek 81,5% |
+| e) adopcja | tryb (przysposobienie/rodzina zastępcza), data przyjęcia, data urodzenia, odroczenie szkolne, „Za życiem” |
+| f) podstawa wymiaru | status, **wymiar etatu** (minimum liczone proporcjonalnie — art. 45 ust. 1 u.z.) |
+| g) dokumenty | tytuł, liczba ubezpieczonych, zaległość, etap sprawy |
+
+Płeć z PESEL-u decyduje, czy Twoje dane trafiają w pola „matka”, czy „ojciec”; dane drugiego rodzica
+idą w pole przeciwne. Pasek **„Z PROFILU”** na górze kalkulatora pokazuje, co zostało podstawione —
+nic nie jest nadpisywane ponownie, więc możesz dowolnie zmienić wartości. Niezalogowany widzi
+zachętę do wypełnienia „Moich danych” i kalkulator na wartościach domyślnych.
 
 ## Wnioski i warianty („każdy wariant” – wymaganie mentorów ZUS)
 

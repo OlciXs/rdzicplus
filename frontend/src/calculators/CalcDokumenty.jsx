@@ -2,9 +2,8 @@ import { useState } from "react";
 import { CFG, num, zl } from "./config.js";
 import { ktoWyplaca } from "../engine/index.js";
 import {
-  Badge, Field, NumberInput, Select, Check, Section, Bullets, List,
-} from "./ui.jsx";
-import { useProfileDefaults } from "./useProfileDefaults.js";
+  Badge, Field, NumberInput, Select, Check, Section, Bullets, List, ProfilInfo } from "./ui.jsx";
+import { useProfileDefaults, opisPodstawienia } from "./useProfileDefaults.js";
 
 const ETAPY = [
   { value: "ciazaL4", label: "Ciąża – niezdolność do pracy (e-ZLA z kodem B)" },
@@ -95,7 +94,7 @@ const ZAGROZENIA = [
 export default function CalcDokumenty() {
   const [s, set] = useState({ status: "pracownik", liczba: "30", etap: "ciazaL4", zaleglosc: false });
   const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
-  useProfileDefaults(set, "dokumenty");
+  const profilDane = useProfileDefaults(set, "dokumenty");
 
   const status = s.status;
   const etap = s.etap;
@@ -121,6 +120,10 @@ export default function CalcDokumenty() {
 
   return (
     <div className="calc">
+      <ProfilInfo
+        zalogowany={!!profilDane.profile}
+        pola={opisPodstawienia(profilDane.podstawione ?? [], s)}
+      />
       <div className="calc-cols">
         <div>
           <Section title="Kim jesteś u płatnika składek">

@@ -3,9 +3,8 @@ import { CFG, num, zl, tyg } from "./config.js";
 import { laczenieZPraca } from "../engine/index.js";
 import {
   Badge, Field, NumberInput, Select, Check, Section,
-  ResultTable, Bullets,
-} from "./ui.jsx";
-import { useProfileDefaults } from "./useProfileDefaults.js";
+  ResultTable, Bullets, ProfilInfo } from "./ui.jsx";
+import { useProfileDefaults, opisPodstawienia } from "./useProfileDefaults.js";
 
 export default function CalcLaczenie() {
   const [s, set] = useState({
@@ -16,7 +15,7 @@ export default function CalcLaczenie() {
     stawka: "81.5",
   });
   const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
-  useProfileDefaults(set, "laczenie");
+  const profilDane = useProfileDefaults(set, "laczenie");
 
   // Wszystkie obliczenia: src/engine/laczenie.js
   const r = laczenieZPraca({
@@ -37,6 +36,10 @@ export default function CalcLaczenie() {
 
   return (
     <div className="calc">
+      <ProfilInfo
+        zalogowany={!!profilDane.profile}
+        pola={opisPodstawienia(profilDane.podstawione ?? [], s)}
+      />
       <div className="calc-cols">
         <div>
           <Section title="Dane">

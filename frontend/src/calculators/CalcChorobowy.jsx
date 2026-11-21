@@ -3,9 +3,8 @@ import { CFG, num, zl, fmtD } from "./config.js";
 import { chorobowyWCiazy } from "../engine/index.js";
 import {
   Badge, Field, NumberInput, DateInput, Select, Check, Section,
-  ResultTable, Bullets, Result,
-} from "./ui.jsx";
-import { useProfileDefaults } from "./useProfileDefaults.js";
+  ResultTable, Bullets, Result, ProfilInfo } from "./ui.jsx";
+import { useProfileDefaults, opisPodstawienia } from "./useProfileDefaults.js";
 
 export default function CalcChorobowy() {
   const [s, set] = useState({
@@ -23,7 +22,7 @@ export default function CalcChorobowy() {
     utrata: "brak",
   });
   const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
-  useProfileDefaults(set, "chorobowy");
+  const profilDane = useProfileDefaults(set, "chorobowy");
 
   const dUb = num(s.dniUb);
   const kodB = s.kodB;
@@ -68,6 +67,10 @@ export default function CalcChorobowy() {
 
   return (
     <div className="calc">
+      <ProfilInfo
+        zalogowany={!!profilDane.profile}
+        pola={opisPodstawienia(profilDane.podstawione ?? [], s)}
+      />
       <div className="calc-cols">
         <div>
           <Section title="Ubezpieczenie i płatnik">

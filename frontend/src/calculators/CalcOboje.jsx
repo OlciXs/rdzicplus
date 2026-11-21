@@ -3,9 +3,8 @@ import { CFG, num, zl } from "./config.js";
 import { obojeRodzice } from "../engine/index.js";
 import {
   Badge, Field, NumberInput, DateInput, Select, Check, Section,
-  ResultTable, Bullets, List,
-} from "./ui.jsx";
-import { useProfileDefaults } from "./useProfileDefaults.js";
+  ResultTable, Bullets, List, ProfilInfo } from "./ui.jsx";
+import { useProfileDefaults, opisPodstawienia } from "./useProfileDefaults.js";
 
 export default function CalcOboje() {
   const [s, set] = useState({
@@ -22,7 +21,7 @@ export default function CalcOboje() {
     pO: "5500",
   });
   const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
-  useProfileDefaults(set, "oboje");
+  const profilDane = useProfileDefaults(set, "oboje");
 
   const zaZ = s.zaZyciem;
   const wz81 = s.wniosek81;
@@ -54,6 +53,10 @@ export default function CalcOboje() {
 
   return (
     <div className="calc">
+      <ProfilInfo
+        zalogowany={!!profilDane.profile}
+        pola={opisPodstawienia(profilDane.podstawione ?? [], s)}
+      />
       <div className="calc-cols">
         <div>
           <Section title="Dziecko">
