@@ -26,8 +26,11 @@ Wagi oceny: związek z wyzwaniem 25% · kompletność + UX 25% · pomysł 20% ·
 
 ## 0. Decyzje na start (pierwsze 15 minut, razem)
 
-- [ ] **Stack.** Propozycja: Next.js (App Router) + TypeScript. Silnik obliczeń to czysty moduł TS bez Reacta (`/engine`), wystawiony przez REST (`/api/calculate`) i importowany bezpośrednio w UI, żeby planer osi czasu liczył na żywo. Tailwind + shadcn/ui. Deploy na Vercel.
-- [ ] **Gdzie trzymamy parametry admina.** Muszą przetrwać restart serwera, więc nie mogą być w pliku na Vercelu. Propozycja: jedna tabela w darmowym Postgresie (Supabase/Neon) albo Vercel KV. Wartości domyślne w `engine/params.default.json`.
+- [x] **Stack: już ustalony w commicie `init` od Oli.** Frontend: React 18 + Vite (`frontend/`, port 5173, proxy `/api` → backend). Backend: Node + Express (`backend/`, port 3001, ESM). To spełnia wymagania ZUS (React + backend JS przez REST). Zostajemy przy tym, bez przepisywania na Next.js.
+- [ ] **Silnik obliczeń jako trzeci folder `engine/`** (czysty JS bez Reacta i Expressa, ESM). Backend importuje go w `/api/calculate`, a frontend bezpośrednio, żeby planer osi czasu liczył na żywo bez zapytań do serwera. TypeScript opcjonalnie (szkielet Oli jest w JS, więc nie trzeba go przerabiać; typy można opisać w JSDoc).
+- [ ] **UI:** Tailwind (dodać do Vite) + ewentualnie gotowe komponenty (shadcn/ui działa z Vite).
+- [ ] **Deploy:** frontend (statyczny build Vite) na Vercel/Netlify, backend Express na Render/Railway (darmowe plany). Na froncie zmienna `VITE_API_URL` wskazująca backend w produkcji, bo proxy z `vite.config.js` działa tylko lokalnie.
+- [ ] **Gdzie trzymamy parametry admina.** Muszą przetrwać restart i redeploy backendu (na Render/Railway dysk jest tymczasowy), więc nie mogą siedzieć w zwykłym pliku na serwerze. Propozycja: jedna tabela w darmowym Postgresie (Supabase/Neon). Wartości domyślne w `engine/params.default.json`. Lokalnie wystarczy plik JSON, a bazę podpiąć przy deployu.
 - [ ] **Model AI do czytania PDF.** Wymagań co do modelu nie ma. Wybierzcie jeden (Claude / Mistral) i zapiszcie go do README i na slajd „gdzie użyto AI”.
 - [ ] **Podział ról.** Przykład dla 3–4 osób:
   - **Silnik + testy:** sekcje 2 i 4 niżej (najważniejsza osoba)
@@ -44,21 +47,38 @@ Wagi oceny: związek z wyzwaniem 25% · kompletność + UX 25% · pomysł 20% ·
 
 ## 1. Setup repo (P0, ~30 min)
 
-- [ ] `npx create-next-app` (TS, Tailwind, App Router, ESLint)
-- [ ] Vitest do testów silnika
-- [ ] `.gitignore`: dodać `/private-cases/`. **Przykładowych spraw ZUS nie wolno wrzucać do repo** (zakaz kopiowania i rozpowszechniania). Demo ładuje je z folderu poza repo albo z miejsca wskazanego przez ZUS.
-- [ ] Struktura katalogów:
+**Zrobione przez Olę (`init`):**
+- [x] `frontend/`: React + Vite, „Hello World” pobierający `/api/hello` (działa połączenie front ↔ back)
+- [x] `backend/`: Express z `cors` i `express.json()`, endpoint `GET /api/hello`, `npm run dev` z `node --watch`
+- [x] `.gitignore`: `node_modules`, `dist`, `.env`
+- [x] README z instrukcją uruchomienia obu części
+
+**Do zrobienia:**
+- [x] `.gitignore`: dodane `private-cases/`. **Przykładowych spraw ZUS nie wolno wrzucać do repo** (zakaz kopiowania i rozpowszechniania). Demo ładuje je z folderu poza repo albo z miejsca wskazanego przez ZUS.
+- [ ] Utworzyć `engine/` z własnym `package.json` (`"type": "module"`) i podpiąć go:
+  - w backendzie: `import { calculate } from "../engine/index.js"`
+  - we froncie: alias w `vite.config.js` (np. `resolve.alias: { "@engine": "../engine" }`) i ewentualnie `server.fs.allow: [".."]`, bo Vite domyślnie nie serwuje plików spoza `frontend/`
+- [ ] Vitest w `engine/` (`npm i -D vitest`, skrypt `"test": "vitest run"`)
+- [ ] Backend: zamienić `/api/hello` na właściwe endpointy:
+  - `POST /api/calculate`: przyjmuje `CaseProfile`, zwraca `Result`
+  - `GET /api/params` i `PUT /api/params` (admin, chronione hasłem z `.env`)
+  - `POST /api/extract`: upload PDF → AI → JSON (sekcja 6); potrzebny `multer` do plików
+  - `GET /api/mock/*`: dane mObywatel / ZUS / e-ZLA (sekcja 9)
+- [ ] Frontend: dodać routing (`react-router-dom`) i Tailwind, wywalić „Hello World”
+- [ ] Docelowa struktura:
   ```
-  /engine        – czysta logika (bez Reacta), testowalna
+  /engine          – czysta logika, testowalna (NOWE)
     params.default.json
-    types.ts     – Profil sprawy, Wynik, Krok obliczeń
-    /rules       – jeden plik na kalkulator
-  /app           – strony Next.js + /api
-  /components
-  /mocks         – fałszywe dane mObywatel / ZUS / e-ZLA
-  /tests/cases   – nasze ręcznie policzone przypadki (bez dokumentów ZUS)
+    types.js       – JSDoc: Profil sprawy, Wynik, Krok obliczeń
+    /rules         – jeden plik na kalkulator
+    /tests/cases   – ręcznie policzone przypadki (bez dokumentów ZUS)
+  /backend         – Express (jest), /routes, /mocks
+  /frontend        – React + Vite (jest), /src/pages, /src/components
+  /private-cases   – sprawy ZUS, tylko lokalnie (w .gitignore)
+  /docs            – materiały (jest)
   ```
-- [ ] Pusty deploy na Vercel od razu, żeby link działał od początku
+- [ ] README: uzupełnić „Moja apka” o nazwę projektu, opis i komendę testów (pełna wersja w sekcji 11)
+- [ ] Wczesny deploy (front + back), żeby link działał od początku
 
 ---
 
