@@ -26,7 +26,7 @@
       "imie": "Marzena",
       "nazwisko": "Wiśniewska",
       "createdAt": "2026-11-21T13:58:06.311Z",
-      "lastLoginAt": "2026-11-21T22:15:09.696Z",
+      "lastLoginAt": "2026-11-21T22:22:37.143Z",
       "profile": {
         "ubezpieczony": {
           "imie": "Marzena",
@@ -56,7 +56,7 @@
           "zapewnionoInnaPrace": ""
         },
         "sytuacja": {
-          "etap": "ciaza",
+          "etap": "po_porodzie",
           "rola": "matka",
           "typPrzyjecia": ""
         },
@@ -87,15 +87,15 @@
           "pesel": "",
           "dataUrodzenia": "",
           "miejsceUrodzenia": "tu",
-          "liczbaDzieci": "3",
+          "liczbaDzieci": "2",
           "przewidywanaDataPorodu": "2026-11-22",
-          "martwe": "",
-          "zmarlo": "",
+          "martwe": "tak",
+          "zmarlo": "tak",
           "dataZgonu": "",
-          "liczbaZyjacych": "",
-          "zaGranica": "",
+          "liczbaZyjacych": "0",
+          "zaGranica": "nie",
           "kraj": "",
-          "pobytWSzpitalu": "",
+          "pobytWSzpitalu": "nie",
           "tydzienCiazy": "",
           "masaUrodzenia": "",
           "szpitalOd": "",
@@ -103,7 +103,23 @@
           "dataPrzyjecia": "",
           "odroczonySzkolny": "",
           "niepelnosprawne": "",
-          "zaZyciem": true
+          "zaZyciem": false,
+          "dzieci": [
+            {
+              "imie": "ja",
+              "nazwisko": "sa",
+              "pesel": "",
+              "dataUrodzenia": "",
+              "miejsceUrodzenia": "tu"
+            },
+            {
+              "imie": "",
+              "nazwisko": "",
+              "pesel": "",
+              "dataUrodzenia": "",
+              "miejsceUrodzenia": ""
+            }
+          ]
         },
         "zdrowie": {
           "zwolnienie": "brak",
@@ -140,7 +156,7 @@
           "opiekunczyDniWRoku": ""
         }
       },
-      "profileUpdatedAt": "2026-11-21T22:16:52.166Z"
+      "profileUpdatedAt": "2026-11-21T22:24:25.105Z"
     },
     {
       "id": "b0cb48cf-1ef8-4a18-8a0a-3e3723b134dd",
@@ -300,7 +316,7 @@
           "zapewnionoInnaPrace": ""
         },
         "sytuacja": {
-          "etap": "ciaza",
+          "etap": "po_porodzie",
           "rola": "ojciec",
           "typPrzyjecia": ""
         },
@@ -384,7 +400,7 @@
           "opiekunczyDniWRoku": ""
         }
       },
-      "profileUpdatedAt": "2026-11-21T21:34:50.475Z"
+      "profileUpdatedAt": "2026-11-21T22:19:10.935Z"
     }
   ]
 }

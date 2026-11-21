@@ -84,6 +84,7 @@ const emptyProfile = (user) => ({
       "dataPrzyjecia", "odroczonySzkolny", "niepelnosprawne",
     ]),
     zaZyciem: false,
+    dzieci: [],
   },
   zdrowie: blank([
     "zwolnienie", "zlaNumer", "zlaOd", "zlaDo", "wczesniejszeZwolnienia",
@@ -149,6 +150,18 @@ export const db = {
         // dawały w formularzu „[object Object]” i śmieci w silniku wniosków.
         if (typeof v === "string") user.profile[section][key] = v.slice(0, 1000);
         else if (typeof v === "boolean" || (typeof v === "number" && Number.isFinite(v))) user.profile[section][key] = v;
+      }
+      if (section === "dziecko" && Array.isArray(source.dzieci)) {
+        user.profile.dziecko.dzieci = source.dzieci
+          .slice(0, 10)
+          .filter((dziecko) => dziecko && typeof dziecko === "object")
+          .map((dziecko) => ({
+            imie: typeof dziecko.imie === "string" ? dziecko.imie.slice(0, 60) : "",
+            nazwisko: typeof dziecko.nazwisko === "string" ? dziecko.nazwisko.slice(0, 60) : "",
+            pesel: typeof dziecko.pesel === "string" ? dziecko.pesel.slice(0, 11) : "",
+            dataUrodzenia: typeof dziecko.dataUrodzenia === "string" ? dziecko.dataUrodzenia.slice(0, 10) : "",
+            miejsceUrodzenia: typeof dziecko.miejsceUrodzenia === "string" ? dziecko.miejsceUrodzenia.slice(0, 120) : "",
+          }));
       }
     }
 
