@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import AppHeader from "../components/AppHeader.jsx";
 import { useProfile } from "../profile.js";
 import { CFG } from "../calculators/config.js";
-import { przegladWnioskow } from "../engine/index.js";
+import { przegladWnioskow, maDruk } from "../engine/index.js";
 
 /* =====================================================================
    „Złóż wniosek” – wybór wniosku i ocena KAŻDEGO wariantu na podstawie
@@ -87,6 +87,14 @@ function Wariant({ v }) {
           <p><b>Do wypełnienia wniosku brakuje jeszcze:</b></p>
           <Pola lista={v.doUzupelnienia} />
         </>
+      )}
+
+      {(v.status === "dostepny" || v.status === "brak_danych") && maDruk(v.id) && (
+        <p>
+          <Link className="btn btn-outline" to={`/wnioski/druk?v=${v.id}`}>
+            🖨️ Przygotuj wniosek do druku
+          </Link>
+        </p>
       )}
 
       {v.uwaga && v.pewnosc !== "do_potwierdzenia" && <p className="note">{v.uwaga}</p>}
