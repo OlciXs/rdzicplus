@@ -33,7 +33,7 @@ export default function CalcPodstawa() {
       <div className="calc">
       <ProfilInfo
         zalogowany={!!profile}
-        pola={opisPodstawienia(profilDane.podstawione ?? [], s)}
+        pola={opisPodstawienia(profilDane.podstawione ?? [], s, profilDane.kalkulator)}
       />
         <div className="calc-cols">
           <div>
@@ -60,7 +60,11 @@ export default function CalcPodstawa() {
 
   const { suma, licznik, srednia, dodatek, przecietne, podstawa } = r;
   const clampNote = {
-    min: `Podniesiono do minimum ${zl(CFG.minPodstawaPracownik)} (minimalne wynagrodzenie ${zl(CFG.minWynagrodzenie)} − 13,71%; art. 45 UZ – dotyczy pełnego wymiaru czasu pracy).`,
+    // Kwota z silnika (r.limit.wartosc) – przy niepełnym etacie minimum jest proporcjonalne (B-17),
+    // więc nie można tu pokazywać pełnej kwoty 4 147,10 zł.
+    min: r.limit?.etat < 1
+      ? `Podniesiono do minimum ${zl(r.limit.wartosc)} – ${String(r.limit.etat).replace(".", ",")} × ${zl(CFG.minPodstawaPracownik)} (minimalne wynagrodzenie ${zl(CFG.minWynagrodzenie)} − 13,71%, proporcjonalnie do etatu; art. 45 UZ).`
+      : `Podniesiono do minimum ${zl(r.limit?.wartosc ?? CFG.minPodstawaPracownik)} (minimalne wynagrodzenie ${zl(CFG.minWynagrodzenie)} − 13,71%; art. 45 UZ – pełny wymiar czasu pracy).`,
     max: `Ograniczono do maksymalnej podstawy ${zl(CFG.maxPodstawaZasilku)} (limit od maksymalnej podstawy dobrowolnej składki chorobowej ${zl(CFG.maxPodstawaSkladki)} − 13,71%).`,
     ostrzezenieMinDobrowolni: `Uwaga: podstawa poniżej typowego minimum dla ubezpieczonych dobrowolnie (przy najniższej zadeklarowanej podstawie składek tzw. duży ZUS 5 652 zł podstawa zasiłku to ok. ${zl(CFG.minPodstawaDobrowolni)}). Zweryfikuj minimalną podstawę z ZUS.`,
   }[r.limit?.typ] ?? "";
@@ -75,6 +79,11 @@ export default function CalcPodstawa() {
 
   return (
     <div className="calc">
+      {/* Pasek „Z PROFILU” także przy normalnym wyniku (wcześniej był tylko w gałęzi „brak danych”). */}
+      <ProfilInfo
+        zalogowany={!!profile}
+        pola={opisPodstawienia(profilDane.podstawione ?? [], s, profilDane.kalkulator)}
+      />
       <div className="calc-cols">
         <div>
           <Section

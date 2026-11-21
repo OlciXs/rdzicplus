@@ -19,6 +19,26 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 > **Do potwierdzenia w generatorze:** treść pism oparta na `docs/02` (szkic z Mistrala) – sprawdzić z rozporządzeniem o wnioskach; W1 po porodzie (urlop przysługuje z mocy prawa, pismo to raczej „informacja + wniosek o 81,5%”); zakres danych ZAM
 > **Do weryfikacji (oznaczone w kodzie `do_potwierdzenia`):** W4 uzupełniający dla nie-pracowników, W12 łączenie z pracą (wydłużona część, pole I14), W44 podwyższenie (szacunek podatku), W47 chorobowy po ustaniu (14 dni), W11 staż 6 mies., W19 świadczenie rodzicielskie (poza ZUS). W dokumentach Mistrala jest też nieaktualny **Z-3b** (zlikwidowany 24.10.2026) – w rejestrze go nie używamy.
 
+### Przegląd po PR #9 i #10 (Claude, 21.11 ~23:00, bez commita)
+Sprawdzone: 230 testów (7 plików), build, API 44/44 przez Dockera, wszystkie strony 200, 7 kalkulatorów z profilem w przeglądarce (komputer + telefon), druk, panel, „Dane z ZUS”.
+
+**Naprawione:**
+- [x] **Merge PR #9 (`calc`) usunął style ekranu druku** (`themes.css`: kartka pisma, checkboxy, `@media print` – na wydruku byłoby menu i przyciski). Przywrócone obok nowych stylów paska „Z PROFILU”
+- [x] **Kalkulator g) dokumenty:** profil „po porodzie” wstawiał etap `poPorodzie`, którego nie ma na liście – pole pokazywało „Ciąża – L4”, a lista dokumentów liczyła się dla nieznanego etapu (test to utrwalał). Teraz: `porod`, `adopcja`, `martwe`, `przedPorodem`; po porodzie stare L4 z kodem B nie cofa etapu do ciąży. Osoba współpracująca → „działalność”; duchowny/marynarz nie są na liście, więc nic nie wstawiamy
+- [x] **b) macierzyński:** zgon dziecka zawsze dawał „zgon po 8 tyg.” – teraz z dat: przed 8. tygodniem = wariant „martwe” (art. 180 § 6 k.p.); brak odpowiedzi o urlopie ojcowskim (u matki tego pytania nie ma) wyłączał urlop ojcowski w wyliczeniu
+- [x] **d) oboje rodzice:** wykorzystany rodzicielski zalogowanego OJCA trafiał w kolumnę matki; ujemne tygodnie z profilu były podstawiane
+- [x] **e) adopcja:** zawodowa rodzina zastępcza dostawała tryb „rodzina zastępcza” (kalkulator pokazywał urlop, do którego nie ma prawa – art. 183 § 1 k.p.)
+- [x] **a) chorobowy:** próg zaległości wpisany na sztywno (48,06) – teraz z parametrów admina
+- [x] **f) podstawa:** pasek „Z PROFILU” był tylko przy „brak danych”, a nie przy wyniku; przy ½ etatu komunikat mówił „Podniesiono do minimum 4 147,10 zł”, a wynik to 2 073,55 zł – teraz kwota z silnika i wzór
+- [x] **Pasek „Z PROFILU”** pokazywał wartości techniczne („obw”, „porod”, „81.5”, „0.5”, daty RRRR-MM-DD) i niejasną „Data urodzenia” w a) (to data matki) – teraz tekst, zł, %, daty po polsku; nie miga „Wypełnij Moje dane po zalogowaniu” zalogowanemu w trakcie wczytywania
+- [x] Nowe testy (14): każda podstawiana wartość musi być na liście wyboru kalkulatora (sprawdzane na 1 680 kombinacjach profilu) + czytelność paska; na starym kodzie 8 z nich nie przechodzi
+
+**Do decyzji (nie zmieniałem):**
+- [ ] Profil ma „Wymiar czasu pracy: pełny / część etatu”, a kalkulator f) potrzebuje ułamka – „część” zamieniamy na ½ (zgadywanie). Lepiej w profilu zapytać o ułamek (¼, ½, ¾)
+- [ ] a) chorobowy: osoba bez ubezpieczenia chorobowego (dzieło, student, brak) zostaje przy domyślnym „obowiązkowe” – kalkulator nie ma opcji „brak ubezpieczenia”
+- [ ] Panel: karta „Twoje dane z mObywatela” pokazuje też adres i rachunek, które pochodzą z „Moje dane”, nie z mObywatela (rachunek w całości)
+- [ ] `backend/data/db.json` znowu z testowymi logowaniami (Ola, 2 commity) – każdy taki commit kasuje bazę na serwerze przy deployu (patrz niżej, `.gitignore`)
+
 ### Przegląd i testy zaawansowane (Claude, sobota 21.11 wieczorem, bez commita)
 Sprawdzone: **171 testów** (5 plików, w tym nowy `fuzz.test.js` – 6000 losowych przypadków), build, 34 testy brzegowe API (bezpośrednio i przez proxy frontu w Dockerze), Docker (`docker compose up --build`: oba kontenery healthy, wszystkie strony 200), przeglądarka (logowanie, panel, profil, ZUS, odpis, 12 wniosków, kalkulator macierzyński, admin) – bez `NaN`/`undefined`, bez błędów w konsoli.
 

@@ -77,7 +77,7 @@ zbierają dane z formularza i wyświetlają wynik.
 | `engine/wnioski/` | **wnioski i ich warianty**: co przysługuje przy danym profilu (niżej) |
 | `calculators/useProfileDefaults.js` | **podstawianie danych z „Moich danych”** do kalkulatorów: komplet pól (podstawa, daty, staż ubezpieczenia, kod B, liczba ubezpieczonych, zaległość, wymiar etatu, tydzień ciąży, dni hospitalizacji) + pasek „Z PROFILU” pokazujący, co zostało wstawione |
 
-Testy (200: kalkulatory, podstawianie profilu, warianty wniosków, regresje do `RAPORT_BLEDOW.md` i spójność z bazą wiedzy):
+Testy (228: kalkulatory, podstawianie profilu i jego spójność z listami wyboru, warianty wniosków, regresje do `RAPORT_BLEDOW.md` i spójność z bazą wiedzy):
 
 ```bash
 cd frontend && npm test

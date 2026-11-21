@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useProfile } from "../profile.js";
+import { CFG } from "./config.js";
 
 /* =====================================================================
    Podstawianie danych z profilu ("Moje dane") do kalkulatorów.
@@ -24,6 +25,11 @@ const liczba = (v) => {
   if (v === "" || v === null || v === undefined) return null;
   const n = Number(String(v).replace(",", "."));
   return Number.isFinite(n) ? n : null;
+};
+// Tygodnie / części z profilu: ujemne traktujemy jak brak danych (nie podstawiamy „-5”).
+const nieujemna = (v) => {
+  const n = liczba(v);
+  return n !== null && n >= 0 ? String(n) : undefined;
 };
 const DZIEN = 86400000;
 
@@ -52,9 +58,12 @@ const statusChorobowy = (u) => {
 };
 
 /** Status dla engine/platnik.js. */
+// Tylko wartości z listy w CalcDokumenty.jsx (pracownik / zlecenie / dg) – inna wartość dawała
+// w polu „Pracownik”, a wyliczenie liczyło dla innego statusu. Osoba współpracująca = jak działalność
+// (ZUS wypłaca zawsze, te same dokumenty); duchowny / marynarz – brak na liście, nie zgadujemy.
 const statusPlatnika = (u) =>
-  ["pracownik", "zlecenie", "dg", "wspolpraca", "duchowny", "marynarz"].includes(u.statusUbezpieczenia)
-    ? u.statusUbezpieczenia
+  u.statusUbezpieczenia === "wspolpraca" ? "dg"
+    : ["pracownik", "zlecenie", "dg"].includes(u.statusUbezpieczenia) ? u.statusUbezpieczenia
     : undefined;
 
 /** Liczba ubezpieczonych u płatnika jako liczba (kalkulator g potrzebuje wartości). */
@@ -66,11 +75,37 @@ const liczbaUb = (p) => {
 };
 
 /** Kwota zaległości: profil trzyma „tak/nie”, silnik oczekuje kwoty. */
-const zalegloscKwota = (p, prog = 48.06) => {
+// Próg z parametrów – panel admina może go zmienić (wcześniej wpisane na sztywno 48,06).
+const zalegloscKwota = (p, prog = CFG.progZaleglosci) => {
   const v = p.ubezpieczony?.zaleglosci;
   if (v === "tak") return String(prog + 1); // powyżej progu → blokada
   if (v === "nie") return "0";
   return null;
+};
+
+/** Sytuacja szczególna dla kalkulatora b): martwe urodzenie i zgon przed 8. tygodniem życia
+ *  to jeden wariant („martwe”, art. 180 § 6 k.p.), zgon po 8 tygodniach – drugi („zgonPo”).
+ *  Bez dat nie zgadujemy, który to przypadek. */
+const sytuacjaSzczegolna = (d) => {
+  if (d.martwe === "tak") return "martwe";
+  if (d.zmarlo !== "tak") return undefined;
+  const ur = new Date(d.dataUrodzenia || "");
+  const zgon = new Date(d.dataZgonu || "");
+  if (Number.isNaN(ur.getTime()) || Number.isNaN(zgon.getTime())) return undefined;
+  return (zgon - ur) / DZIEN < CFG.martweUrodzenieTygodnie * 7 ? "martwe" : "zgonPo";
+};
+
+/** Etap sprawy dla kalkulatora g) – musi być jedną z wartości ETAPY z CalcDokumenty.jsx
+ *  (wcześniej „poPorodzie”, którego na liście nie ma – lista pokazywała co innego, niż liczył kalkulator). */
+const etapDokumentow = (p) => {
+  const s = p.sytuacja ?? {};
+  const d = p.dziecko ?? {};
+  const z = p.zdrowie ?? {};
+  if (d.martwe === "tak" || d.zmarlo === "tak") return "martwe";
+  if (s.etap === "przyjecie") return "adopcja";
+  if (s.etap === "po_porodzie") return "porod";
+  if (s.etap === "ciaza") return z.zwolnienie !== "B" && p.urlopy?.urlopPrzedPorodemOd ? "przedPorodem" : "ciazaL4";
+  return z.zwolnienie === "B" ? "ciazaL4" : undefined;
 };
 
 // Kto jest matką, a kto ojcem: zalogowany = ubezpieczony, drugi = drugiRodzic.
@@ -137,7 +172,7 @@ const PICKS = {
         const tyg = Math.round((pdp - start) / (7 * DZIEN));
         return tyg > 0 ? String(Math.min(tyg, 6)) : undefined;
       })(),
-      szczegol: d.martwe === "tak" ? "martwe" : d.zmarlo === "tak" ? "zgonPo" : undefined,
+      szczegol: sytuacjaSzczegolna(d),
       zgon: d.dataZgonu || undefined,
       // Wniosek 81,5% ma sens tylko przy zamiarze pełnego wymiaru (art. 30a u.z.).
       wniosek81: ur.zamiarPelnyWymiar === "tak" ? true : ur.zamiarPelnyWymiar === "nie" ? false : undefined,
@@ -147,7 +182,8 @@ const PICKS = {
       tydzCiazy: d.tydzienCiazy === "ponizej_28" ? "26" : d.tydzienCiazy === "28_37" ? "32" : d.tydzienCiazy === "po_37" ? "38" : undefined,
       masa: d.masaUrodzenia || undefined,
       hosp: hosp ?? undefined,
-      ojcowski: typeof ur.planOjcowski === "string" ? ur.planOjcowski === "tak" : undefined,
+      // Pusta odpowiedź (u matki tego pytania nie ma) nie może wyłączać urlopu ojcowskiego w wyliczeniu.
+      ojcowski: ur.planOjcowski === "tak" ? true : ur.planOjcowski === "nie" ? false : undefined,
     };
   },
 
@@ -156,7 +192,7 @@ const PICKS = {
     dzieci: d.liczbaDzieci ? clamp(d.liczbaDzieci, 2) : undefined,
     zaZyciem: typeof d.zaZyciem === "boolean" ? d.zaZyciem : undefined,
     podstawa: u.podstawaWymiaru || undefined,
-    // Wymiar pracy z profilu: ≤ ½ etatu → 0.5, powyżej → 0.5 (silnik i tak przytnie i ostrzeże).
+    // Wymiar pracy z profilu: ≤ ½ etatu → 0.5, powyżej → 0.75 (silnik przytnie do ½ i ostrzeże).
     etat: ur.wymiarPracyPrzyLaczeniu === "do_polowy" ? "0.5"
       : ur.wymiarPracyPrzyLaczeniu === "powyzej" ? "0.75"
       : undefined,
@@ -175,17 +211,20 @@ const PICKS = {
       zaZyciem: typeof d.zaZyciem === "boolean" ? d.zaZyciem : undefined,
       pM: r.podstawaMatki || undefined,
       pO: r.podstawaOjca || undefined,
-      tM: liczba(ur.rodzicielskiWykorzystanoTyg) !== null ? String(liczba(ur.rodzicielskiWykorzystanoTyg)) : undefined,
-      cM: liczba(ur.rodzicielskieCzesci) !== null ? String(liczba(ur.rodzicielskieCzesci)) : undefined,
-      macM: liczba(ur.macierzynskiWykorzystanoTyg) !== null ? String(liczba(ur.macierzynskiWykorzystanoTyg)) : undefined,
+      // Wykorzystany rodzicielski to dane ZALOGOWANEGO – u ojca trafiają w kolumnę ojca.
+      [r.jestOjcem ? "tO" : "tM"]: nieujemna(ur.rodzicielskiWykorzystanoTyg),
+      [r.jestOjcem ? "cO" : "cM"]: nieujemna(ur.rodzicielskieCzesci),
+      // Wykorzystany macierzyński to zawsze tygodnie matki.
+      macM: nieujemna(ur.macierzynskiWykorzystanoTyg),
       wniosek81: ur.zamiarPelnyWymiar === "tak" ? true : ur.zamiarPelnyWymiar === "nie" ? false : undefined,
     };
   },
 
   // e) adopcja / rodzina zastępcza
   adopcja: ({ ubezpieczony: u, dziecko: d, sytuacja: s }) => ({
-    tryb: s.typPrzyjecia === "rodzina_zastepcza" || s.typPrzyjecia === "rodzina_zastepcza_zawodowa"
-      ? "rodzinaZastepcza"
+    // Zawodowa rodzina zastępcza NIE ma prawa do tego urlopu (art. 183 § 1 k.p.) – nie podstawiamy
+    // „rodzinaZastepcza”, bo kalkulator pokazałby świadczenie, którego nie ma (wyjaśnia to /wnioski, W28).
+    tryb: s.typPrzyjecia === "rodzina_zastepcza" ? "rodzinaZastepcza"
       : s.typPrzyjecia === "przysposobienie" ? "przysposobienie" : undefined,
     dzieci: d.liczbaDzieci ? clamp(d.liczbaDzieci, 5) : undefined,
     ur: d.dataUrodzenia || undefined,
@@ -213,10 +252,7 @@ const PICKS = {
       status: statusPlatnika(u),
       liczba: liczbaUb(p) ?? undefined,
       zaleglosc: u.zaleglosci === "tak" ? true : u.zaleglosci === "nie" ? false : undefined,
-      // Etap: ciąża z L4 vs po porodzie.
-      etap: z.zwolnienie === "B" || s.etap === "ciaza" ? "ciazaL4"
-        : s.etap === "po_porodzie" ? "poPorodzie"
-        : undefined,
+      etap: etapDokumentow(p),
     };
   },
 };
@@ -247,7 +283,7 @@ export function useProfileDefaults(set, name) {
     setPodstawione(Object.keys(patch));
   }, [profile, set, name]);
 
-  return { ...result, podstawione };
+  return { ...result, podstawione, kalkulator: name };
 }
 
 /** Do testów: czysta funkcja bez Reacta — co zostałoby podstawione dla danego profilu. */
@@ -304,13 +340,39 @@ export const ETYKIETY_POL = {
 };
 
 /** Zamienia listę kluczy na gotowe do wyświetlenia wiersze {pole, etykieta, wartosc}. */
-export function opisPodstawienia(klucze, stan) {
-  return klucze.map((pole) => {
-    const v = stan?.[pole];
-    return {
-      pole,
-      etykieta: ETYKIETY_POL[pole] ?? pole,
-      wartosc: typeof v === "boolean" ? (v ? "tak" : "nie") : String(v ?? ""),
-    };
-  });
+// Wartości techniczne stanu → tekst dla użytkownika (wcześniej pasek pokazywał np. „obw”, „porod”, „81.5”).
+const WARTOSCI = {
+  status: { obw: "obowiązkowe (umowa o pracę)", dobr: "dobrowolne", pracownik: "pracownik (umowa o pracę)", niepracownik: "nie-pracownik", zlecenie: "zlecenie", dg: "działalność gospodarcza" },
+  etap: { ciazaL4: "ciąża – zwolnienie z kodem B", przedPorodem: "ciąża – urlop przed porodem", porod: "po porodzie", uzupelniajacy: "urlop uzupełniający", rodzicielski: "urlop rodzicielski", ojcowski: "urlop ojcowski", adopcja: "przyjęcie dziecka", utrata: "utrata pracy w ciąży", martwe: "martwe urodzenie / zgon dziecka" },
+  szczegol: { martwe: "martwe urodzenie / zgon przed 8. tyg.", zgonPo: "zgon dziecka po 8. tyg." },
+  tryb: { przysposobienie: "przysposobienie", rodzinaZastepcza: "rodzina zastępcza" },
+  wymiarEtatu: { 1: "pełny etat", 0.75: "3/4 etatu", 0.5: "1/2 etatu", 0.25: "1/4 etatu" },
+  etat: { 0.5: "do 1/2 etatu", 0.75: "powyżej 1/2 etatu" },
+};
+const KWOTY = new Set(["podstawa", "podstM", "podstO", "pM", "pO"]);
+const DATY = new Set(["ur", "od", "porod", "zgon", "przyj"]);
+const zlote = (v) => `${(Math.round(Number(v) * 100) / 100).toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, " ")} zł`;
+const dataPl = (v) => (/^\d{4}-\d{2}-\d{2}$/.test(v) ? `${v.slice(8, 10)}.${v.slice(5, 7)}.${v.slice(0, 4)}` : v);
+// W kalkulatorze a) „ur” to data urodzenia MATKI (reguła 50+ dni), w pozostałych – dziecka.
+const ETYKIETY_KALK = { chorobowy: { ur: "Twoja data urodzenia" } };
+
+function wartoscDlaLudzi(pole, v) {
+  if (typeof v === "boolean") return v ? "tak" : "nie";
+  const s = String(v ?? "");
+  if (s === "") return "";
+  if (WARTOSCI[pole]?.[s] !== undefined) return WARTOSCI[pole][s];
+  if (KWOTY.has(pole) && Number.isFinite(Number(s))) return zlote(s);
+  if (DATY.has(pole)) return dataPl(s);
+  if (pole === "stawka") return `${s.replace(".", ",")}%`;
+  if (pole === "zaleglosc") return Number(s) > 0 ? "tak (powyżej progu)" : "nie";
+  return s;
+}
+
+/** @param {string} [kalkulator] klucz z PICKS – dla etykiet zależnych od kalkulatora */
+export function opisPodstawienia(klucze, stan, kalkulator) {
+  return klucze.map((pole) => ({
+    pole,
+    etykieta: ETYKIETY_KALK[kalkulator]?.[pole] ?? ETYKIETY_POL[pole] ?? pole,
+    wartosc: wartoscDlaLudzi(pole, stan?.[pole]),
+  }));
 }

@@ -198,9 +198,9 @@ describe("g) kalkulator dokumentów i terminów", () => {
     expect(p.etap).toBe("ciazaL4");
   });
 
-  it("po porodzie → etap poPorodzie", () => {
+  it("po porodzie → etap porod (wartość z listy ETAPY w CalcDokumenty.jsx)", () => {
     const profil = { ...profilOjciec, zdrowie: { zwolnienie: "brak" } };
-    expect(wyliczPodstawienie(profil, "dokumenty").etap).toBe("poPorodzie");
+    expect(wyliczPodstawienie(profil, "dokumenty").etap).toBe("porod");
   });
 });
 
@@ -264,5 +264,121 @@ describe("pasek „dane z profilu” (ProfilInfo)", () => {
 
   it("niezalogowany (brak profilu) nie dostaje żadnych podstawień", () => {
     expect(wyliczPodstawienie(null, "chorobowy")).toEqual({});
+  });
+});
+
+/* ---------- spójność z listami w kalkulatorach i z przepisami (przegląd 21.11 wieczorem) ---------- */
+import fs from "node:fs";
+import path from "node:path";
+
+// Wartości opcji <Select> z pliku kalkulatora – podstawiona wartość MUSI być na liście,
+// inaczej pole pokazuje pierwszą opcję, a wyliczenie liczy dla innej wartości.
+const opcje = (plik) => {
+  const kod = fs.readFileSync(path.join(import.meta.dirname, plik), "utf8");
+  return new Set([...kod.matchAll(/value: "([^"]+)"/g)].map((m) => m[1]));
+};
+
+describe("spójność podstawień z listami wyboru w kalkulatorach", () => {
+  const ETAPY_PROFILU = ["ciaza", "po_porodzie", "przyjecie", ""];
+  const TYTULY = ["pracownik", "powolanie", "zlecenie", "dg", "wspolpraca", "duchowny", "marynarz", "uaktywniajaca", "dzielo", "student_zlecenie", "nierejestrowa", "ulga_na_start", "brak", ""];
+  const warianty = [];
+  for (const etap of ETAPY_PROFILU) for (const tytul of TYTULY) for (const martwe of ["tak", "nie"]) for (const zwolnienie of ["B", "bez_B", ""]) for (const typPrzyjecia of ["przysposobienie", "rodzina_zastepcza", "rodzina_zastepcza_zawodowa", ""]) {
+    warianty.push({
+      ...profilCiezarna,
+      ubezpieczony: { ...profilCiezarna.ubezpieczony, statusUbezpieczenia: tytul },
+      sytuacja: { etap, rola: "matka", typPrzyjecia },
+      dziecko: { ...profilCiezarna.dziecko, martwe },
+      zdrowie: { zwolnienie },
+    });
+  }
+  const sprawdz = (kalk, plik, pola) => {
+    const dozwolone = opcje(plik);
+    const zle = [];
+    for (const p of warianty) {
+      const w = wyliczPodstawienie(p, kalk);
+      for (const pole of pola) if (w[pole] !== undefined && !dozwolone.has(w[pole])) zle.push(`${pole}=${w[pole]}`);
+    }
+    expect([...new Set(zle)]).toEqual([]);
+  };
+
+  it("g) dokumenty: status i etap zawsze z listy", () => sprawdz("dokumenty", "CalcDokumenty.jsx", ["status", "etap"]));
+  it("a) chorobowy: status z listy", () => sprawdz("chorobowy", "CalcChorobowy.jsx", ["status"]));
+  it("b) macierzyński: sytuacja szczególna i liczba dzieci z listy", () => sprawdz("macierzynski", "CalcMacierzynski.jsx", ["szczegol", "dzieci"]));
+  it("c) łączenie: stawka i liczba dzieci z listy", () => sprawdz("laczenie", "CalcLaczenie.jsx", ["stawka", "dzieci"]));
+  it("e) adopcja: tryb i liczba dzieci z listy", () => sprawdz("adopcja", "CalcAdopcja.jsx", ["tryb", "dzieci"]));
+  it("f) podstawa: status i etat z listy", () => sprawdz("podstawa", "CalcPodstawa.jsx", ["status", "wymiarEtatu"]));
+});
+
+describe("poprawki mapowania", () => {
+  it("g) etapy: przyjęcie → adopcja, strata dziecka → martwe, urlop przed porodem → przedPorodem", () => {
+    const e = (s, d = {}, z = {}, ur = {}) => wyliczPodstawienie({ ...profilCiezarna, sytuacja: { ...profilCiezarna.sytuacja, ...s }, dziecko: { ...profilCiezarna.dziecko, ...d }, zdrowie: z, urlopy: { ...profilCiezarna.urlopy, ...ur } }, "dokumenty").etap;
+    expect(e({ etap: "przyjecie" })).toBe("adopcja");
+    expect(e({ etap: "po_porodzie" }, { zmarlo: "tak" })).toBe("martwe");
+    expect(e({ etap: "ciaza" }, {}, {}, { urlopPrzedPorodemOd: "2026-08-10" })).toBe("przedPorodem");
+    expect(e({ etap: "ciaza" }, {}, { zwolnienie: "B" }, { urlopPrzedPorodemOd: "2026-08-10" })).toBe("ciazaL4");
+    // po porodzie stare L4 z kodem B nie może przestawiać etapu z powrotem na ciążę
+    expect(e({ etap: "po_porodzie" }, {}, { zwolnienie: "B" })).toBe("porod");
+  });
+
+  it("g) osoba współpracująca → dg; duchowny / marynarz – nie zgadujemy", () => {
+    const st = (t) => wyliczPodstawienie({ ...profilCiezarna, ubezpieczony: { ...profilCiezarna.ubezpieczony, statusUbezpieczenia: t } }, "dokumenty").status;
+    expect(st("wspolpraca")).toBe("dg");
+    expect(st("duchowny")).toBeUndefined();
+    expect(st("marynarz")).toBeUndefined();
+  });
+
+  it("b) zgon dziecka przed 8. tygodniem → wariant „martwe”, po 8 tygodniach → „zgonPo”, bez dat → nie zgadujemy", () => {
+    const sz = (d) => wyliczPodstawienie({ ...profilOjciec, dziecko: { ...profilOjciec.dziecko, zmarlo: "tak", ...d } }, "macierzynski").szczegol;
+    expect(sz({ dataUrodzenia: "2026-01-10", dataZgonu: "2026-02-01" })).toBe("martwe");
+    expect(sz({ dataUrodzenia: "2026-01-10", dataZgonu: "2026-03-07" })).toBe("zgonPo"); // 56 dni
+    expect(sz({ dataUrodzenia: "2026-01-10", dataZgonu: "" })).toBeUndefined();
+  });
+
+  it("b) brak odpowiedzi o urlopie ojcowskim nie wyłącza go w wyliczeniu", () => {
+    const p = { ...profilCiezarna, urlopy: { ...profilCiezarna.urlopy, planOjcowski: "" } };
+    expect(wyliczPodstawienie(p, "macierzynski").ojcowski).toBeUndefined();
+    expect(wyliczPodstawienie({ ...p, urlopy: { ...p.urlopy, planOjcowski: "nie" } }, "macierzynski").ojcowski).toBe(false);
+  });
+
+  it("d) wykorzystany rodzicielski ojca trafia do kolumny ojca, ujemne liczby pomijane", () => {
+    const p = wyliczPodstawienie({ ...profilOjciec, urlopy: { ...profilOjciec.urlopy, rodzicielskiWykorzystanoTyg: "6", rodzicielskieCzesci: "2", macierzynskiWykorzystanoTyg: "-3" } }, "oboje");
+    expect(p.tO).toBe("6");
+    expect(p.cO).toBe("2");
+    expect(p.tM).toBeUndefined();
+    expect(p.cM).toBeUndefined();
+    expect(p.macM).toBeUndefined();
+  });
+
+  it("e) zawodowa rodzina zastępcza nie dostaje trybu „rodzina zastępcza” (brak prawa do urlopu)", () => {
+    const p = wyliczPodstawienie({ ...profilCiezarna, sytuacja: { etap: "przyjecie", rola: "matka", typPrzyjecia: "rodzina_zastepcza_zawodowa" } }, "adopcja");
+    expect(p.tryb).toBeUndefined();
+  });
+});
+
+describe("pasek „Z PROFILU” – wartości czytelne dla człowieka", () => {
+  const profile = [profilCiezarna, profilOjciec, profilDG,
+    { ...profilCiezarna, ubezpieczony: { ...profilCiezarna.ubezpieczony, wymiarEtatu: "czesc" }, urlopy: { ...profilCiezarna.urlopy, wymiarPracyPrzyLaczeniu: "powyzej", zamiarPelnyWymiar: "nie" } },
+    { ...profilCiezarna, sytuacja: { etap: "przyjecie", rola: "matka", typPrzyjecia: "rodzina_zastepcza" }, dziecko: { ...profilCiezarna.dziecko, dataPrzyjecia: "2026-04-01", martwe: "tak" } }];
+  const KALK = ["chorobowy", "macierzynski", "laczenie", "oboje", "adopcja", "podstawa", "dokumenty"];
+
+  it("bez kodów technicznych, kropek dziesiętnych i dat ISO", () => {
+    const zle = [];
+    for (const p of profile) for (const k of KALK) {
+      const patch = wyliczPodstawienie(p, k);
+      for (const o of opisPodstawienia(Object.keys(patch), patch, k)) {
+        if (/^(obw|dobr|porod|ciazaL4|przedPorodem|martwe|zgonPo|rodzinaZastepcza|niepracownik)$/.test(o.wartosc)
+          || /(^|\s)\d+\.\d+(\s|%|$)/.test(o.wartosc) /* „81.5”, „0.5” – ale nie data 10.04.1992 */ || /\d{4}-\d{2}-\d{2}/.test(o.wartosc) || o.wartosc === "") zle.push(`${k}.${o.pole}=${o.wartosc}`);
+      }
+    }
+    expect(zle).toEqual([]);
+  });
+
+  it("kwoty w złotych, stawka z przecinkiem, data po polsku, w a) data urodzenia matki", () => {
+    const opis = (k) => { const patch = wyliczPodstawienie(profilCiezarna, k); return Object.fromEntries(opisPodstawienia(Object.keys(patch), patch, k).map((o) => [o.etykieta, o.wartosc])); };
+    expect(opis("chorobowy")["Podstawa wymiaru"]).toBe("6 500,00 zł");
+    expect(opis("chorobowy")["Tytuł ubezpieczenia"]).toBe("obowiązkowe (umowa o pracę)");
+    expect(opis("chorobowy")["Twoja data urodzenia"]).toBe("10.04.1992");
+    expect(opis("laczenie")["Stawka zasiłku"]).toBe("81,5%");
+    expect(opis("dokumenty")["Etap sprawy"]).toBe("ciąża – zwolnienie z kodem B");
   });
 });

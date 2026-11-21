@@ -1,4 +1,5 @@
 import { useId } from "react";
+import { useAuth } from "../auth.js";
 
 /* Wspólne klocki UI dla kalkulatorów - wszystkie klasy są w themes.css. */
 
@@ -164,6 +165,10 @@ export function List({ title, items, tone }) {
  * @param {boolean} props.zalogowany
  */
 export function ProfilInfo({ pola = [], zalogowany }) {
+  // Zalogowany, ale profil jeszcze się wczytuje – nic nie pokazujemy (wcześniej mignął
+  // komunikat „Wypełnij »Moje dane« po zalogowaniu”, mimo że użytkownik jest zalogowany).
+  const { user } = useAuth() ?? {};
+  if (!zalogowany && user) return null;
   if (!zalogowany) {
     return (
       <p className="note" role="status">

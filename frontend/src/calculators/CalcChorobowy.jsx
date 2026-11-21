@@ -69,7 +69,7 @@ export default function CalcChorobowy() {
     <div className="calc">
       <ProfilInfo
         zalogowany={!!profilDane.profile}
-        pola={opisPodstawienia(profilDane.podstawione ?? [], s)}
+        pola={opisPodstawienia(profilDane.podstawione ?? [], s, profilDane.kalkulator)}
       />
       <div className="calc-cols">
         <div>
