@@ -77,11 +77,31 @@ zbierają dane z formularza i wyświetlają wynik.
 | `engine/wnioski/` | **wnioski i ich warianty**: co przysługuje przy danym profilu (niżej) |
 | `calculators/useProfileDefaults.js` | **podstawianie danych z „Moich danych”** do kalkulatorów: komplet pól (podstawa, daty, staż ubezpieczenia, kod B, liczba ubezpieczonych, zaległość, wymiar etatu, tydzień ciąży, dni hospitalizacji) + pasek „Z PROFILU” pokazujący, co zostało wstawione |
 
-Testy (228: kalkulatory, podstawianie profilu i jego spójność z listami wyboru, warianty wniosków, regresje do `RAPORT_BLEDOW.md` i spójność z bazą wiedzy):
+Testy (249: kalkulatory, podstawianie profilu, logika formularza (płeć/rola), warianty wniosków, regresje do `RAPORT_BLEDOW.md` i spójność z bazą wiedzy):
 
 ```bash
 cd frontend && npm test
 ```
+
+## Formularz „Moje dane” — logika zależna od płci i roli
+
+Etykiety i widoczność pól zależą od tego, kim jesteś — żeby nie było pytań bez sensu:
+
+| Sytuacja | Co widzisz |
+| --- | --- |
+| Kobieta, rola „matka” | etap **„Jestem w ciąży”** |
+| Mężczyzna (każda rola) lub rola „ojciec” | etap **„Moja partnerka jest w ciąży”** + podpowiedź, że chodzi o ciążę drugiego rodzica |
+| Kobieta | role: matka, inny członek rodziny (bez „ojciec”) |
+| Mężczyzna | role: ojciec, inny członek rodziny (bez „matka”) |
+
+**Dane z aktu urodzenia** (imię, nazwisko, PESEL, miejsce urodzenia dziecka) można uzupełnić
+**także w ciąży** — wtedy jako opcjonalne, bo zwykle jeszcze ich nie znasz, ale możesz przygotować
+je zawczasu. Data urodzenia pojawia się dopiero po porodzie. Pola opcjonalne nie blokują
+ukończenia kroku (nie liczą się do paska postępu).
+
+Logika jest w `src/profile-logic/etapy.js` (czysty JS, bez Reacta) i pokryta testami
+`etapy.test.js` — m.in. sprawdzają, że żadna etykieta nie mówi mężczyźnie, że jest w ciąży,
+a klucze etapów (`ciaza` / `po_porodzie` / `przyjecie`) pozostają zgodne z silnikiem wniosków.
 
 ## Kalkulatory a „Moje dane”
 
