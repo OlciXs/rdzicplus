@@ -13,19 +13,24 @@ export default function AppHeader({ actions = null, children = null }) {
       {children}
       <div className="topbar-actions">
         {actions}
-        {user && (
-          <details className="menu">
-            <summary className="menu-button" aria-label="Menu użytkownika">
-              Cześć, {user.imie} <span aria-hidden="true">⌄</span>
-            </summary>
-            <div className="menu-list">
-              <Link to="/panel">Mój panel</Link>
-              <Link to="/profil">Moje dane</Link>
-              <Link to="/kalkulatory">Kalkulatory</Link>
-              <button type="button" onClick={logout}>Wyloguj</button>
-            </div>
-          </details>
-        )}
+        <details className="menu">
+          <summary className="menu-button" aria-label="Menu aplikacji">
+            <span className="hamburger" aria-hidden="true"><i></i><i></i><i></i></span>
+          </summary>
+          <div className="menu-list">
+            {user ? (
+              <>
+                <span className="menu-user">Cześć, {user.imie}</span>
+                <Link to="/panel">Mój panel</Link>
+                <Link to="/profil">Moje dane</Link>
+              </>
+            ) : (
+              <Link to="/logowanie">Zaloguj się</Link>
+            )}
+            <Link to="/kalkulatory">Kalkulatory</Link>
+            {user && <button type="button" onClick={logout}>Wyloguj</button>}
+          </div>
+        </details>
       </div>
     </header>
   );

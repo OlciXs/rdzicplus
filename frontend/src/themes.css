@@ -140,48 +140,24 @@ h2 { font-size: 1.1rem; margin: 0 0 8px; color: var(--color-navy); }
 .data-list dt { color: var(--color-muted); }
 .data-list dd { margin: 0; font-weight: 600; }
 
-.progress-card {
-  background: var(--color-primary-soft); border: 1px solid var(--color-primary-border);
-  border-radius: var(--radius); padding: 18px; margin-bottom: 20px;
-}
-.progress-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
-.next { margin: 12px 0 0; }
-
-.bar {
-  display: block; width: 100%; height: 14px; border: none;
-  border-radius: 999px; overflow: hidden;
-  -webkit-appearance: none; appearance: none; background: #fff;
-}
-.bar::-webkit-progress-bar { background: #fff; border-radius: 999px; }
-.bar::-webkit-progress-value { background: var(--color-primary); border-radius: 999px; transition: width 0.3s; }
-.bar::-moz-progress-bar { background: var(--color-primary); border-radius: 999px; }
-
-.steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
-.step {
-  background: var(--color-surface); border: 2px solid var(--color-border);
-  border-radius: var(--radius);
-}
-.step.is-done { border-color: var(--color-primary); background: #f7fcf9; }
-.step.is-done .step-title { text-decoration: line-through; color: var(--color-muted); }
-.step-row { display: flex; gap: 14px; padding: 16px; cursor: pointer; align-items: flex-start; }
-.step-row input { width: 28px; height: 28px; margin-top: 2px; accent-color: var(--color-primary); flex-shrink: 0; }
-.step-body { display: grid; gap: 2px; }
-.step-title { font-weight: 700; color: var(--color-navy); }
-.step-where { color: var(--color-muted); font-size: 0.9rem; }
 
 /* pasek górny – akcje */
 .topbar-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .topbar-user { color: var(--color-muted); font-weight: 600; }
 .menu { position: relative; }
 .menu-button {
-  display: flex; align-items: center; gap: 6px;
-  min-height: 40px; padding: 8px 12px;
+  display: grid; place-items: center;
+  width: 44px; height: 44px; padding: 10px;
   border: 1px solid var(--color-border); border-radius: 10px;
   background: var(--color-surface); color: var(--color-navy);
-  font: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+  cursor: pointer;
   list-style: none;
 }
 .menu-button::-webkit-details-marker { display: none; }
+.menu-button:hover { background: var(--color-primary-soft); border-color: var(--color-primary); }
+.hamburger { display: grid; gap: 4px; width: 20px; }
+.hamburger i { display: block; width: 20px; height: 2px; background: currentColor; }
+.menu-user { padding: 8px 12px 10px; color: var(--color-muted); font-size: 0.85rem; }
 .menu-list {
   position: absolute; right: 0; top: calc(100% + 8px); z-index: 20;
   display: grid; min-width: 210px; padding: 6px;
@@ -413,7 +389,7 @@ h2 { font-size: 1.1rem; margin: 0 0 8px; color: var(--color-navy); }
 
 @media (max-width: 620px) {
   .topbar { flex-wrap: wrap; gap: 10px; }
-  .topbar-actions { width: 100%; }
+  .topbar-actions { width: auto; margin-left: auto; }
   .topbar-actions .btn { flex: 1; }
   .brand-name { font-size: 1.05rem; }
   .hero h1, .calc-head h1 { font-size: 1.4rem; }
@@ -456,22 +432,6 @@ h2 { font-size: 1.1rem; margin: 0 0 8px; color: var(--color-navy); }
 .landing-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
 .landing-actions .btn-big { width: auto; min-height: 52px; }
 
-.landing-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px; margin-bottom: 40px;
-}
-.landing-card {
-  background: var(--color-surface); border: 1px solid var(--color-border);
-  border-radius: var(--radius); padding: 22px; margin: 0;
-}
-.landing-card-icon { font-size: 1.8rem; }
-.landing-card h2 { font-size: 1.1rem; margin: 10px 0 6px; }
-.landing-card p { color: var(--color-muted); margin: 0; font-size: 0.94rem; }
-
-.landing-calcs-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.landing-calcs h2 { font-size: 1.3rem; margin: 0 0 14px; }
-.link-more { color: var(--color-primary); font-weight: 700; text-decoration: none; white-space: nowrap; }
-.link-more:hover { color: var(--color-primary-hover); }
 
 .site-footer {
   max-width: 960px; margin: 0 auto; padding: 16px; text-align: center;

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import AppHeader from "../components/AppHeader.jsx";
 import { useAuth } from "../auth.js";
 import { useProfile } from "../profile.js";
@@ -67,7 +66,7 @@ const SECTIONS = [
 const toStr = (v) => (v === null || v === undefined ? "" : String(v));
 
 export default function ProfilePage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { profile, updatedAt, loading, save } = useProfile();
   const [form, setForm] = useState(null);
   const [errors, setErrors] = useState({});
@@ -102,15 +101,7 @@ export default function ProfilePage() {
 
   return (
     <div className="app">
-      <AppHeader
-        actions={
-          <>
-            <Link className="btn btn-outline" to="/panel">Panel</Link>
-            <Link className="btn btn-primary" to="/kalkulatory">Kalkulatory świadczeń</Link>
-            <button className="btn btn-outline" onClick={logout}>Wyloguj</button>
-          </>
-        }
-      />
+      <AppHeader />
 
       <main className="container">
         <h1>Moje dane</h1>
