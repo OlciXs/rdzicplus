@@ -1,0 +1,54 @@
+name: Build and Deploy Docker Compose to GCE
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  REGION: europe-central2
+  REPOSITORY: app-images
+  IMAGE_NAME: your-app
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Build and push Docker image
+        run: |
+          IMAGE_URI="${{ env.REGION }}-docker.pkg.dev/${{ auth.outputs.project_id }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}"
+          docker build -t "${IMAGE_URI}:latest" -t "${IMAGE_URI}:${{ github.sha }}" .
+          docker push "${IMAGE_URI}:latest"
+          docker push "${IMAGE_URI}:${{ github.sha }}"
+
+      - name: Pull and restart on VM
+        run: |
+          gcloud compute ssh ${{ secrets.GCE_INSTANCE }} \
+            --zone=${{ secrets.GCE_ZONE }} \
+            --tunnel-through-iap \
+            --command="
+              sudo docker compose -f /opt/app/docker-compose.yml pull &&
+              sudo docker compose -f /opt/app/docker-compose.yml up -d --remove-orphans &&
+              sudo docker image prune -f
+            "
