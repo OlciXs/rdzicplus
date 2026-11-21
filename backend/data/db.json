@@ -36,8 +36,8 @@
           "dataUrodzenia": "1987-09-03",
           "adres": "bydgoszcz",
           "rachunek": "PL12345678901234567890123456",
-          "statusUbezpieczenia": "student_zlecenie",
-          "podstawaWymiaru": "",
+          "statusUbezpieczenia": "dg",
+          "podstawaWymiaru": 4877.11,
           "ubezpieczenieOd": "",
           "ulgaWyczekiwania": "",
           "wymiarEtatu": "",
@@ -61,10 +61,10 @@
           "typPrzyjecia": ""
         },
         "platnik": {
-          "nazwa": "Ojciej",
-          "adres": "Mielczyce",
-          "nip": "1234567891",
-          "regon": "123456789",
+          "nazwa": "Marzena Wiśniewska Pracownia Grafiki (dane fikcyjne)",
+          "adres": "ul. Malarska 12/3, 30-001 Kraków",
+          "nip": "5213456782",
+          "regon": "987654324",
           "liczbaUbezpieczonych": ""
         },
         "drugiRodzic": {
@@ -140,7 +140,7 @@
           "opiekunczyDniWRoku": ""
         }
       },
-      "profileUpdatedAt": "2026-11-21T19:24:29.884Z"
+      "profileUpdatedAt": "2026-11-21T19:46:37.010Z"
     },
     {
       "id": "b0cb48cf-1ef8-4a18-8a0a-3e3723b134dd",
