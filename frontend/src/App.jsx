@@ -6,7 +6,6 @@ import { api } from "./api.js";
 import { AuthContext } from "./auth.js";
 import Dashboard from "./pages/Dashboard.jsx";
 import Login from "./pages/Login.jsx";
-import Landing from "./pages/Landing.jsx";
 import KalkulatoryList from "./pages/KalkulatoryList.jsx";
 import Kalkulator from "./pages/Kalkulator.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
@@ -77,7 +76,7 @@ export default function App() {
             ) : user ? (
               <Navigate to="/panel" replace />
             ) : (
-              <Landing />
+              <Navigate to="/logowanie" replace />
             )
           }
         />

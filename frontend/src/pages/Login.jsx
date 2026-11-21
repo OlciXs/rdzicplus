@@ -91,11 +91,8 @@ export default function Login() {
 
       {step === "start" && (
         <section className="card">
-          <h1>Witamy! Załatwimy papiery razem.</h1>
-          <p className="lead">
-            Pomagamy nowym rodzicom ogarnąć dokumenty krok po kroku. Zacznij od
-            zalogowania.
-          </p>
+          <h1>Zaloguj się do RodzicPlus</h1>
+          <p className="lead">Dane i kalkulatory będą dostępne po zalogowaniu.</p>
           {error && <p className="error" role="alert">{error}</p>}
           <button className="btn btn-primary btn-big" onClick={start} disabled={busy}>
             {busy ? "Chwileczkę…" : "Zaloguj się mObywatelem"}
@@ -176,9 +173,9 @@ export default function Login() {
         </section>
       )}
 
-      <p className="hint" style={{ textAlign: "center" }}>
-        <Link to="/kalkulatory">Zobacz kalkulatory bez logowania →</Link>
-      </p>
+      <Link className="login-without-account" to="/kalkulatory">
+        Chcesz sprawdzić świadczenia bez logowania? <strong>Otwórz kalkulatory</strong>
+      </Link>
     </main>
   );
 }
