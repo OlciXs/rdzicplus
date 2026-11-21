@@ -152,6 +152,15 @@ export default function Dashboard() {
           <span className="calc-cta-arrow" aria-hidden="true">→</span>
         </Link>
 
+        <Link className="calc-cta" to="/kalendarz">
+          <span className="calc-cta-icon" aria-hidden="true">📅</span>
+          <span className="calc-cta-body">
+            <span className="calc-cta-title">Kalendarz terminów</span>
+            <span className="calc-cta-desc">Ostateczne terminy wniosków i przypomnienia tydzień wcześniej.</span>
+          </span>
+          <span className="calc-cta-arrow" aria-hidden="true">→</span>
+        </Link>
+
         <Link className="calc-cta" to="/wsparcie">
           <span className="calc-cta-icon" aria-hidden="true">🤝</span>
           <span className="calc-cta-body">

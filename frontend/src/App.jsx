@@ -17,6 +17,7 @@ import Wnioski from "./pages/Wnioski.jsx";
 import Support from "./pages/Support.jsx";
 import OfficialLinks from "./pages/OfficialLinks.jsx";
 import Druk from "./pages/Druk.jsx";
+import Kalendarz from "./pages/Kalendarz.jsx";
 
 const TOKEN_KEY = "rodzicplus-token";
 
@@ -145,6 +146,14 @@ export default function App() {
           element={
             <RequireAuth loading={loading} user={user}>
               <Support />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/kalendarz"
+          element={
+            <RequireAuth loading={loading} user={user}>
+              <Kalendarz />
             </RequireAuth>
           }
         />

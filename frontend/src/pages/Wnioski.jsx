@@ -39,9 +39,47 @@ function Pola({ lista }) {
 // Wariant, przy którym nic nie składasz (np. e-ZLA leci automatycznie) – inna etykieta niż „Przysługuje”.
 const AUTOMAT = { label: "Przysługuje – nic nie składasz", badge: "b-ok", kolor: "var(--color-navy)" };
 
-function Wariant({ v }) {
+const parseDate = (value) => {
+  if (!value) return null;
+  const date = new Date(`${String(value).slice(0, 10)}T12:00:00`);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+const addDays = (date, days) => date ? new Date(date.getTime() + days * 86400000) : null;
+const fmtDate = (date) => date ? date.toLocaleDateString("pl-PL") : "";
+
+function deadlineForVariant(v, profile) {
+  const dziecko = profile?.dziecko ?? {};
+  const firstChild = Array.isArray(dziecko.dzieci) && dziecko.dzieci.length ? dziecko.dzieci[0] : dziecko;
+  const birth = parseDate(firstChild?.dataUrodzenia);
+  const due = parseDate(dziecko.przewidywanaDataPorodu);
+  const adoption = parseDate(dziecko.dataPrzyjecia);
+  const leaveEnd = parseDate(profile?.urlopy?.terminKoncaMacierzynskiego);
+
+  if (v.id === "W41" && birth) return addDays(birth, 21);
+  if (v.id === "W2" && due) return addDays(addDays(due, -42), -14);
+  if (v.id === "W4" && leaveEnd) return addDays(leaveEnd, -21);
+  if (v.id === "W21" && birth) {
+    const end = new Date(birth);
+    end.setMonth(end.getMonth() + 12);
+    end.setDate(end.getDate() - 1);
+    return end;
+  }
+  if (v.id === "W25" && birth) return new Date(birth.getFullYear() + 6, 11, 31);
+  if (v.id === "W28" && adoption) return addDays(adoption, 7);
+  if (v.id === "W45") {
+    const funeral = parseDate(dziecko.dataZgonu) ?? birth;
+    return addDays(funeral, 365);
+  }
+  return null;
+}
+
+function Wariant({ v, profile }) {
   const automat = v.status === "dostepny" && v.skladanie === "automatycznie";
   const st = automat ? AUTOMAT : STATUS[v.status];
+  const deadline = deadlineForVariant(v, profile);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const remaining = deadline ? Math.ceil((deadline.getTime() - now.getTime()) / 86400000) : null;
   const drukujPodsumowanie = (event) => {
     const karta = event.currentTarget.closest(".result-card");
     if (karta) karta.classList.add("drukuj-wynik");
@@ -90,6 +128,23 @@ function Wariant({ v }) {
             )}
             {v.adresat && <div><dt>🏢 Komu</dt><dd>{v.adresat}</dd></div>}
             {v.termin && <div><dt>⏰ Do kiedy</dt><dd>{v.termin}</dd></div>}
+            {deadline && (
+              <div>
+                <dt>📅 Konkretny termin</dt>
+                <dd>
+                  <b>{fmtDate(deadline)}</b>
+                  {remaining !== null && (
+                    <span className={remaining < 0 ? "deadline-overdue" : remaining <= 7 ? "deadline-soon" : "deadline-ok"}>
+                      {" "}– {remaining < 0
+                        ? `termin minął ${Math.abs(remaining)} ${Math.abs(remaining) === 1 ? "dzień" : "dni"} temu`
+                        : remaining === 0
+                          ? "ostatni dzień"
+                          : `pozostało ${remaining} ${remaining === 1 ? "dzień" : "dni"}`}
+                    </span>
+                  )}
+                </dd>
+              </div>
+            )}
             {v.wymiar && <div><dt>Ile</dt><dd>{v.wymiar}</dd></div>}
             {v.wysokosc && <div><dt>Wysokość</dt><dd>{v.wysokosc}</dd></div>}
           </dl>
@@ -240,7 +295,7 @@ export default function Wnioski() {
               {wniosek.warianty
                 .filter((v) => v.status !== "nie_dotyczy")
                 .sort((a, b) => ["dostepny", "brak_danych", "niedostepny", "informacja"].indexOf(a.status) - ["dostepny", "brak_danych", "niedostepny", "informacja"].indexOf(b.status))
-                .map((v) => <Wariant key={v.id} v={v} />)}
+                .map((v) => <Wariant key={v.id} v={v} profile={profile} />)}
             </div>
             {wniosek.warianty.some((v) => v.status === "nie_dotyczy") && (
               <details className="result-card">

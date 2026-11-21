@@ -26,7 +26,7 @@
       "imie": "Marzena",
       "nazwisko": "Wiśniewska",
       "createdAt": "2026-11-21T13:58:06.311Z",
-      "lastLoginAt": "2026-11-21T22:38:44.929Z",
+      "lastLoginAt": "2026-11-21T23:02:10.334Z",
       "profile": {
         "ubezpieczony": {
           "imie": "Marzena",
@@ -82,17 +82,17 @@
           "brak": true
         },
         "dziecko": {
-          "imie": "ja",
-          "nazwisko": "sa",
+          "imie": "Julia",
+          "nazwisko": "Wiśniewska",
           "pesel": "",
-          "dataUrodzenia": "",
-          "miejsceUrodzenia": "tu",
+          "dataUrodzenia": "2026-11-20",
+          "miejsceUrodzenia": "Szpital Uniwersytecki nr 2 im. Jana Pawła II w Krakowie",
           "liczbaDzieci": "2",
-          "przewidywanaDataPorodu": "2026-11-22",
-          "martwe": "tak",
-          "zmarlo": "tak",
+          "przewidywanaDataPorodu": "2026-11-20",
+          "martwe": "nie",
+          "zmarlo": "nie",
           "dataZgonu": "",
-          "liczbaZyjacych": "0",
+          "liczbaZyjacych": "2",
           "zaGranica": "nie",
           "kraj": "",
           "pobytWSzpitalu": "nie",
@@ -102,22 +102,22 @@
           "szpitalDo": "",
           "dataPrzyjecia": "",
           "odroczonySzkolny": "",
-          "niepelnosprawne": "",
+          "niepelnosprawne": "nie",
           "zaZyciem": false,
           "dzieci": [
             {
-              "imie": "ja",
-              "nazwisko": "sa",
-              "pesel": "",
-              "dataUrodzenia": "",
-              "miejsceUrodzenia": "tu"
+              "imie": "Julia",
+              "nazwisko": "Wiśniewska",
+              "pesel": "26212000012",
+              "dataUrodzenia": "2026-11-20",
+              "miejsceUrodzenia": "Szpital Uniwersytecki nr 2 im. Jana Pawła II w Krakowie"
             },
             {
-              "imie": "",
-              "nazwisko": "",
-              "pesel": "",
-              "dataUrodzenia": "",
-              "miejsceUrodzenia": ""
+              "imie": "Lena",
+              "nazwisko": "Wiśniewska",
+              "pesel": "26212000029",
+              "dataUrodzenia": "2026-11-20",
+              "miejsceUrodzenia": "Szpital Uniwersytecki nr 2 im. Jana Pawła II w Krakowie"
             }
           ]
         },
@@ -134,7 +134,7 @@
         "urlopy": {
           "urlopPrzedPorodemOd": "2026-11-10",
           "zamiarPelnyWymiar": "tak",
-          "macierzynskiWykorzystanoTyg": "",
+          "macierzynskiWykorzystanoTyg": "0",
           "matkaRezygnuje": "",
           "planUzupelniajacy": "",
           "terminKoncaMacierzynskiego": "",
@@ -151,12 +151,12 @@
           "wymiarPracyPrzyLaczeniu": "",
           "planWychowawczy": "",
           "wychowawczyWykorzystanoMies": "",
-          "potrzebaOpieki": "",
+          "potrzebaOpieki": "brak",
           "domownikMozeOpiekowac": "",
           "opiekunczyDniWRoku": ""
         }
       },
-      "profileUpdatedAt": "2026-11-21T22:24:25.105Z"
+      "profileUpdatedAt": "2026-11-21T22:57:31.213Z"
     },
     {
       "id": "b0cb48cf-1ef8-4a18-8a0a-3e3723b134dd",
