@@ -134,7 +134,7 @@ Wagi oceny: związek z wyzwaniem 25% · kompletność + UX 25% · pomysł 20% ·
   /private-cases             – sprawy ZUS, tylko lokalnie (w .gitignore)
   /docs                      – materiały
   ```
-- [ ] README: uzupełnić „Moja apka” o nazwę projektu, opis i komendę testów (pełna wersja w sekcji 11)
+- [ ] README: uzupełnić „RodzicPlus” o nazwę projektu, opis i komendę testów (pełna wersja w sekcji 11)
 - [ ] Wczesny deploy (front + back), żeby link działał od początku
 
 ---

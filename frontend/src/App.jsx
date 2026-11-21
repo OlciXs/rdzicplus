@@ -69,7 +69,18 @@ export default function App() {
   return (
     <AuthContext.Provider value={auth}>
       <Routes>
-        <Route path="/" element={<Landing />} />
+        <Route
+          path="/"
+          element={
+            loading ? (
+              <p className="center-msg">Ładowanie aplikacji…</p>
+            ) : user ? (
+              <Navigate to="/panel" replace />
+            ) : (
+              <Landing />
+            )
+          }
+        />
         <Route path="/logowanie" element={<Login />} />
 
         {/* Strefa zalogowanego użytkownika */}
