@@ -6,7 +6,7 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 
 ---
 
-## Stan projektu (sobota 21.11, 16:05)
+## Stan projektu (sobota 21.11, 16:10)
 
 **Działa** (sprawdzone lokalnie w przeglądarce i przez API):
 - logowanie mObywatelem (symulacja): kod → wybór jednej z 3 fikcyjnych osób → sesja z tokenem, PESEL maskowany na froncie
@@ -16,9 +16,11 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 - „baza” w pliku `backend/data/db.json` (Ola, `backend/db.js`), schowana za obiektem `db`
 - Docker (`docker-compose.yml`, Dockerfile dla obu części) + GitHub Actions z deployem na Google Cloud (Enard)
 
-**Nie działa:** deploy. **Wszystkie 5 uruchomień w GitHub Actions zakończyło się błędem**, więc demo online jeszcze nie istnieje. Ostatnie padło po ~1,5 min, czyli pewnie na kroku na maszynie wirtualnej (prawdopodobnie `PROJECT_ID`, patrz niżej). Logi widać tylko po zalogowaniu na GitHubie.
+**Deploy działa** (Enard): uruchomienia #6 i #7 w GitHub Actions przeszły na zielono (pierwsze 5 padło). Do README brakuje linku do demo online.
 
-**Jeszcze nie ma:** uploadu PDF / przykładowych spraw, panelu admina, testów wyliczeń, planera osi czasu, generatora wniosków. **Uwaga architektoniczna:** wszystkie wyliczenia siedzą wewnątrz komponentów React (`frontend/src/calculators/Calc*.jsx`), a parametry w `frontend/src/calculators/config.js`. Przez to nie da się ich przetestować, użyć przy uploadzie PDF ani zmienić z panelu admina, więc pierwszym zadaniem jest wyciągnięcie ich do `engine/` (sekcja 2).
+**Zrobione o 16:10 (Claude, bez commita):** silnik obliczeń `frontend/src/engine/` (wszystkie wyliczenia przeniesione z komponentów, wyniki bez zmian), 50 testów (`npm test`), panel admina `/admin` z zapisem parametrów w backendzie (`/api/params`). Opis w README.
+
+**Jeszcze nie ma:** uploadu PDF / przykładowych spraw, planera osi czasu, generatora wniosków, wspólnego profilu sprawy (każdy kalkulator osobno pyta o podstawę), symulacji e-ZLA / zadłużenia / PUE.
 
 ### Poprawione w kalkulatorach (21.11, 16:00, przez Claude; bez commita, sprawdzone w przeglądarce)
 - [x] **c) Łączenie z pracą: zły wzór wydłużenia.** Było `urlop + urlop × etat` (½ etatu → 61,5 tyg.), jest `urlop ÷ (1 − etat)` zgodnie z KP art. 182¹f (½ etatu → 82 tyg., ¼ etatu → 54,67 tyg., „Za życiem” → 130 tyg.)
@@ -42,7 +44,7 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 **Lekcja z dzisiaj:** commit „Build and deploy” przypadkiem cofnął logowanie Oli w `server.js` (naprawione w `5b3ce25`). **Przed każdym pushem: `git pull`**, a przy konflikcie nie wybierać „swojej wersji” w ciemno.
 
 ### Poprawki techniczne (P0, małe)
-- [ ] **Naprawić deploy (Enard):** przeczytać log z GitHub Actions (run #5), potem poprawki poniżej. Przed oddaniem demo MUSI działać online
+- [x] **Naprawić deploy (Enard):** runy #6 i #7 przechodzą
 - [ ] **`docker-compose.yml`: `${PROJECT_ID}` bez wartości daje błędną nazwę obrazu** (`europe-central2-docker.pkg.dev//app-images/...`), więc lokalne `docker compose up --build` z README się wyłoży. Poprawka: `${PROJECT_ID:-local}`. Na VM `PROJECT_ID` musi być w `/opt/app/.env`, bo `sudo` gubi zmienne środowiskowe (Enard)
 - [ ] **Puste `backend/.dockerignore` i `frontend/.dockerignore`:** `COPY . .` wrzuci do obrazu `node_modules` z Windowsa i może zepsuć build w kontenerze. Wpisać do obu: `node_modules`, `dist`, `.env`, `data` (backend)
 - [ ] Pusty `frontend/nginx.conf`: usunąć albo wypełnić (teraz frontend w Dockerze chodzi na `vite preview`, nie na nginx)
@@ -105,27 +107,22 @@ Wagi oceny: związek z wyzwaniem 25% · kompletność + UX 25% · pomysł 20% ·
 
 **Do zrobienia:**
 - [x] `.gitignore`: dodane `private-cases/`. **Przykładowych spraw ZUS nie wolno wrzucać do repo** (zakaz kopiowania i rozpowszechniania). Demo ładuje je z folderu poza repo albo z miejsca wskazanego przez ZUS.
-- [ ] Utworzyć `engine/` z własnym `package.json` (`"type": "module"`) i podpiąć go:
-  - w backendzie: `import { calculate } from "../engine/index.js"`
-  - we froncie: alias w `vite.config.js` (np. `resolve.alias: { "@engine": "../engine" }`) i ewentualnie `server.fs.allow: [".."]`, bo Vite domyślnie nie serwuje plików spoza `frontend/`
-- [ ] Vitest w `engine/` (`npm i -D vitest`, skrypt `"test": "vitest run"`)
+- [x] Silnik w **`frontend/src/engine/`** (21.11, Claude). Nie w głównym folderze, bo Docker buduje frontend i backend z osobnych folderów (`./frontend`, `./backend`) i nie widziałby `engine/`. Przeniesienie wymagałoby zmiany deployu Enarda
+- [x] Vitest we frontendzie: `cd frontend && npm test`
 - [ ] Backend: zamienić `/api/hello` na właściwe endpointy:
-  - `POST /api/calculate`: przyjmuje `CaseProfile`, zwraca `Result`
-  - `GET /api/params` i `PUT /api/params` (admin, chronione hasłem z `.env`)
+  - [ ] `POST /api/calculate`: wymaga, by backend widział silnik (wspólny kontekst budowania w Dockerze, do ustalenia z Enardem). Na razie niepotrzebne, bo liczy front
+  - [x] `GET /api/params`, `PUT /api/params`, `DELETE /api/params` (zapis chroniony hasłem z `ADMIN_PASSWORD`)
   - `POST /api/extract`: upload PDF → AI → JSON (sekcja 6); potrzebny `multer` do plików
   - `GET /api/mock/*`: dane ZUS / e-ZLA / zadłużenie (sekcja 9). Logowanie mObywatelem już jest pod `/api/auth/*`
-- [ ] Frontend: dodać routing (`react-router-dom`), bo teraz `App.jsx` przełącza tylko Login ↔ Dashboard, a dojdą kalkulator, planer i admin. Style: Ola trzyma wszystko w `themes.css` (tokeny kolorów + klasy), więc **zostajemy przy tym zamiast Tailwinda**, żeby nie mieszać dwóch systemów
-- [ ] Docelowa struktura:
+- [x] Frontend: routing (`react-router-dom`, Montarex23). Style zostają w `themes.css`, bez Tailwinda
+- [x] Aktualna struktura:
   ```
-  /engine          – czysta logika, testowalna (NOWE)
-    params.default.json
-    types.js       – JSDoc: Profil sprawy, Wynik, Krok obliczeń
-    /rules         – jeden plik na kalkulator
-    /tests/cases   – ręcznie policzone przypadki (bez dokumentów ZUS)
-  /backend         – Express (jest), /routes, /mocks
-  /frontend        – React + Vite (jest), /src/pages, /src/components
-  /private-cases   – sprawy ZUS, tylko lokalnie (w .gitignore)
-  /docs            – materiały (jest)
+  /frontend/src/engine       – silnik: czyste funkcje + params.js + engine.test.js
+  /frontend/src/calculators  – UI kalkulatorów (formularz → funkcja silnika → wynik)
+  /frontend/src/pages        – strony (Landing, Login, Dashboard, Kalkulator, Admin, 404)
+  /backend                   – Express: logowanie mObywatel (symulacja), /api/params
+  /private-cases             – sprawy ZUS, tylko lokalnie (w .gitignore)
+  /docs                      – materiały
   ```
 - [ ] README: uzupełnić „Moja apka” o nazwę projektu, opis i komendę testów (pełna wersja w sekcji 11)
 - [ ] Wczesny deploy (front + back), żeby link działał od początku
@@ -208,27 +205,29 @@ Wagi oceny: związek z wyzwaniem 25% · kompletność + UX 25% · pomysł 20% ·
 
 ## 3. Parametry i panel admina (P0, wymóg z treści zadania)
 
-- [ ] Punkt startowy: obiekt `CFG` w `frontend/src/calculators/config.js` (już ma większość stawek i limitów). Przenieść go do `engine/params.default.json`
-- [ ] `params.default.json` ze wszystkimi wartościami z §4 pliku z danymi. Klucze semantyczne (`maternity.weeks.byChildren`, `rates.parental`), **a nie numery artykułów**
-- [ ] Każdy parametr ma: wartość, opis po polsku, podstawę prawną i datę „obowiązuje od”
-- [ ] `/admin`: tabela parametrów, edycja, zapis do bazy, przycisk „przywróć domyślne”. Proste hasło z env wystarczy
-- [ ] Silnik zawsze czyta parametry z bazy (z fallbackiem na domyślne)
+- [x] Wszystkie parametry w `frontend/src/engine/params.js` (`DEFAULT_PARAMS`), klucze semantyczne, nie numery artykułów. Doszły: próg płatnika (20) i limity wieku przy adopcji (14/7/10), które wcześniej były wpisane na sztywno
+- [x] `/admin`: 5 grup parametrów z polskimi opisami, podświetlenie zmienionych pól, zapis i „Przywróć domyślne”, hasło z `ADMIN_PASSWORD` (demo: `zus-demo-2026`, w README)
+- [x] Backend trzyma tylko zmiany (`paramOverrides` w `db.json`, na serwerze na wolumenie Dockera), a front nakłada je przy starcie (`loadParams()` w `main.jsx`)
+- [x] Sprawdzone w przeglądarce: 70% → 75% w adminie → „Oboje rodzice” od razu liczy ojcu 18 075,75 zł zamiast 17 498,25 zł; reset przywraca 70%
+- [ ] Każdy parametr: podstawa prawna i data „obowiązuje od” (teraz są tylko w komentarzach w `params.js`)
+- [ ] **Ustawić `ADMIN_PASSWORD` na serwerze** (Enard: zmienna w `docker-compose.yml` / `.env` na VM)
 - [ ] Na demo pokazać: zmieniam stawkę 70% → 75% w adminie i kalkulator od razu liczy inaczej
 
 ---
 
 ## 4. Testy na przykładowych sprawach (P0, robić równolegle z silnikiem)
 
-- [ ] Ręcznie policzone przypadki w `/tests/cases/*.json` (wejście i oczekiwany wynik). Na start:
-  - [ ] etat, 6 000 zł brutto stałe przez 12 miesięcy → podstawa **5 177,40 zł** → 100% = 5 177,40 · 81,5% = 4 219,58 · 70% = 3 624,18
-  - [ ] pensja poniżej minimum → podstawa podniesiona do 4 147,09 zł
-  - [ ] JDG z dobrowolnym chorobowym od 60 dni → brak prawa (okres oczekiwania 90 dni) → komunikat „NIE”
-  - [ ] JDG z zaległością 100 zł → blokada
-  - [ ] bliźnięta → macierzyński 31 tygodni, rodzicielski 43 tygodnie
-  - [ ] „Za życiem” → 65 tygodni
-  - [ ] wcześniak 26. tydzień, 900 g, 10 tygodni w szpitalu → uzupełniający 10 tygodni
-  - [ ] ½ etatu w rodzicielskim → wydłużenie i proporcjonalna kwota
-  - [ ] firma z 15 pracownikami → „składasz do ZUS”
+- [x] **50 testów** w `frontend/src/engine/engine.test.js` (`cd frontend && npm test`), w tym:
+  - [x] etat, 6 000 zł brutto stałe przez 12 miesięcy → podstawa **5 177,40 zł** → 100% = 5 177,40 · 81,5% = 4 219,58 · 70% = 3 624,18
+  - [x] pensja poniżej minimum → podstawa podniesiona do 4 147,09 zł
+  - [x] JDG z dobrowolnym chorobowym od 60 dni → brak prawa (okres oczekiwania 90 dni)
+  - [x] JDG z zaległością 100 zł → blokada (a u pracownika nie)
+  - [x] bliźnięta → macierzyński 31 tygodni, rodzicielski 43 tygodnie
+  - [x] „Za życiem” → 65 tygodni
+  - [x] wcześniak 26. tydzień, 900 g, 10 tygodni w szpitalu → uzupełniający 10 tygodni
+  - [x] ½ etatu w rodzicielskim → 82 tygodnie i zasiłek o połowę mniejszy
+  - [x] firma z 15 pracownikami → ZUS (próg 20 jako parametr)
+  - [x] 300 dni L4 → 270 płatnych; martwe urodzenie → 56 dni; 9 tyg. ojca po 70%; adopcja 32 tyg.; zmiana parametru zmienia wynik
 - [ ] Każda **przykładowa sprawa od ZUS** jako test (pliki tylko w `/private-cases`, testy pomijane, gdy plików brak)
 - [ ] `npm test` w CI (GitHub Actions); zielony badge w README to argument na prezentację
 

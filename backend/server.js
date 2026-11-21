@@ -97,6 +97,52 @@ app.post("/api/auth/logout", requireAuth, (req, res) => {
   res.json({ ok: true });
 });
 
+/* ---------- Parametry kalkulatorów (panel admina) ----------
+   Silnik obliczeń jest we froncie (frontend/src/engine). Backend przechowuje tylko
+   zmiany wprowadzone w panelu admina; front nakłada je na wartości domyślne.
+   Zapis chroni hasło z ADMIN_PASSWORD (w demo domyślne – zmienić na serwerze). */
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "zus-demo-2026";
+
+function requireAdmin(req, res, next) {
+  const given = Buffer.from(String(req.headers["x-admin-password"] ?? ""));
+  const expected = Buffer.from(ADMIN_PASSWORD);
+  if (given.length !== expected.length || !crypto.timingSafeEqual(given, expected)) {
+    return res.status(401).json({ error: "Nieprawidłowe hasło administratora." });
+  }
+  next();
+}
+
+const isNum = (v) => typeof v === "number" && Number.isFinite(v);
+
+// Dozwolone: { klucz: liczba } albo { klucz: { podklucz: liczba } }.
+function validOverrides(o) {
+  if (!o || typeof o !== "object" || Array.isArray(o)) return false;
+  const entries = Object.entries(o);
+  if (entries.length > 200) return false;
+  return entries.every(([k, v]) =>
+    /^[\p{L}\d_]{1,60}$/u.test(k) &&
+    (isNum(v) ||
+      (v && typeof v === "object" && !Array.isArray(v) &&
+        Object.entries(v).every(([sk, sv]) => /^[\p{L}\d_]{1,30}$/u.test(sk) && isNum(sv))))
+  );
+}
+
+app.get("/api/params", (req, res) => {
+  res.json({ overrides: db.getParamOverrides() });
+});
+
+app.put("/api/params", requireAdmin, (req, res) => {
+  const { overrides } = req.body ?? {};
+  if (!validOverrides(overrides)) {
+    return res.status(400).json({ error: "Parametry muszą być liczbami." });
+  }
+  res.json({ overrides: db.setParamOverrides(overrides) });
+});
+
+app.delete("/api/params", requireAdmin, (req, res) => {
+  res.json({ overrides: db.setParamOverrides({}) });
+});
+
 app.listen(PORT, () => {
   console.log(`Backend działa na http://localhost:${PORT}`);
 });

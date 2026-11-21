@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { CFG, num, zl, tyg, zasilek, tygodnieRodz } from "./config.js";
+import { CFG, num, zl, tyg } from "./config.js";
+import { laczenieZPraca } from "../engine/index.js";
 import {
   Badge, Field, NumberInput, Select, Check, Section,
   ResultTable, Bullets,
@@ -15,24 +16,22 @@ export default function CalcLaczenie() {
   });
   const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
 
-  const n = num(s.dzieci) >= 2 ? 2 : 1;
-  const zaZ = s.zaZyciem;
-  const f = Math.min(num(s.etat), CFG.maksEtuLaczenie);
-  const podstawa = num(s.podstawa);
-  const stawka = num(s.stawka);
-  const przekroczonyEtat = num(s.etat) > CFG.maksEtuLaczenie;
-
-  const W = tygodnieRodz(n, zaZ, false);
-  const cap = (zaZ ? CFG.limitLaczenieZaZyciem : CFG.limitLaczenie)[n];
-  // KP art. 182¹f: urlop łączony z pracą wydłuża się proporcjonalnie do wymiaru pracy:
-  // wymiar ÷ (1 − etat). Przy 1/2 etatu: 41 → 82 tyg. (= limit), 43 → 86 tyg.
-  const WextRaw = f > 0 && f < 1 ? W / (1 - f) : W;
-  const Wext = Math.min(cap, WextRaw);
-  const wydlKwoty = Wext - W;
-  const uderzonoWLimit = WextRaw > cap + 1e-9;
-
-  const dzienPelny = zasilek(podstawa, stawka, 1);
-  const dzienPomn = dzienPelny * (1 - f);
+  // Wszystkie obliczenia: src/engine/laczenie.js
+  const r = laczenieZPraca({
+    dzieci: num(s.dzieci),
+    zaZyciem: s.zaZyciem,
+    etat: num(s.etat),
+    podstawa: num(s.podstawa),
+    stawka: num(s.stawka),
+  }, CFG);
+  const { przekroczonyEtat, uderzonoWLimit } = r;
+  const f = r.etat;
+  const W = r.wymiar;
+  const cap = r.limit;
+  const Wext = r.wydluzony;
+  const wydlKwoty = r.wydluzenie;
+  const dzienPelny = r.dziennyPelny;
+  const dzienPomn = r.dziennyPomniejszony;
 
   return (
     <div className="calc">
@@ -110,9 +109,9 @@ export default function CalcLaczenie() {
             rows={[
               { cells: ["Zasiłek dzienny bez pracy", zl(dzienPelny)] },
               { cells: [`Zasiłek dziennie przy pracy ${Math.round(f * 100)}% etatu (pomniejszony proporcjonalnie)`, zl(dzienPomn)] },
-              { cells: ["Ekwiwalent miesięczny (×30)", zl(dzienPomn * 30)] },
-              { cells: ["Wynagrodzenie z pracy (pensja brutto × etat)", zl(podstawa * f) + " brutto"] },
-              { cells: ["Suma zasiłku za cały wydłużony urlop", zl(dzienPomn * Wext * 7)], total: true },
+              { cells: ["Ekwiwalent miesięczny (×30)", zl(r.miesiecznie)] },
+              { cells: ["Wynagrodzenie z pracy (pensja brutto × etat)", zl(r.wynagrodzenieZPracy) + " brutto"] },
+              { cells: ["Suma zasiłku za cały wydłużony urlop", zl(r.sumaZasilku)], total: true },
             ]}
           />
           <p className="note">

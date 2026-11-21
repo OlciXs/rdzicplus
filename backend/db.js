@@ -35,6 +35,16 @@ function save() {
 }
 
 export const db = {
+  // Zmiany parametrów kalkulatorów z panelu admina (tylko różnice względem wartości
+  // domyślnych z frontend/src/engine/params.js). Pusty obiekt = wszystko domyślne.
+  getParamOverrides: () => data.paramOverrides ?? {},
+
+  setParamOverrides(overrides) {
+    data.paramOverrides = overrides;
+    save();
+    return data.paramOverrides;
+  },
+
   listProfiles: () => data.mobywatelProfiles,
 
   getProfile: (id) => data.mobywatelProfiles.find((p) => p.id === id),
