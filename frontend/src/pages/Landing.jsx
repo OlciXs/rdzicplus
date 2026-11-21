@@ -81,7 +81,8 @@ export default function Landing() {
 
       <footer className="site-footer">
         <p className="note">
-          Materiał poglądowy (prototyp konkursowy). Kalkulacje nie stanowią decyzji ZUS.
+          Materiał poglądowy (prototyp konkursowy). Kalkulacje nie stanowią decyzji ZUS.{" "}
+          <Link to="/admin">Panel administratora</Link>
         </p>
       </footer>
     </div>

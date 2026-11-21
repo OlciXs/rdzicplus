@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../auth.js";
 import { CFG, num, zl } from "./config.js";
+import { podstawaWymiaru } from "../engine/index.js";
 import {
   Badge, Field, NumberInput, Select, Section, ResultTable, Bullets,
 } from "./ui.jsx";
@@ -17,22 +18,15 @@ export default function CalcPodstawa() {
   const [saveMsg, setSaveMsg] = useState("");
   const setMonth = (i) => (v) => setMonths((prev) => prev.map((m, j) => (j === i ? v : m)));
 
-  const status = s.status;
-  const ileMies = Math.min(12, Math.max(1, num(s.ileMies)));
-  const kwartalne = num(s.kwartalne);
-  const roczna = num(s.roczna);
+  const r = podstawaWymiaru({
+    status: s.status,
+    miesiace: months.map(num),
+    ileMies: num(s.ileMies),
+    premieKwartalne: num(s.kwartalne),
+    premiaRoczna: num(s.roczna),
+  }, CFG);
 
-  let suma = 0;
-  let licznik = 0;
-  for (let i = 0; i < 12; i++) {
-    const v = num(months[i]);
-    if (i + 1 <= ileMies && v > 0) {
-      suma += v;
-      licznik++;
-    }
-  }
-
-  if (licznik === 0) {
+  if (!r.ok) {
     return (
       <div className="calc">
         <div className="calc-cols">
@@ -58,25 +52,12 @@ export default function CalcPodstawa() {
     );
   }
 
-  const srednia = suma / licznik;
-  const dodatek = kwartalne / 12 + roczna / 12;
-  const przecietne = srednia + dodatek;
-
-  let podstawa = przecietne * (1 - CFG.potracenie / 100);
-  let clampNote = "";
-  if (status === "pracownik") {
-    if (podstawa < CFG.minPodstawaPracownik) {
-      clampNote = `Podniesiono do minimum ${zl(CFG.minPodstawaPracownik)} (minimalne wynagrodzenie ${zl(CFG.minWynagrodzenie)} − 13,71%; art. 45 UZ – dotyczy pełnego wymiaru czasu pracy).`;
-      podstawa = CFG.minPodstawaPracownik;
-    }
-  } else {
-    if (podstawa > CFG.maxPodstawaZasilku) {
-      clampNote = `Ograniczono do maksymalnej podstawy ${zl(CFG.maxPodstawaZasilku)} (limit od maksymalnej podstawy dobrowolnej składki chorobowej ${zl(CFG.maxPodstawaSkladki)} − 13,71%).`;
-      podstawa = CFG.maxPodstawaZasilku;
-    } else if (podstawa < CFG.minPodstawaDobrowolni) {
-      clampNote = `Uwaga: podstawa poniżej typowego minimum dla ubezpieczonych dobrowolnie (przy najniższej zadeklarowanej podstawie składek tzw. duży ZUS 5 652 zł podstawa zasiłku to ok. ${zl(CFG.minPodstawaDobrowolni)}). Zweryfikuj minimalną podstawę z ZUS.`;
-    }
-  }
+  const { suma, licznik, srednia, dodatek, przecietne, podstawa } = r;
+  const clampNote = {
+    min: `Podniesiono do minimum ${zl(CFG.minPodstawaPracownik)} (minimalne wynagrodzenie ${zl(CFG.minWynagrodzenie)} − 13,71%; art. 45 UZ – dotyczy pełnego wymiaru czasu pracy).`,
+    max: `Ograniczono do maksymalnej podstawy ${zl(CFG.maxPodstawaZasilku)} (limit od maksymalnej podstawy dobrowolnej składki chorobowej ${zl(CFG.maxPodstawaSkladki)} − 13,71%).`,
+    ostrzezenieMinDobrowolni: `Uwaga: podstawa poniżej typowego minimum dla ubezpieczonych dobrowolnie (przy najniższej zadeklarowanej podstawie składek tzw. duży ZUS 5 652 zł podstawa zasiłku to ok. ${zl(CFG.minPodstawaDobrowolni)}). Zweryfikuj minimalną podstawę z ZUS.`,
+  }[r.limit?.typ] ?? "";
 
   const saveToProfile = async () => {
     const res = await save({
@@ -119,8 +100,8 @@ export default function CalcPodstawa() {
             rows={[
               { cells: ["Przeciętne miesięczne", zl(przecietne)] },
               { cells: ["Podstawa miesięcznie", zl(podstawa)] },
-              { cells: ["Podstawa dzienna (1/30)", zl(podstawa / CFG.dniMiesiaca)] },
-              { cells: ["Zasiłek 100% / mies.", zl((podstawa * CFG.stMacierzynski) / 100)], total: true },
+              { cells: ["Podstawa dzienna (1/30)", zl(r.dzienna)] },
+              { cells: ["Zasiłek 100% / mies.", zl(r.miesiecznie.macierzynski100)], total: true },
             ]}
           />
           {user && profile && (
@@ -144,9 +125,9 @@ export default function CalcPodstawa() {
               { cells: ["Przeciętne miesięczne (bez potrąceń)", zl(srednia)] },
               ...(dodatek > 0 ? [{ cells: ["Premie wliczane 1/12 (kwartalne + roczna)", zl(dodatek)] }] : []),
               { cells: ["Przeciętne razem", zl(przecietne)] },
-              { cells: ["Potrącenie składek (13,71%)", "−" + zl((przecietne * CFG.potracenie) / 100)] },
+              { cells: ["Potrącenie składek (13,71%)", "−" + zl(r.potracenie)] },
               { cells: ["Podstawa wymiaru zasiłku (miesięcznie)", zl(podstawa)], total: true },
-              { cells: ["Podstawa dzienna (1/30)", zl(podstawa / CFG.dniMiesiaca)] },
+              { cells: ["Podstawa dzienna (1/30)", zl(r.dzienna)] },
             ]}
           />
           {clampNote && <p className="alert-inline"><Badge tone="warn">LIMIT</Badge> {clampNote}</p>}
@@ -157,11 +138,11 @@ export default function CalcPodstawa() {
           <ResultTable
             cols={[{ label: "Świadczenie" }, { label: "", align: "right" }]}
             rows={[
-              { cells: ["Zasiłek macierzyński 100% (macierzyński, uzupełniający, ojcowski)", zl((podstawa * CFG.stMacierzynski) / 100)] },
-              { cells: [`Zasiłek macierzyński 81,5% (wniosek do ${CFG.deadlineSredniowany} dni)`, zl((podstawa * CFG.stSredniowany) / 100)] },
-              { cells: ["Zasiłek macierzyński 70% (wariant zmienny – rodzicielski)", zl((podstawa * CFG.stRodzicielski) / 100)] },
-              { cells: ["Zasiłek chorobowy 100% (ciąża, kod B)", zl((podstawa * CFG.stChorobowyCiaza) / 100)] },
-              { cells: ["Zasiłek chorobowy 80% (standard)", zl((podstawa * CFG.stChorobowy) / 100)] },
+              { cells: ["Zasiłek macierzyński 100% (macierzyński, uzupełniający, ojcowski)", zl(r.miesiecznie.macierzynski100)] },
+              { cells: [`Zasiłek macierzyński 81,5% (wniosek do ${CFG.deadlineSredniowany} dni)`, zl(r.miesiecznie.macierzynski815)] },
+              { cells: ["Zasiłek macierzyński 70% (wariant zmienny – rodzicielski)", zl(r.miesiecznie.rodzicielski70)] },
+              { cells: ["Zasiłek chorobowy 100% (ciąża, kod B)", zl(r.miesiecznie.chorobowyCiaza)] },
+              { cells: ["Zasiłek chorobowy 80% (standard)", zl(r.miesiecznie.chorobowy80)] },
             ]}
           />
           <Bullets items={[

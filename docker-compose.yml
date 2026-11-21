@@ -1,11 +1,15 @@
 services:
   backend:
-    image: europe-central2-docker.pkg.dev/${PROJECT_ID}/app-images/backend:latest
+    # PROJECT_ID ustawiony na serwerze (deploy); lokalnie domyślnie "local", żeby
+    # `docker compose up --build` z README działało bez dodatkowych zmiennych.
+    image: europe-central2-docker.pkg.dev/${PROJECT_ID:-local}/app-images/backend:latest
     build:
       context: ./backend
     environment:
       NODE_ENV: production
       PORT: 3001
+      # hasło panelu admina (/admin); puste = hasło demo z backend/server.js
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
     ports:
       - "3001:3001"
     volumes:
@@ -23,7 +27,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    image: europe-central2-docker.pkg.dev/${PROJECT_ID}/app-images/frontend:latest
+    image: europe-central2-docker.pkg.dev/${PROJECT_ID:-local}/app-images/frontend:latest
     build:
       context: ./frontend
     environment:

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { CFG, num, zl, zasilek, fmtD } from "./config.js";
+import { CFG, num, zl, fmtD } from "./config.js";
+import { chorobowyWCiazy } from "../engine/index.js";
 import {
   Badge, Field, NumberInput, DateInput, Select, Check, Section,
   ResultTable, Bullets, Result,
@@ -28,39 +29,34 @@ export default function CalcChorobowy() {
   const kodB = s.kodB;
   const od = s.od ? new Date(s.od) : null;
   const dNz = num(s.dniNz);
-  const wiek50 = s.ur && od ? od.getFullYear() > new Date(s.ur).getFullYear() + 50 : false;
-  const podstawa = num(s.podstawa);
-  const platnikDuzy = num(s.liczbaUbPlatnika) > 20;
 
-  /* ---- 1. prawo do zasiłku ---- */
-  const potrzeba = s.status === "obw" ? CFG.oczekiwanieObowiazkowe : CFG.oczekiwanieDobrowolne;
-  const maPrawo = dUb >= potrzeba;
-  // Blokada za zaległość (art. 2a UZ) dotyczy tylko osób, które same opłacają składki
-  // (działalność, osoby współpracujące, duchowni) – nie pracowników.
-  const zalegloscBlokada = s.status === "dobr" && num(s.zaleglosc) > CFG.progZaleglosci;
-  // Bez prawa (okres oczekiwania) lub przy blokadzie nic nie jest wypłacane.
-  const wyplata = maPrawo && !zalegloscBlokada;
-
-  /* ---- 4. okres zasiłkowy (liczony najpierw – ogranicza płatne dni) ---- */
-  const okresMax = kodB ? CFG.okresZasilkowyCiaza : CFG.okresZasilkowy;
-  const pozostaloPrzed = Math.max(0, okresMax - num(s.wykorzZasilk));
-  const dniPlatne = Math.min(dNz, pozostaloPrzed);
-  const poTymOkresie = Math.max(0, pozostaloPrzed - dNz);
-
-  /* ---- 2. wynagrodzenie chorobowe vs zasiłek ---- */
-  const limitWyn = wiek50 ? CFG.wynagrodzenieChorobowe50 : CFG.wynagrodzenieChorobowe;
-  const dostepneWyn = Math.max(0, limitWyn - num(s.wykorzWynagr));
-  const dniWynagr = s.status === "obw" ? Math.min(dniPlatne, dostepneWyn) : 0;
-  const dniZasilku = dniPlatne - dniWynagr;
-
-  /* ---- 3. wysokość ---- */
-  const stawka = kodB ? CFG.stChorobowyCiaza : CFG.stChorobowy;
-  // Wynagrodzenie chorobowe: 100% w ciąży (KP art. 92 § 1 pkt 2), standardowo 80%.
-  const stawkaWyn = kodB ? CFG.stChorobowyCiaza : CFG.stChorobowy;
-  const dzienStawka = podstawa / CFG.dniMiesiaca;
-  const kwotaWynagr = wyplata ? (dzienStawka * stawkaWyn * dniWynagr) / 100 : 0;
-  const kwotaZasilku = wyplata ? zasilek(podstawa, stawka, dniZasilku) : 0;
-  const kwotaRazem = kwotaWynagr + kwotaZasilku;
+  // Wszystkie obliczenia: src/engine/chorobowy.js
+  const r = chorobowyWCiazy({
+    status: s.status,
+    dniUbezpieczenia: dUb,
+    liczbaUbPlatnika: num(s.liczbaUbPlatnika),
+    dataUrodzenia: s.ur,
+    poczatek: s.od,
+    dniNiezdolnosci: dNz,
+    wykorzystaneWynagrodzenie: num(s.wykorzWynagr),
+    wykorzystanyOkres: num(s.wykorzZasilk),
+    kodB,
+    podstawa: num(s.podstawa),
+    zaleglosc: num(s.zaleglosc),
+  }, CFG);
+  const {
+    maPrawo, zalegloscBlokada, wyplata, wiek50, okresMax, pozostaloPrzed,
+    dniZasilku, kwotaZasilku, kwotaRazem,
+  } = r;
+  const potrzeba = r.wymaganyOkres;
+  const platnikDuzy = r.platnik.duzyPlatnik;
+  const poTymOkresie = r.pozostaloPo;
+  const limitWyn = r.limitWynagrodzenia;
+  const dniWynagr = r.dniWynagrodzenia;
+  const stawka = r.stawkaZasilku;
+  const stawkaWyn = r.stawkaWynagrodzenia;
+  const dzienStawka = r.dziennaPodstawa;
+  const kwotaWynagr = r.kwotaWynagrodzenia;
 
   /* ---- 6. utrata pracy ---- */
   const powodUtraty =
@@ -170,7 +166,7 @@ export default function CalcChorobowy() {
           {s.status === "obw" ? (
             <Bullets items={[
               <>Wynagrodzenie chorobowe (pracodawca, z własnych środków): <b>{dniWynagr} dni</b> – limit {limitWyn} dni w roku ({wiek50 ? "po 50 r.ż." : "pracownik do 50 r.ż."}), wykorzystane wcześniej: {num(s.wykorzWynagr)}.</>,
-              <>Zasiłek chorobowy za pozostałe <b>{dniZasilku} dni</b> wypłaca: {platnikDuzy ? "płatnik składek (zgłasza > 20 ubezpieczonych)" : "ZUS (płatnik zgłasza ≤ 20 ubezpieczonych – przekazuje dokumenty w 7 dni)"}.</>,
+              <>Zasiłek chorobowy za pozostałe <b>{dniZasilku} dni</b> wypłaca: {platnikDuzy ? `płatnik składek (zgłasza > ${CFG.progPlatnika} ubezpieczonych)` : `ZUS (płatnik zgłasza ≤ ${CFG.progPlatnika} ubezpieczonych – przekazuje dokumenty w 7 dni)`}.</>,
               <>Wynagrodzenie chorobowe w ciąży wynosi 100% (KP art. 92 § 1 pkt 2) i wlicza się do okresu zasiłkowego (UZ art. 12 ust. 1).</>,
             ]} />
           ) : (

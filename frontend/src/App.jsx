@@ -11,6 +11,7 @@ import KalkulatoryList from "./pages/KalkulatoryList.jsx";
 import Kalkulator from "./pages/Kalkulator.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import NotFound from "./pages/NotFound.jsx";
+import Admin from "./pages/Admin.jsx";
 
 const TOKEN_KEY = "rodzicplus-token";
 
@@ -95,6 +96,9 @@ export default function App() {
 
         {/* Przekierowania zgodności ze starym adresem */}
         <Route path="/kalkulatory/index" element={<Navigate to="/kalkulatory" replace />} />
+
+        {/* Panel administratora: parametry kalkulatorów (zapis chroniony hasłem po stronie API) */}
+        <Route path="/admin" element={<Admin />} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

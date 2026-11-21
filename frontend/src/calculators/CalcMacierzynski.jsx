@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { CFG, num, zl, zasilek, tyg, fmtD, addDays, tygodnieMac, tygodnieRodz } from "./config.js";
+import { CFG, num, zl, tyg, fmtD } from "./config.js";
+import { zasilekMacierzynski } from "../engine/index.js";
 import {
   Badge, Field, NumberInput, DateInput, Select, Check, Section,
   ResultTable, Bullets,
@@ -28,18 +29,35 @@ export default function CalcMacierzynski() {
 
   const n = num(s.dzieci);
   const porod = s.porod ? new Date(s.porod) : null;
-  const przed = Math.min(num(s.przedPorodem), CFG.przedPorodemMax);
   const zaZ = s.zaZyciem;
   const wz81 = s.wniosek81;
   const pM = num(s.podstM);
-  const pO = num(s.podstO);
-  const ojc = s.ojcowski;
+  const tydz = num(s.tydzCiazy);
+  const masa = num(s.masa);
+  const hosp = num(s.hosp);
 
-  const stMac = wz81 ? CFG.stSredniowany : CFG.stMacierzynski;
-  const stRodz = wz81 ? CFG.stSredniowany : CFG.stRodzicielski;
+  // Wszystkie obliczenia: src/engine/macierzynski.js
+  const r = zasilekMacierzynski({
+    dzieci: n,
+    porod: s.porod,
+    przedPorodem: num(s.przedPorodem),
+    zaZyciem: zaZ,
+    sytuacja: s.szczegol,
+    dataZgonu: s.zgon,
+    wniosek815: wz81,
+    podstawaMatki: pM,
+    podstawaOjca: num(s.podstO),
+    tygodnieDlaOjca: num(s.dlaOjca),
+    ojcowski: s.ojcowski,
+    tydzienCiazy: tydz,
+    masa,
+    dniHospitalizacji: hosp,
+  }, CFG);
+  const { tygMac, przed, stMac, dlaOjca, maxDlaOjca, bladOjca, tygUzup, limitUzup } = r;
+  const pool = r.pulaRodzicielska;
+  const mT = r.sumaMatka;
 
-  /* ---------- wymiar macierzyńskiego ---------- */
-  let tygMac = tygodnieMac(n);
+  /* ---------- opis wymiaru macierzyńskiego ---------- */
   let blokMac;
   if (s.szczegol === "brak") {
     blokMac = (
@@ -50,11 +68,7 @@ export default function CalcMacierzynski() {
       ]} />
     );
   } else if (s.szczegol === "martwe") {
-    // Ostatni dzień: 8 tygodni = 56 dni licząc dzień porodu; „nie krócej niż 7 dni od zgonu” = dzień zgonu + 6.
-    let koniec = porod ? addDays(porod, CFG.martweUrodzenieTygodnie * 7 - 1) : null;
-    if (s.zgon) koniec = new Date(Math.max(koniec ?? 0, addDays(new Date(s.zgon), CFG.zgonPo8TygDni - 1)));
-    const dni = porod && koniec ? Math.round((koniec - porod) / 86400000) + 1 : 0;
-    tygMac = dni / 7;
+    const { koniec, dni } = r.martwe;
     blokMac = (
       <p>
         <Badge tone="warn">Sytuacja szczególna</Badge> Zasiłek macierzyński za <b>8 tygodni po porodzie</b>,
@@ -76,71 +90,14 @@ export default function CalcMacierzynski() {
     );
   }
 
-  /* ---------- podział na rodziców ---------- */
-  const dlaOjca = Math.max(0, num(s.dlaOjca));
-  const maxDlaOjca = tygMac - przed - CFG.wyliczneMacierzynskieMatki;
-  const bladOjca = s.szczegol === "brak" && dlaOjca > maxDlaOjca;
-
-  /* ---------- uzupełniający ---------- */
-  const tydz = num(s.tydzCiazy);
-  const masa = num(s.masa);
-  const hosp = num(s.hosp);
-  let tygUzup = 0;
-  let limitUzup = 0;
-  if (s.szczegol === "brak" && hosp > 0) {
-    limitUzup = tydz > 0 && (tydz < 28 || (masa > 0 && masa <= 1000))
-      ? CFG.uzupełniajacyLimitWczesny
-      : CFG.uzupełniajacyLimitPozny;
-    tygUzup = Math.min(limitUzup, Math.ceil(hosp / 7));
-  }
-
-  /* ---------- rodzicielski ---------- */
-  const pool = tygodnieRodz(n, zaZ, false);
-
-  /* ---------- kwoty ---------- */
-  const rows = [];
-  let mT = 0;
-  let oT = 0;
-  if (s.szczegol === "brak") {
-    if (przed > 0) {
-      const k = zasilek(pM, stMac, przed * 7);
-      mT += k;
-      rows.push({ cells: ["Urlop macierzyński przed porodem", "matka", przed * 7, `${stMac}%`, zl(k)] });
-    }
-    const k2 = zasilek(pM, stMac, (tygMac - przed - dlaOjca) * 7);
-    mT += k2;
-    rows.push({
-      cells: ["Urlop macierzyński po porodzie", "matka", Math.round((tygMac - przed - dlaOjca) * 7), `${stMac}%`, zl(k2)],
-    });
-    if (dlaOjca > 0) {
-      const k3 = zasilek(pO, stMac, dlaOjca * 7);
-      oT += k3;
-      rows.push({ cells: ["Część urlopu macierzyńskiego przejęta", "ojciec", dlaOjca * 7, `${stMac}%`, zl(k3)] });
-    }
-    if (tygUzup > 0) {
-      const k4 = zasilek(pM, CFG.stMacierzynski, tygUzup * 7);
-      mT += k4;
-      rows.push({ cells: ["Uzupełniający urlop macierzyński", "matka", tygUzup * 7, "100%", zl(k4)] });
-    }
-    rows.push({
-      cells: ["Urlop rodzicielski (pula – podział w kalkulatorze „Oboje rodzice”)", "oboje", pool * 7, wz81 ? "81,5% (9 tyg. wyłącznych: 70%)" : "70%", "podział – kalk. d"],
-    });
-  } else if (s.szczegol === "martwe") {
-    const k = zasilek(pM, CFG.stMacierzynski, Math.round(tygMac * 7));
-    mT += k;
-    rows.push({ cells: ["Zasiłek macierzyński po urodzeniu martwego dziecka", "matka", Math.round(tygMac * 7), "100%", zl(k)] });
-  } else {
-    const k = zasilek(pM, CFG.stMacierzynski, CFG.zgonPo8TygDni);
-    mT += k;
-    rows.push({ cells: ["Zasiłek macierzyński po zgonie dziecka (po 8 tyg.)", "matka", CFG.zgonPo8TygDni, "100%", zl(k)] });
-  }
-  if (ojc && s.szczegol === "brak") {
-    const k = zasilek(pO, CFG.stMacierzynski, CFG.tygodnieOjcowski * 7);
-    oT += k;
-    rows.push({ cells: ["Urlop ojcowski", "ojciec", CFG.tygodnieOjcowski * 7, "100%", zl(k)] });
-  }
-  rows.push({ cells: ["Łącznie matka", "", "", "", zl(mT)], total: true });
-  rows.push({ cells: ["Łącznie ojciec", "", "", "", zl(oT)], total: true });
+  /* ---------- tabela kwot (wiersze z silnika) ---------- */
+  const rows = r.wiersze.map((w) =>
+    w.id === "rodzicielski"
+      ? { cells: [w.opis, w.kto, w.dni, wz81 ? "81,5% (9 tyg. wyłącznych: 70%)" : `${w.stawka}%`, "podział – kalk. d"] }
+      : { cells: [w.opis, w.kto, w.dni, `${w.stawka}%`, zl(w.kwota)] }
+  );
+  rows.push({ cells: ["Łącznie matka", "", "", "", zl(r.sumaMatka)], total: true });
+  rows.push({ cells: ["Łącznie ojciec", "", "", "", zl(r.sumaOjciec)], total: true });
 
   return (
     <div className="calc">
@@ -217,7 +174,7 @@ export default function CalcMacierzynski() {
               { cells: ["Wymiar macierzyński", tyg(tygMac)] },
               { cells: ["Pula rodzicielska", tyg(pool)] },
               { cells: ["Uzupełniający", tyg(tygUzup)] },
-              { cells: [`Zasiłek dzienny – matka (${stMac}%)`, zl((pM / 30) * stMac / 100)] },
+              { cells: [`Zasiłek dzienny – matka (${stMac}%)`, zl(r.dziennyMatka)] },
               { cells: ["Łącznie matka", zl(mT)], total: true },
             ]}
           />
@@ -253,7 +210,7 @@ export default function CalcMacierzynski() {
           <section className="result-card">
             <h3 className="result-title">2. Uzupełniający urlop macierzyński</h3>
             <Bullets items={[
-              <>Limit: {limitUzup} tyg. ({tydz < 28 || masa <= 1000 ? "poród przed 28 tyg. ciąży lub masa ≤ 1000 g" : "inny przypadek"}). Hospitalizacja {hosp} dni → <b>{tygUzup} tyg.</b> urlopu (1 tydzień za tydzień szpitala, niepełny tydzień w górę).</>,
+              <>Limit: {limitUzup} tyg. ({limitUzup === CFG.uzupełniajacyLimitWczesny ? "poród przed 28 tyg. ciąży lub masa ≤ 1000 g" : "inny przypadek"}). Hospitalizacja {hosp} dni → <b>{tygUzup} tyg.</b> urlopu (1 tydzień za tydzień szpitala, niepełny tydzień w górę).</>,
               <>Wniosek ≥ {CFG.ochronaWkladDni.uzupelniajacy} dni przed końcem urlopu macierzyńskiego (RWN § 14); udzielany jednorazowo, bezpośrednio po macierzyńskim.</>,
             ]} />
           </section>
@@ -264,7 +221,7 @@ export default function CalcMacierzynski() {
           {s.szczegol === "brak" ? (
             <Bullets items={[
               <>Pula: <b>{pool} tygodni</b>{zaZ ? " („Za życiem”)" : ""}, po <b>{CFG.wyliczneRodzicielskie} tyg. wyłącznych</b> na każdego rodzica (tej części nie można przenieść; zasiłek za nią zawsze {CFG.stRodzicielski}%).</>,
-              <>Do wykorzystania: jednorazowo lub max <b>{CFG.maxCzesci} części</b>; do końca roku kalendarzowego, w którym dziecko kończy <b>{CFG.limitRokZycia} lat</b>.{porod ? ` Do: 31.12.${porod.getFullYear() + CFG.limitRokZycia}.` : ""}</>,
+              <>Do wykorzystania: jednorazowo lub max <b>{CFG.maxCzesci} części</b>; do końca roku kalendarzowego, w którym dziecko kończy <b>{CFG.limitRokZycia} lat</b>.{r.rodzicielskiDoRoku ? ` Do: 31.12.${r.rodzicielskiDoRoku}.` : ""}</>,
               <>Wariant: {wz81 ? <>81,5% podstawy za macierzyński + rodzicielski (wniosek ≤ {CFG.deadlineSredniowany} dni po porodzie)</> : <>100% za macierzyński, 70% za rodzicielski</>}</>,
             ]} />
           ) : (
