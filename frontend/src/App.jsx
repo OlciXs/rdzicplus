@@ -13,7 +13,11 @@ import NotFound from "./pages/NotFound.jsx";
 import Admin from "./pages/Admin.jsx";
 import Zus from "./pages/Zus.jsx";
 import OdpisAktu from "./pages/OdpisAktu.jsx";
+<<<<<<< HEAD
 import WnioskiPage from "./pages/WnioskiPage.jsx";
+=======
+import Wnioski from "./pages/Wnioski.jsx";
+>>>>>>> 5d5d31d6bb2b0004992aa000490679a63953c01c
 
 const TOKEN_KEY = "rodzicplus-token";
 
@@ -99,6 +103,15 @@ export default function App() {
           element={
             <RequireAuth loading={loading} user={user}>
               <ProfilePage />
+            </RequireAuth>
+          }
+        />
+        {/* Złóż wniosek: wszystkie warianty ocenione na podstawie „Moje dane” (src/engine/wnioski) */}
+        <Route
+          path="/wnioski"
+          element={
+            <RequireAuth loading={loading} user={user}>
+              <Wnioski />
             </RequireAuth>
           }
         />

@@ -17,6 +17,11 @@ export { DEFAULT_PARAMS, mergeParams, diffParams, PARAM_GROUPS } from "./params.
 export * from "./helpers.js";
 export { podstawaWymiaru, chorobowyWCiazy, zasilekMacierzynski, laczenieZPraca, obojeRodzice, adopcja, ktoWyplaca };
 
+// Wnioski i ich warianty (profil → co przysługuje): src/engine/wnioski/
+export { WNIOSKI, WARIANTY, POLA, wariantById, wniosekById } from "./wnioski/rejestr.js";
+export { kontekstSprawy, GRUPA_TYTULU } from "./wnioski/kontekst.js";
+export { ocenWariant, ocenWniosek, przegladWnioskow, ostrzezenia } from "./wnioski/ocena.js";
+
 // Jeden punkt wejścia (np. dla przyszłego REST API albo wyniku z odczytu PDF).
 const KALKULATORY = {
   podstawa: podstawaWymiaru,

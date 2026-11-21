@@ -6,9 +6,17 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 
 ---
 
-## Stan projektu (sobota 21.11, 17:50)
+## Stan projektu (sobota 21.11, 20:40)
 
-> **Serwer znów działa.** Deploy #10 (PR #2) padł, bo przy merge'u do `backend/server.js` trafiły znaczniki konfliktu (`<<<<<<<`) i backend nie startował. Naprawione w commicie „backend fix”; od tamtej pory deploye **#11–#14 są zielone**.
+> **🎯 Nowy kierunek po rozmowie z mentorami ZUS (wieczór 21.11):** narzędzie ma obsłużyć **KAŻDY wariant** każdego wniosku/zaświadczenia (matka, ojciec, adopcja, rodzina zastępcza, inny członek rodziny, martwe urodzenie, wcześniak, matka nieubezpieczona, zbieg tytułów…). Plan: (1) rodzic wypełnia pełny profil → (2) wybiera, jaki wniosek chce złożyć → (3) widzi warianty: dostępne / niedostępne z powodem / brakuje danych → (4) formularz wypełniony z profilu + lista dokumentów, termin, adresat. Źródło: `docs/01-katalog-swiadczen-2026.md` (~50 wariantów W1–W50) i `docs/02-dane-do-wnioskow-2026.md` (pola A–K, oświadczenia J1–J30, ostrzeżenia V1–V40) – szkic z Mistrala, do weryfikacji.
+> **Zrobione:**
+> - krok (1) – Ola, „risk”: profil „Moje dane” w 7 krokach, ~80 pól warunkowych (`backend/db.js` → `emptyProfile`)
+> - kroki (2)–(3) od strony silnika – Claude, 20:40, bez commita: `frontend/src/engine/wnioski/` – **14 wniosków, 45 wariantów** (w tym 9 informacyjnych), ocena każdego wariantu na podstawie profilu Oli (`dostepny` / `niedostepny` + powód / `brak_danych` + które pola / `nie_dotyczy` / `informacja`), wymiar, wysokość, adresat (pracodawca / ZUS / gmina), formularz, termin z konkretną datą, dokumenty, pola do uzupełnienia, ostrzeżenia V1–V40. **38 testów** na rodzinach (razem 88). Opis w README → „Wnioski i warianty”
+> - ekran „Złóż wniosek” – Claude, 21:00, bez commita: `/wnioski` (kafelek w panelu + pozycja w menu): kafelki 14 wniosków z licznikami (przysługuje / brak danych / nie przysługuje, „nie dotyczy” wyszarzone na końcu), ostrzeżenia dla sprawy, karty wariantów z powodami, terminami z datą, dokumentami i warunkami ✓/✗/?; linki „uzupełnij” otwierają „Moje dane” na właściwym kroku (dodane `?krok=` w `ProfilePage.jsx`). Sprawdzone w przeglądarce (pusty profil → „ZACZNIJ TU”; profil Bożeny → chorobowy 2 przysługuje, macierzyński 2 przysługuje) i na telefonie
+> **Następne:** generator samego wniosku do druku / PDF dla najczęstszych wariantów (W1, W2, W21, W25, W22, W4, W28) – dane z profilu wstawione w pola, oświadczenia jako checkboxy; drobne: `db.json` – cofnąć `mob-mariuszz` (test Enarda) i dodać plik do `.gitignore`.
+> **Do weryfikacji (oznaczone w kodzie `do_potwierdzenia`):** W4 uzupełniający dla nie-pracowników, W12 łączenie z pracą (wydłużona część, pole I14), W44 podwyższenie (szacunek podatku), W47 chorobowy po ustaniu (14 dni), W11 staż 6 mies., W19 świadczenie rodzicielskie (poza ZUS). W dokumentach Mistrala jest też nieaktualny **Z-3b** (zlikwidowany 24.10.2026) – w rejestrze go nie używamy.
+
+> **Serwer znów działa.** Deploy #10 (PR #2) padł, bo przy merge'u do `backend/server.js` trafiły znaczniki konfliktu (`<<<<<<<`) i backend nie startował. Naprawione w commicie „backend fix”; od tamtej pory deploye **#11–#17 są zielone**.
 > **Żeby się nie powtórzyło:** po rozwiązaniu konfliktu `git grep -n "<<<<<<<"` przed commitem, a w deployu krok z testami (niżej).
 
 **Działa** (17:45: sprawdzone w Dockerze tak jak na serwerze, w przeglądarce i przez API):
@@ -32,7 +40,13 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 
 **Zrobione (Claude, PR #1, na `main`):** silnik obliczeń `frontend/src/engine/` (wszystkie wyliczenia przeniesione z komponentów, wyniki bez zmian), 50 testów (`npm test`), panel admina `/admin` z zapisem parametrów w backendzie (`/api/params`). Opis w README.
 
-**Nowe (17:50, Claude, bez commita): symulacje usług ZUS i USC** – `/zus` (ubezpieczenie, podstawa, e-ZLA, zaświadczenie o niezaleganiu, wnioski PUE) i `/odpis-aktu`. Szczegóły w sekcji 9.
+**Symulacje usług ZUS i USC** (Claude, PR #4) – `/zus` (ubezpieczenie, podstawa, e-ZLA, zaświadczenie o niezaleganiu, wnioski PUE) i `/odpis-aktu`. Szczegóły w sekcji 9.
+
+### Znalezione 19:40 (drobne)
+- [ ] **Lokalnie „Sesja wygasła” bez powodu:** `npm run dev` w backendzie to `node --watch`, który restartuje serwer, gdy Windows/antywirus/Docker dotknie plików w `node_modules`; sesje są w pamięci, więc znikają. Tylko w trybie deweloperskim (serwer używa `npm start`). Poprawka: w `backend/package.json` `"dev": "node --watch-path=server.js --watch-path=db.js --watch-path=zus-mock.js server.js"`
+- [ ] „Dane z ZUS” → „Przenieś do »Moje dane«” wypełnia na razie tytuł, podstawę i płatnika. Nowy profil ma też `platnik.liczbaUbezpieczonych`, `ubezpieczony.ubezpieczenieOd`, `zdrowie.zla*` – warto je też przenosić (e-ZLA, okres ubezpieczenia)
+- [ ] Nowe pola profilu (np. `dziecko.liczbaZyjacych`, `dziecko.tydzienCiazy`, `urlopy.*`) nie są jeszcze podstawiane w kalkulatorach (`useProfileDefaults.js`) – do zrobienia razem z osobą od kalkulatorów
+- [ ] Backend zapisuje w profilu dowolne wartości (bez sprawdzania typów/długości) – na demo OK, przed wdrożeniem walidacja
 
 **Jeszcze nie ma:** uploadu PDF / przykładowych spraw („Sprawdź mój przypadek”), jednego podsumowania „co mi przysługuje”, planera osi czasu, generatora wniosków urlopowych do pracodawcy.
 

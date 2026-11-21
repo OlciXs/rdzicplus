@@ -34,6 +34,17 @@ export default function Dashboard() {
         <h1>Cześć, {user.imie}! 👋</h1>
         <p className="lead">Co chcesz teraz sprawdzić?</p>
 
+        <Link className="calc-cta" to="/wnioski">
+          <span className="calc-cta-icon" aria-hidden="true">🗂️</span>
+          <span className="calc-cta-body">
+            <span className="calc-cta-title">Złóż wniosek – co mi przysługuje?</span>
+            <span className="calc-cta-desc">
+              Wybierz wniosek, a sprawdzimy każdy jego wariant: co przysługuje, czego nie (i dlaczego), gdzie i do kiedy złożyć.
+            </span>
+          </span>
+          <span className="calc-cta-arrow" aria-hidden="true">→</span>
+        </Link>
+
         <Link className="calc-cta" to="/kalkulatory">
           <span className="calc-cta-icon" aria-hidden="true">🧮</span>
           <span className="calc-cta-body">

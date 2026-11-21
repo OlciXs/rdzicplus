@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import AppHeader from "../components/AppHeader.jsx";
 import { useAuth } from "../auth.js";
 import { useProfile } from "../profile.js";
@@ -508,7 +509,9 @@ export default function ProfilePage() {
   const [form, setForm] = useState(null);
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState("idle"); // idle | saving | saved | error
-  const [stepId, setStepId] = useState("sytuacja");
+  // ?krok=dziecko – wejście prosto do etapu (np. z linku „uzupełnij” na stronie /wnioski)
+  const [searchParams] = useSearchParams();
+  const [stepId, setStepId] = useState(() => searchParams.get("krok") || "sytuacja");
 
   useEffect(() => {
     if (profile && !form) setForm(normalize(profile));

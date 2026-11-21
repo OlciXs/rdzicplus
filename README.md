@@ -38,6 +38,7 @@ który można odświeżyć lub wysłać komuś linkiem.
 | `/logowanie` | Logowanie (symulacja mObywatela: Bożena, Marzena, Mariusz) |
 | `/panel` | Panel użytkownika — **wymaga zalogowania** |
 | `/profil` | „Moje dane” (dane do wniosków, podstawiane w kalkulatorach) — **wymaga zalogowania** |
+| `/wnioski` | **Złóż wniosek**: 14 wniosków → każdy wariant oceniony na podstawie „Moje dane” (przysługuje / nie i dlaczego / brakuje danych) — **wymaga zalogowania**; `?w=<id>` otwiera konkretny wniosek |
 | `/zus` | Symulacja „Moje dane z ZUS”: ubezpieczenie, podstawa, e-ZLA, zaświadczenie o niezaleganiu, wnioski PUE — **wymaga zalogowania** |
 | `/odpis-aktu` | Symulacja wniosku o odpis aktu urodzenia (gov.pl) — **wymaga zalogowania** |
 | `/kalkulatory` | Lista kalkulatorów |
@@ -73,12 +74,48 @@ zbierają dane z formularza i wyświetlają wynik.
 | `engine/adopcja.js` | e) adopcja / rodzina zastępcza: limity wieku, kwoty |
 | `engine/platnik.js` | g) płatnik (> 20 ubezpieczonych) czy ZUS |
 | `engine/engine.test.js` | testy z ręcznie policzonymi wartościami |
+| `engine/wnioski/` | **wnioski i ich warianty**: co przysługuje przy danym profilu (niżej) |
 
-Testy:
+Testy (88: kalkulatory + warianty wniosków na przykładowych rodzinach):
 
 ```bash
 cd frontend && npm test
 ```
+
+## Wnioski i warianty („każdy wariant” – wymaganie mentorów ZUS)
+
+Rodzic wypełnia „Moje dane”, wybiera wniosek, a silnik ocenia **każdy wariant** tego wniosku:
+
+| Status | Znaczenie |
+| --- | --- |
+| `dostepny` | wszystkie warunki spełnione – są wymiar, wysokość, adresat, termin, dokumenty |
+| `niedostepny` | warunek niespełniony – `powody` mówią który (np. „matka wykorzystała 10 z 14 tygodni”) |
+| `brak_danych` | nic nie wyklucza, ale w profilu brakuje odpowiedzi – `brakujaceDane` z etykietami pól |
+| `nie_dotyczy` | inna rola albo etap (np. urlop ojcowski dla matki) |
+| `informacja` | zasada do pokazania bez oceny (np. ochrona przed zwolnieniem) |
+
+| Plik | Zawartość |
+| --- | --- |
+| `engine/wnioski/rejestr.js` | 14 wniosków do wyboru i 45 wariantów (W1–W50 z `docs/01-katalog-swiadczen-2026.md`): warunki, wymiar, wysokość, adresat, formularz, termin, dokumenty, potrzebne pola, podstawa prawna; niepewne oznaczone `pewnosc: "do_potwierdzenia"` |
+| `engine/wnioski/kontekst.js` | profil z `GET /api/profile` → fakty dla reguł (tak / nie / brak danych) |
+| `engine/wnioski/ocena.js` | `ocenWniosek(profil, wniosekId)`, `przegladWnioskow(profil)` i ostrzeżenia V1–V40 z `docs/02-dane-do-wnioskow-2026.md` |
+| `engine/wnioski/wnioski.test.js` | testy na rodzinach: etat w ciąży, działalność z długiem, zlecenie (90 dni), studentka, utrata pracy w ciąży, ojciec przejmujący urlop (14 tyg., szpital, zgon, matka nieubezpieczona), wcześniak, martwe urodzenie, adopcja, 81,5%, rodzicielski, opiekuńczy |
+
+Ekran: `frontend/src/pages/Wnioski.jsx` (`/wnioski`) – kafelki wniosków z licznikami (najpierw to, co przysługuje),
+ostrzeżenia dla całej sprawy, a po wyborze wniosku karta każdego wariantu: wymiar, wysokość, gdzie złożyć, termin,
+dokumenty, rozwijane warunki ✓/✗/? i linki „uzupełnij w »Moje dane«” prowadzące do właściwego kroku profilu
+(`/profil?krok=dziecko` itd.).
+
+Przykład:
+
+```js
+import { ocenWniosek } from "./engine/index.js";
+const { warianty } = ocenWniosek(profil, "przejecie");
+// [{ id: "W22", status: "niedostepny", powody: ["Matka wykorzystała po porodzie co najmniej 14 tygodni…"], … }, …]
+```
+
+Źródła: `docs/01-katalog-swiadczen-2026.md` i `docs/02-dane-do-wnioskow-2026.md` – szkic przygotowany
+z pomocą AI (Mistral) na podstawie materiałów ZUS; wymaga weryfikacji z przepisami.
 
 ## Symulacje usług ZUS i USC
 

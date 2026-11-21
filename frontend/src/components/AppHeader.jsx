@@ -23,6 +23,7 @@ export default function AppHeader({ actions = null, children = null }) {
                 <span className="menu-user">Cześć, {user.imie}</span>
                 <Link to="/panel">Mój panel</Link>
                 <Link to="/profil">Moje dane</Link>
+                <Link to="/wnioski">Złóż wniosek</Link>
                 <Link to="/zus">Dane z ZUS</Link>
                 <Link to="/odpis-aktu">Odpis aktu urodzenia</Link>
                 <Link to="/wnioski">Wnioski</Link>
