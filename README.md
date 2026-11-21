@@ -85,7 +85,9 @@ Stawki, wymiary urlopów, kwoty i terminy można zmienić bez wdrażania nowej w
 starcie, więc wszyscy użytkownicy od razu liczą według nowych parametrów.
 
 Zapis chroni hasło ze zmiennej środowiskowej `ADMIN_PASSWORD`. W wersji demonstracyjnej
-(bez tej zmiennej) hasło to `zus-demo-2026`. **Na serwerze ustaw własne `ADMIN_PASSWORD`.**
+(bez tej zmiennej) hasło to `zus-demo-2026`. **Na serwerze ustaw własne `ADMIN_PASSWORD`**
+(np. linia `ADMIN_PASSWORD=…` w pliku `.env` obok `docker-compose.yml`; Compose przekazuje ją
+do kontenera backendu).
 
 ### Deploy
 

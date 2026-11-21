@@ -6,7 +6,7 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 
 ---
 
-## Stan projektu (sobota 21.11, 16:10)
+## Stan projektu (sobota 21.11, 16:25)
 
 **Działa** (sprawdzone lokalnie w przeglądarce i przez API):
 - logowanie mObywatelem (symulacja): kod → wybór jednej z 3 fikcyjnych osób → sesja z tokenem, PESEL maskowany na froncie
@@ -16,13 +16,15 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 - „baza” w pliku `backend/data/db.json` (Ola, `backend/db.js`), schowana za obiektem `db`
 - Docker (`docker-compose.yml`, Dockerfile dla obu części) + GitHub Actions z deployem na Google Cloud (Enard)
 
-**Deploy działa** (Enard): uruchomienia #6 i #7 w GitHub Actions przeszły na zielono (pierwsze 5 padło). Do README brakuje linku do demo online.
+**Deploy działa** (Enard): uruchomienia #6, #7 i #8 (z silnikiem i panelem admina, PR #1) w GitHub Actions przeszły na zielono. Do README brakuje linku do demo online.
 
-**Zrobione o 16:10 (Claude, bez commita):** silnik obliczeń `frontend/src/engine/` (wszystkie wyliczenia przeniesione z komponentów, wyniki bez zmian), 50 testów (`npm test`), panel admina `/admin` z zapisem parametrów w backendzie (`/api/params`). Opis w README.
+**Docker lokalnie** (sprawdzone 16:20): `docker compose up --build` z README działa (po poprawce `PROJECT_ID`, niżej). Strony, proxy `/api`, logowanie, panel admina, zapis parametrów przetrwa restart backendu (wolumen), własne `ADMIN_PASSWORD` przekazuje się do kontenera.
+
+**Zrobione (Claude, PR #1, na `main`):** silnik obliczeń `frontend/src/engine/` (wszystkie wyliczenia przeniesione z komponentów, wyniki bez zmian), 50 testów (`npm test`), panel admina `/admin` z zapisem parametrów w backendzie (`/api/params`). Opis w README.
 
 **Jeszcze nie ma:** uploadu PDF / przykładowych spraw, planera osi czasu, generatora wniosków, wspólnego profilu sprawy (każdy kalkulator osobno pyta o podstawę), symulacji e-ZLA / zadłużenia / PUE.
 
-### Poprawione w kalkulatorach (21.11, 16:00, przez Claude; bez commita, sprawdzone w przeglądarce)
+### Poprawione w kalkulatorach (21.11, 16:00, przez Claude; commit `fix-calc`, sprawdzone w przeglądarce)
 - [x] **c) Łączenie z pracą: zły wzór wydłużenia.** Było `urlop + urlop × etat` (½ etatu → 61,5 tyg.), jest `urlop ÷ (1 − etat)` zgodnie z KP art. 182¹f (½ etatu → 82 tyg., ¼ etatu → 54,67 tyg., „Za życiem” → 130 tyg.)
 - [x] **a) Chorobowy:** przy braku prawa (okres oczekiwania) lub blokadzie za zaległość kwoty były liczone jak normalnie, a teraz wynoszą 0 zł z powodem. Blokada za zaległość dotyczy już tylko ubezpieczonych dobrowolnie, nie pracowników. Wynagrodzenie chorobowe bez kodu B liczy się po 80% (było zawsze 100%). Płatne dni są ograniczone do pozostałego okresu zasiłkowego (było: 300 dni L4 = 300 dni płatnych; jest 270), a ostrzeżenie o przekroczeniu okresu nie pojawia się już fałszywie
 - [x] **d) Oboje rodzice:** w wariancie 81,5% 9 tygodni ojca liczone po 70% (tekst o tym mówił, ale wyliczenie brało 81,5%). Mniej niż 9 tygodni u rodzica to teraz ostrzeżenie o stracie, a nie „BŁĄD planu”
@@ -45,8 +47,8 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 
 ### Poprawki techniczne (P0, małe)
 - [x] **Naprawić deploy (Enard):** runy #6 i #7 przechodzą
-- [ ] **`docker-compose.yml`: `${PROJECT_ID}` bez wartości daje błędną nazwę obrazu** (`europe-central2-docker.pkg.dev//app-images/...`), więc lokalne `docker compose up --build` z README się wyłoży. Poprawka: `${PROJECT_ID:-local}`. Na VM `PROJECT_ID` musi być w `/opt/app/.env`, bo `sudo` gubi zmienne środowiskowe (Enard)
-- [ ] **Puste `backend/.dockerignore` i `frontend/.dockerignore`:** `COPY . .` wrzuci do obrazu `node_modules` z Windowsa i może zepsuć build w kontenerze. Wpisać do obu: `node_modules`, `dist`, `.env`, `data` (backend)
+- [x] **`docker-compose.yml`: `${PROJECT_ID}` bez wartości dawało błędną nazwę obrazu** (`…pkg.dev//app-images/…`, potwierdzone: `invalid reference format`), więc `docker compose up --build` z README się wykładał. Poprawione na `${PROJECT_ID:-local}` (Claude, 16:20); na serwerze, gdzie `PROJECT_ID` jest ustawione, bez zmian
+- [x] **Puste `.dockerignore`:** wpisane `node_modules`, `.env` (+ `dist` we frontendzie). Obraz frontendu nie dostaje już windowsowych `node_modules`
 - [ ] Pusty `frontend/nginx.conf`: usunąć albo wypełnić (teraz frontend w Dockerze chodzi na `vite preview`, nie na nginx)
 - [ ] `backend/data/db.json` dodać do `.gitignore` (i `git rm --cached`). Zmienia się przy każdym logowaniu, a `db.js` i tak tworzy go sam z danych startowych
 - [ ] Gdy deploy przejdzie: wpisać do README link do działającego demo
@@ -210,7 +212,7 @@ Wagi oceny: związek z wyzwaniem 25% · kompletność + UX 25% · pomysł 20% ·
 - [x] Backend trzyma tylko zmiany (`paramOverrides` w `db.json`, na serwerze na wolumenie Dockera), a front nakłada je przy starcie (`loadParams()` w `main.jsx`)
 - [x] Sprawdzone w przeglądarce: 70% → 75% w adminie → „Oboje rodzice” od razu liczy ojcu 18 075,75 zł zamiast 17 498,25 zł; reset przywraca 70%
 - [ ] Każdy parametr: podstawa prawna i data „obowiązuje od” (teraz są tylko w komentarzach w `params.js`)
-- [ ] **Ustawić `ADMIN_PASSWORD` na serwerze** (Enard: zmienna w `docker-compose.yml` / `.env` na VM)
+- [ ] **Ustawić `ADMIN_PASSWORD` na serwerze** (Enard): `docker-compose.yml` już przekazuje zmienną do backendu, wystarczy linia `ADMIN_PASSWORD=…` w `/opt/app/.env` na VM i restart. Bez niej działa hasło demo
 - [ ] Na demo pokazać: zmieniam stawkę 70% → 75% w adminie i kalkulator od razu liczy inaczej
 
 ---
