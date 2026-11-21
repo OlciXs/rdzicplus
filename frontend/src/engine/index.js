@@ -22,6 +22,7 @@ export { WNIOSKI, WARIANTY, POLA, wariantById, wniosekById } from "./wnioski/rej
 export { kontekstSprawy, GRUPA_TYTULU } from "./wnioski/kontekst.js";
 export { ocenWariant, ocenWniosek, przegladWnioskow, ostrzezenia } from "./wnioski/ocena.js";
 export { przygotujDruk, maDruk, DRUKI } from "./wnioski/druki.js";
+export { terminyWnioskow, doIcs } from "./wnioski/kalendarz.js";
 
 // Jeden punkt wejścia (np. dla przyszłego REST API albo wyniku z odczytu PDF).
 const KALKULATORY = {

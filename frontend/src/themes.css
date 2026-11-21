@@ -248,6 +248,10 @@ h2 { font-size: 1.1rem; margin: 0 0 8px; color: var(--color-navy); }
 }
 .calendar-dot.deadline { background: var(--color-danger-soft); color: var(--color-danger); }
 .calendar-dot.reminder { background: #fff4d6; color: #805b00; }
+.calendar-dot.start { background: var(--color-primary-soft); color: var(--color-primary-hover); }
+.calendar-dot.info { background: #e8eef5; color: var(--color-navy); }
+a.calendar-dot { text-decoration: none; }
+.calendar-today { outline: 2px solid var(--color-navy); outline-offset: -2px; }
 .calendar-event {
   display: grid; grid-template-columns: 1fr auto; gap: 16px;
   align-items: start; background: var(--color-surface);

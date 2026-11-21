@@ -11,10 +11,13 @@ import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { parse } from "yaml";
 
-// Pliki leżą w katalogu głównym repo (dwa poziomy wyżej niż frontend/).
-const KORZEN = resolve(__dirname, "../../../../../");
+// Katalog główny repo = 4 poziomy nad frontend/src/engine/wnioski (wcześniej 5 – wychodziło POZA repo,
+// więc w CI testy padały na ENOENT, a deploy zatrzymywał się na „npm test”).
+const KORZEN = resolve(__dirname, "../../../../");
 const SZABLONY = resolve(KORZEN, "szablony_pism_2026.yaml");
-const BAZA = resolve(KORZEN, "zus_dane_2026.yaml");
+// Baza wiedzy: YAML w katalogu głównym (jeśli ktoś go ma), inaczej ta sama baza w JSON z repo.
+const BAZA_YAML = resolve(KORZEN, "zus_dane_2026.yaml");
+const BAZA = existsSync(BAZA_YAML) ? BAZA_YAML : resolve(__dirname, "../dane/zus_dane_2026.json");
 
 const PLACEHOLDER = /\{\{([a-z_ąćęłńóśźż]+)\}\}/g;
 const wszystkiePlaceholdery = (tekst) => [...tekst.matchAll(PLACEHOLDER)].map((m) => m[1]);
@@ -22,8 +25,10 @@ const wszystkiePlaceholdery = (tekst) => [...tekst.matchAll(PLACEHOLDER)].map((m
 const opisTestu = existsSync(SZABLONY) && existsSync(BAZA) ? describe : describe.skip;
 
 opisTestu("szablony pism — spójność z bazą wiedzy", () => {
-  const sz = parse(readFileSync(SZABLONY, "utf-8"));
-  const baza = parse(readFileSync(BAZA, "utf-8"));
+  // describe.skip też wykonuje to ciało przy zbieraniu testów – czytamy pliki tylko, gdy istnieją.
+  const jest = existsSync(SZABLONY) && existsSync(BAZA);
+  const sz = jest ? parse(readFileSync(SZABLONY, "utf-8")) : { szablony: [], placeholdery: {}, mapowanie_wariantow: {}, decyzje_zus: [] };
+  const baza = jest ? parse(readFileSync(BAZA, "utf-8")) : { variants: [], forms: [] }; // YAML jest nadzbiorem JSON
   const warianty = new Set(baza.variants.map((v) => v.id));
   const formularze = new Set(baza.forms.map((f) => f.symbol));
 

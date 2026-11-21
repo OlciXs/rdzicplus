@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import AppHeader from "../components/AppHeader.jsx";
 import { useProfile } from "../profile.js";
 import { CFG } from "../calculators/config.js";
-import { przegladWnioskow, maDruk } from "../engine/index.js";
+import { przegladWnioskow, maDruk, terminyWnioskow } from "../engine/index.js";
 
 /* =====================================================================
    „Złóż wniosek” – wybór wniosku i ocena KAŻDEGO wariantu na podstawie
@@ -47,36 +47,19 @@ const parseDate = (value) => {
 const addDays = (date, days) => date ? new Date(date.getTime() + days * 86400000) : null;
 const fmtDate = (date) => date ? date.toLocaleDateString("pl-PL") : "";
 
-function deadlineForVariant(v, profile) {
-  const dziecko = profile?.dziecko ?? {};
-  const firstChild = Array.isArray(dziecko.dzieci) && dziecko.dzieci.length ? dziecko.dzieci[0] : dziecko;
-  const birth = parseDate(firstChild?.dataUrodzenia);
-  const due = parseDate(dziecko.przewidywanaDataPorodu);
-  const adoption = parseDate(dziecko.dataPrzyjecia);
-  const leaveEnd = parseDate(profile?.urlopy?.terminKoncaMacierzynskiego);
-
-  if (v.id === "W41" && birth) return addDays(birth, 21);
-  if (v.id === "W2" && due) return addDays(addDays(due, -42), -14);
-  if (v.id === "W4" && leaveEnd) return addDays(leaveEnd, -21);
-  if (v.id === "W21" && birth) {
-    const end = new Date(birth);
-    end.setMonth(end.getMonth() + 12);
-    end.setDate(end.getDate() - 1);
-    return end;
-  }
-  if (v.id === "W25" && birth) return new Date(birth.getFullYear() + 6, 11, 31);
-  if (v.id === "W28" && adoption) return addDays(adoption, 7);
-  if (v.id === "W45") {
-    const funeral = parseDate(dziecko.dataZgonu) ?? birth;
-    return addDays(funeral, 365);
-  }
-  return null;
+// Konkretny termin z silnika kalendarza (engine/wnioski/kalendarz.js) – to samo źródło co /kalendarz.
+// Najbliższy nadchodzący termin wniosku / ostatni dzień; gdy wszystkie minęły – ostatni z nich.
+function deadlineForVariant(v, terminy) {
+  const dzisIso = new Date().toISOString().slice(0, 10);
+  const pilne = (terminy ?? []).filter((t) => t.wariant === v.id && (t.typ === "termin" || t.typ === "koniec"));
+  const t = pilne.find((x) => x.data >= dzisIso) ?? pilne[pilne.length - 1];
+  return t ? parseDate(t.data) : null;
 }
 
-function Wariant({ v, profile }) {
+function Wariant({ v, terminy }) {
   const automat = v.status === "dostepny" && v.skladanie === "automatycznie";
   const st = automat ? AUTOMAT : STATUS[v.status];
-  const deadline = deadlineForVariant(v, profile);
+  const deadline = deadlineForVariant(v, terminy);
   const now = new Date();
   now.setHours(0, 0, 0, 0);
   const remaining = deadline ? Math.ceil((deadline.getTime() - now.getTime()) / 86400000) : null;
@@ -211,6 +194,7 @@ export default function Wnioski() {
   const wybrany = params.get("w");
 
   const wynik = useMemo(() => (profile ? przegladWnioskow(profile, { params: CFG }) : null), [profile]);
+  const terminy = useMemo(() => (profile ? terminyWnioskow(profile, { params: CFG }) : []), [profile]);
 
   if (loading || !wynik) {
     return (
@@ -295,7 +279,7 @@ export default function Wnioski() {
               {wniosek.warianty
                 .filter((v) => v.status !== "nie_dotyczy")
                 .sort((a, b) => ["dostepny", "brak_danych", "niedostepny", "informacja"].indexOf(a.status) - ["dostepny", "brak_danych", "niedostepny", "informacja"].indexOf(b.status))
-                .map((v) => <Wariant key={v.id} v={v} profile={profile} />)}
+                .map((v) => <Wariant key={v.id} v={v} terminy={terminy} />)}
             </div>
             {wniosek.warianty.some((v) => v.status === "nie_dotyczy") && (
               <details className="result-card">
