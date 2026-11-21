@@ -6,28 +6,35 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 
 ---
 
-## Stan projektu (sobota 21.11, 16:50)
+## Stan projektu (sobota 21.11, 17:50)
 
-> **🔴 Serwer leżał po PR #2 (deploy #10 czerwony).** Przy merge'u „formularz” do `backend/server.js` trafiły nierozwiązane znaczniki konfliktu (`<<<<<<< HEAD` … `>>>>>>>`), więc backend nie startował (`SyntaxError`), healthcheck padał, a `docker compose up` na serwerze kończył się błędem. Odtworzone lokalnie w Dockerze. **Naprawione przez Claude (bez commita):** zostały obie części, czyli profil Oli i parametry admina; backend w Dockerze znów jest `healthy`. Po commicie i pushu deploy powinien przejść, więc warto zerknąć w Actions.
+> **Serwer znów działa.** Deploy #10 (PR #2) padł, bo przy merge'u do `backend/server.js` trafiły znaczniki konfliktu (`<<<<<<<`) i backend nie startował. Naprawione w commicie „backend fix”; od tamtej pory deploye **#11–#14 są zielone**.
 > **Żeby się nie powtórzyło:** po rozwiązaniu konfliktu `git grep -n "<<<<<<<"` przed commitem, a w deployu krok z testami (niżej).
 
-**Działa** (sprawdzone lokalnie w przeglądarce, przez API i w Dockerze):
+**Działa** (17:45: sprawdzone w Dockerze tak jak na serwerze, w przeglądarce i przez API):
 - logowanie mObywatelem (symulacja): kod → wybór jednej z 3 fikcyjnych osób (Bożena, Marzena, Mariusz) → sesja z tokenem, PESEL maskowany na froncie
-- **„Moje dane” `/profil`** (Ola, PR #2): dane ubezpieczonego, płatnika, drugiego rodzica i dziecka zapisane raz (`GET/PUT /api/profile`); kalkulatory same podstawiają je w pola (`useProfileDefaults.js`), a kalkulator f) zapisuje wyliczoną podstawę do profilu
-- **Poprawione w profilu (Claude, bez commita):** backend nie zapisywał płci, więc zalogowany ojciec (Mariusz) był traktowany jak matka i jego podstawa trafiała w pole „matka”. Teraz płeć i data urodzenia są wyliczane z PESEL-u (`backend/db.js`), więc u Mariusza jego 6 000 zł trafia do „ojciec”, a 4 500 zł partnerki do „matka”. Data urodzenia z mObywatela przestała być pusta (używa jej limit 14 dni po 50. r.ż.)
-- dashboard z listą spraw po porodzie (checkboxy), wylogowanie, sesja przetrwa odświeżenie strony
-- **routing + 7 kalkulatorów a–g** (Montarex23, „Kalkulatory oraz routing”): strona powitalna `/`, lista `/kalkulatory`, osobny adres dla każdego kalkulatora, strona 404, `/panel` tylko dla zalogowanych. Adresy w README
+- **nowy front (Ola, PR #3 + „dane”):** `/` przekierowuje na `/logowanie` albo `/panel`; menu „hamburger” w nagłówku (Mój panel, Moje dane, Kalkulatory, Wyloguj); panel z dwoma kafelkami (kalkulatory, uzupełnij dane: „X z 7 kluczowych pól”). Stara strona powitalna i lista spraw z 800+ zniknęły
+- **„Moje dane” `/profil`** (Ola, PR #2): dane ubezpieczonego, płatnika, drugiego rodzica i dziecka zapisane raz (`GET/PUT /api/profile`); kalkulatory same podstawiają je w pola (`useProfileDefaults.js`), a kalkulator f) zapisuje wyliczoną podstawę do profilu. Płeć i data urodzenia liczone z PESEL-u (Claude, „backend fix”), więc u ojca jego podstawa trafia w pole „ojciec”. Sprawdzone: Bożena zapisuje 6 000 zł → kalkulator macierzyński ma „matka = 6 000”
+- **routing + 7 kalkulatorów a–g** (Montarex23): lista `/kalkulatory`, osobny adres dla każdego kalkulatora, strona 404, `/panel` i `/profil` tylko dla zalogowanych. Adresy w README
 - RWD na telefonie (375 px, bez poziomego scrolla, także strony kalkulatorów), build produkcyjny frontendu
 - „baza” w pliku `backend/data/db.json` (Ola, `backend/db.js`), schowana za obiektem `db`
 - Docker (`docker-compose.yml`, Dockerfile dla obu części) + GitHub Actions z deployem na Google Cloud (Enard)
 
-**Deploy** (Enard): #6–#9 zielone, **#10 (PR #2) czerwony** – przyczyna i poprawka wyżej. Do README brakuje linku do demo online.
+**Deploy** (Enard): #11–#14 zielone. Nowość („deploy clear db on change”): gdy w pushu zmieni się `backend/data/db.json`, deploy **kasuje bazę na serwerze** (wolumen `app_backend-data`) i startuje od pliku z repo. Dzięki temu Mariusz trafił na serwer, ale zobacz uwagę o `db.json` niżej. Do README brakuje linku do demo online.
+
+### Do poprawy po zmianach z 17:30 (drobne)
+- [ ] **`db.json` w repo + kasowanie bazy przy deployu = utrata danych na serwerze.** Każdy commit z lokalnymi logowaniami (np. „dane” dodał 96 linii testowych użytkowników) wyczyści na serwerze profile użytkowników i zmiany z panelu admina. Rozwiązanie: `backend/data/db.json` do `.gitignore` (+ `git rm --cached`); osoby z mObywatela i tak są w `SEED` w `db.js` (Mariusz już tam jest). Jeśli trzeba zmienić listę osób, kasować bazę świadomie, a nie przy każdej zmianie pliku
+- [ ] Deploy: gdy na serwerze nie ma jeszcze kontenera backendu, `docker rm -f "$CID"` z pustym `CID` zakończy krok błędem (dotyczy tylko pierwszego uruchomienia z kasowaniem bazy)
+- [ ] Logowanie: nagłówek mówi „Dane i kalkulatory będą dostępne po zalogowaniu”, a link pod spodem „Otwórz kalkulatory bez logowania” – sprzeczne. Proponowany tekst: „Zaloguj się, żeby kalkulatory same wypełniały Twoje dane”
+- [ ] Do `/admin` nie ma już żadnego linku (był w stopce usuniętej strony powitalnej). Na demo wpisywać adres ręcznie albo dodać link w menu
 
 **Docker lokalnie** (sprawdzone 16:20): `docker compose up --build` z README działa (po poprawce `PROJECT_ID`, niżej). Strony, proxy `/api`, logowanie, panel admina, zapis parametrów przetrwa restart backendu (wolumen), własne `ADMIN_PASSWORD` przekazuje się do kontenera.
 
 **Zrobione (Claude, PR #1, na `main`):** silnik obliczeń `frontend/src/engine/` (wszystkie wyliczenia przeniesione z komponentów, wyniki bez zmian), 50 testów (`npm test`), panel admina `/admin` z zapisem parametrów w backendzie (`/api/params`). Opis w README.
 
-**Jeszcze nie ma:** uploadu PDF / przykładowych spraw („Sprawdź mój przypadek”), jednego podsumowania „co mi przysługuje”, planera osi czasu, generatora wniosków, symulacji e-ZLA / zadłużenia / PUE.
+**Nowe (17:50, Claude, bez commita): symulacje usług ZUS i USC** – `/zus` (ubezpieczenie, podstawa, e-ZLA, zaświadczenie o niezaleganiu, wnioski PUE) i `/odpis-aktu`. Szczegóły w sekcji 9.
+
+**Jeszcze nie ma:** uploadu PDF / przykładowych spraw („Sprawdź mój przypadek”), jednego podsumowania „co mi przysługuje”, planera osi czasu, generatora wniosków urlopowych do pracodawcy.
 
 ### Poprawione w kalkulatorach (21.11, 16:00, przez Claude; commit `fix-calc`, sprawdzone w przeglądarce)
 - [x] **c) Łączenie z pracą: zły wzór wydłużenia.** Było `urlop + urlop × etat` (½ etatu → 61,5 tyg.), jest `urlop ÷ (1 − etat)` zgodnie z KP art. 182¹f (½ etatu → 82 tyg., ¼ etatu → 54,67 tyg., „Za życiem” → 130 tyg.)
@@ -57,12 +64,11 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 - [x] **Puste `.dockerignore`:** wpisane `node_modules`, `.env` (+ `dist` we frontendzie). Obraz frontendu nie dostaje już windowsowych `node_modules`
 - [ ] Pusty `frontend/nginx.conf`: usunąć albo wypełnić (teraz frontend w Dockerze chodzi na `vite preview`, nie na nginx)
 - [ ] **Krok testów w deployu (Enard):** przed budowaniem obrazów w `deploy.yml` dodać `cd frontend && npm ci && npm test` oraz `node --check backend/server.js`. Zepsuty kod (jak #10) nie trafi wtedy na serwer, tylko deploy zatrzyma się na testach
-- [ ] `backend/data/db.json` dodać do `.gitignore` (i `git rm --cached`). Zmienia się przy każdym logowaniu (PR #2 wrzucił do repo profile testowych użytkowników), a `db.js` i tak tworzy go sam z danych startowych. **Uwaga:** wtedy w `SEED` w `db.js` trzeba podmienić Katarzynę na Mariusza (teraz Mariusz jest tylko w `db.json`)
-- [ ] Na serwerze plik bazy leży na wolumenie, więc nowa lista osób (Mariusz zamiast Katarzyny) tam nie dotrze. Enard: jednorazowo usunąć wolumen `backend-data` albo poprawić plik ręcznie
+- [ ] `backend/data/db.json` do `.gitignore` – szczegóły w „Do poprawy po zmianach z 17:30” (`SEED` w `db.js` ma już Mariusza)
+- [x] ~~Na serwerze stara lista osób~~ – Enard: deploy kasuje bazę przy zmianie `db.json`
 - [ ] Gdy deploy przejdzie: wpisać do README link do działającego demo
 - [ ] (drobne) Ostrzeżenie w Actions: `actions/checkout@v4` i `setup-gcloud@v2` działają na wycofywanym Node 20. Na razie nic nie psuje
-- [ ] Dashboard: usunąć krok „Świadczenie 800 plus” (poza zakresem zadania ZUS) i podmienić listę na kroki z kalkulatora (sekcja 8)
-- [ ] Dashboard: zapisywać zaznaczone checkboxy (teraz po odświeżeniu wracają do 0), np. w profilu użytkownika w `db`
+- [x] ~~Dashboard: krok „800 plus” i niezapisywane checkboxy~~ – Ola przebudowała panel (PR #3), listy spraw już nie ma
 
 ---
 
@@ -295,13 +301,16 @@ Wagi oceny: związek z wyzwaniem 25% · kompletność + UX 25% · pomysł 20% ·
 ## 9. Symulacje integracji (P0, wszystkie wymienione w treści, tylko mocki)
 
 - [x] Logowanie mObywatelem: kod logowania + ekran „aplikacji mObywatel” z wyborem osoby (Ola)
-- [ ] Podpiąć do 3 osób z `db.js` (Bożena, Marzena, Katarzyna) **różne sytuacje ubezpieczeniowe**, żeby demo pokazywało różne wyniki kalkulatora, np. Bożena: etat 6 000 zł, 1. ciąża · Marzena: JDG z zaległością składkową · Katarzyna: zlecenie, bliźnięta. Ewentualnie dodać 4. osobę: tata / adopcja
-- [ ] „Pobieram dane z ZUS”: okresy ubezpieczenia, płatnik, wynagrodzenia (ubezpieczony / nieubezpieczony)
-- [ ] Zaświadczenie o niezaleganiu / zadłużeniu składkowym na dzień porodu (ważne dla JDG)
-- [ ] Podgląd e-ZLA: lista zwolnień z kodami (B!), która zasila licznik 182/270
-- [ ] Połączenie z PUE/eZUS (status wniosku, mock)
-- [ ] Wniosek o odpis aktu urodzenia (symulacja formularza USC / gov.pl)
-- [ ] Każdy mock wyraźnie oznaczony „SYMULACJA”
+**Zrobione 21.11, 17:50 (Claude, bez commita):** `backend/zus-mock.js` + strony `/zus` i `/odpis-aktu`, link w menu i dwa kafelki w panelu. Opis w README („Symulacje usług ZUS i USC”).
+- [x] Różne sytuacje dla 3 osób z mObywatela: Bożena – etat 6 000 zł, ciąża, e-ZLA z kodem B, duży pracodawca · Marzena – działalność, dobrowolne chorobowe, zaległość 312,40 zł · Mariusz – etat 7 500 zł, przyszły tata
+- [x] „Moje dane z ZUS”: okresy ubezpieczenia, płatnik (NIP/REGON, liczba ubezpieczonych → kto wypłaca), wynagrodzenia z 12 mies. → podstawa wymiaru liczona silnikiem; przycisk „Przenieś do »Moje dane«” (kalkulatory od razu podstawiają podstawę, tytuł ubezpieczenia i płatnika)
+- [x] Zaświadczenie o niezaleganiu na wybrany dzień (domyślnie data urodzenia dziecka z profilu): przy działalności porównanie z progiem 48,06 zł z parametrów → „BLOKADA”; u pracownika „nie dotyczy”; przycisk „Drukuj”
+- [x] Podgląd e-ZLA: lista zwolnień z kodami i opisem (B = 100%, 270 dni), suma dni z kodem B
+- [x] PUE/eZUS: lista wniosków ze statusem (np. Marzena: ZAS-53 wstrzymany przez zaległość)
+- [x] Wniosek o odpis aktu urodzenia: dane dziecka z „Moje dane”, rodzaj odpisu, sposób odbioru, walidacja, numer wniosku, lista wniosków + informacja, że do ZUS odpis zwykle nie jest potrzebny
+- [x] Każdy ekran oznaczony „SYMULACJA”, dane fikcyjne (firmy, lekarze, numery)
+- [ ] Liczba dni e-ZLA z kodem B mogłaby sama trafiać do kalkulatora chorobowego (teraz: podpowiedź „wpisz je jako wykorzystane dni”) – do uzgodnienia z osobą od kalkulatorów
+- [ ] Wnioski o odpis są trzymane w pamięci backendu (po restarcie/deployu znikają) – na demo wystarczy
 
 ---
 

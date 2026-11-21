@@ -11,6 +11,8 @@ import Kalkulator from "./pages/Kalkulator.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Admin from "./pages/Admin.jsx";
+import Zus from "./pages/Zus.jsx";
+import OdpisAktu from "./pages/OdpisAktu.jsx";
 
 const TOKEN_KEY = "rodzicplus-token";
 
@@ -96,6 +98,23 @@ export default function App() {
           element={
             <RequireAuth loading={loading} user={user}>
               <ProfilePage />
+            </RequireAuth>
+          }
+        />
+        {/* Symulacje usług ZUS i USC (dane fikcyjne, backend/zus-mock.js) */}
+        <Route
+          path="/zus"
+          element={
+            <RequireAuth loading={loading} user={user}>
+              <Zus />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/odpis-aktu"
+          element={
+            <RequireAuth loading={loading} user={user}>
+              <OdpisAktu />
             </RequireAuth>
           }
         />
