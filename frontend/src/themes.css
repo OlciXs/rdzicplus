@@ -139,6 +139,10 @@ h2 { font-size: 1.1rem; margin: 0 0 8px; color: var(--color-navy); }
 .data-list div { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .data-list dt { color: var(--color-muted); }
 .data-list dd { margin: 0; font-weight: 600; }
+.info-card-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.info-card-heading h2 { margin: 0; }
+.text-link { color: var(--color-navy); font-weight: 600; text-decoration: none; }
+.text-link:hover { text-decoration: underline; }
 
 
 /* pasek górny – akcje */

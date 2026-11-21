@@ -240,7 +240,7 @@ const STEPS = [
           { name: "dataPrzyjecia", label: "Data przyjęcia dziecka na wychowanie", type: "date", max: "today", if: (c) => c.etap === "przyjecie" },
           yn("odroczonySzkolny", "Czy dziecko ma odroczony obowiązek szkolny?", { if: (c) => c.etap === "przyjecie", wide: true }),
           yn("niepelnosprawne", "Czy dziecko ma orzeczenie o niepełnosprawności?", { if: (c) => c.etap && c.etap !== "ciaza", wide: true }),
-          { name: "zaZyciem", label: "Oświadczenie „Za życiem” (ciężkie, nieodwracalne upośledzenie dziecka)", type: "checkbox", wide: true, if: (c) => !!c.etap },
+          { name: "zaZyciem", label: "Oświadczenie „Za życiem” (ciężkie, nieodwracalne upośledzenie dziecka) — opcjonalne", type: "checkbox", wide: true, optional: true, if: (c) => !!c.etap },
         ],
       },
     ],
@@ -411,6 +411,7 @@ const stepProgress = (step, form) => {
   let total = 0, done = 0;
   for (const sec of visibleSections(step, c)) {
     for (const f of visibleFields(sec, c)) {
+      if (f.optional) continue;
       total += 1;
       if (isFilled(form[sec.data]?.[f.name])) done += 1;
     }

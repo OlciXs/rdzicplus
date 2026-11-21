@@ -125,6 +125,10 @@ Rodzic wypełnia „Moje dane”, wybiera wniosek, a silnik ocenia **każdy wari
 | `engine/fuzz.test.js` | testy losowe (stałe ziarno, powtarzalne): 3000 losowych/„śmieciowych” profili przez wszystkie wnioski i 3000 wejść kalkulatorów – bez wyjątków, bez `NaN`/`undefined`/ujemnych kwot w tekstach, spójne statusy (np. `dostepny` ⇒ wszystkie warunki spełnione) i reguły biznesowe (limit łączenia, suma macierzyńskiego, 70% ojca ≤ 9 tyg.) |
 | `engine/wnioski/wnioski.test.js` | testy na rodzinach: etat w ciąży, działalność z długiem, zlecenie (90 dni), studentka, utrata pracy w ciąży, ojciec przejmujący urlop (14 tyg., szpital, zgon, matka nieubezpieczona), wcześniak, martwe urodzenie, adopcja, 81,5%, rodzicielski, opiekuńczy |
 
+Wniosek do druku: `frontend/src/pages/Druk.jsx` (`/wnioski/druk?v=W21`) + silnik `engine/wnioski/druki.js` – pismo do pracodawcy
+(albo dane do ZAM dla osoby bez umowy o pracę) wypełnione z „Moje dane”, z oświadczeniami, załącznikami i kontrolą terminów;
+„Drukuj / zapisz jako PDF” otwiera okno drukowania przeglądarki. Testy: `engine/wnioski/druki.test.js` i fuzz.
+
 Ekran: `frontend/src/pages/Wnioski.jsx` (`/wnioski`) – kafelki wniosków z licznikami (najpierw to, co przysługuje),
 ostrzeżenia dla całej sprawy, a po wyborze wniosku karta każdego wariantu: wymiar, wysokość, gdzie złożyć, termin,
 dokumenty, rozwijane warunki ✓/✗/? i linki „uzupełnij w »Moje dane«” prowadzące do właściwego kroku profilu

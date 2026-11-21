@@ -14,6 +14,7 @@ import Admin from "./pages/Admin.jsx";
 import Zus from "./pages/Zus.jsx";
 import OdpisAktu from "./pages/OdpisAktu.jsx";
 import Wnioski from "./pages/Wnioski.jsx";
+import Druk from "./pages/Druk.jsx";
 
 const TOKEN_KEY = "rodzicplus-token";
 
@@ -108,6 +109,15 @@ export default function App() {
           element={
             <RequireAuth loading={loading} user={user}>
               <Wnioski />
+            </RequireAuth>
+          }
+        />
+        {/* Wniosek do druku / PDF wypełniony z „Moje dane” (src/engine/wnioski/druki.js) */}
+        <Route
+          path="/wnioski/druk"
+          element={
+            <RequireAuth loading={loading} user={user}>
+              <Druk />
             </RequireAuth>
           }
         />
