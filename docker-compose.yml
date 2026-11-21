@@ -1,5 +1,6 @@
 services:
   backend:
+    image: europe-central2-docker.pkg.dev/${PROJECT_ID}/app-images/backend:latest
     build:
       context: ./backend
     environment:
@@ -22,6 +23,7 @@ services:
     restart: unless-stopped
 
   frontend:
+    image: europe-central2-docker.pkg.dev/${PROJECT_ID}/app-images/frontend:latest
     build:
       context: ./frontend
     environment:
