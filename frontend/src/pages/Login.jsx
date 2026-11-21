@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
+import { Link, Navigate } from "react-router-dom";
 import { api } from "../api.js";
+import { useAuth } from "../auth.js";
 
 const formatCode = (code) => `${code.slice(0, 3)} ${code.slice(3)}`;
 
-export default function Login({ onLogin }) {
+export default function Login() {
+  const { user, loading, login } = useAuth();
   const [step, setStep] = useState("start"); // "start" | "code" | "app"
   const [request, setRequest] = useState(null); // { requestId, code }
   const [profiles, setProfiles] = useState([]);
@@ -68,12 +71,16 @@ export default function Login({ onLogin }) {
           profileId: profile.id,
         },
       });
-      onLogin(data);
+      login(data);
     } catch (err) {
       setError(err.message);
       setBusyId(null);
     }
   };
+
+  if (loading) return <p className="center-msg">Ładowanie aplikacji…</p>;
+  // Zalogowany użytkownik nie widzi ekranu logowania.
+  if (user) return <Navigate to="/panel" replace />;
 
   return (
     <main className="login">
@@ -168,6 +175,10 @@ export default function Login({ onLogin }) {
           </button>
         </section>
       )}
+
+      <p className="hint" style={{ textAlign: "center" }}>
+        <Link to="/kalkulatory">Zobacz kalkulatory bez logowania →</Link>
+      </p>
     </main>
   );
 }

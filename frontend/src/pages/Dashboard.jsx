@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import AppHeader from "../components/AppHeader.jsx";
+import { useAuth } from "../auth.js";
 
 const STEPS = [
   {
@@ -33,7 +36,8 @@ const STEPS = [
   },
 ];
 
-export default function Dashboard({ user, onLogout }) {
+export default function Dashboard() {
+  const { user, logout } = useAuth();
   const [done, setDone] = useState([]);
 
   const toggle = (id) =>
@@ -44,17 +48,29 @@ export default function Dashboard({ user, onLogout }) {
 
   return (
     <div className="app">
-      <header className="topbar">
-        <div className="brand">
-          <span className="brand-mark" aria-hidden="true">R+</span>
-          <span className="brand-name">RodzicPlus</span>
-        </div>
-        <button className="btn btn-outline" onClick={onLogout}>Wyloguj</button>
-      </header>
+      <AppHeader
+        actions={
+          <>
+            <Link className="btn btn-primary" to="/kalkulatory">Kalkulatory świadczeń</Link>
+            <button className="btn btn-outline" onClick={logout}>Wyloguj</button>
+          </>
+        }
+      />
 
       <main className="container">
         <h1>Cześć, {user.imie}! 👋</h1>
         <p className="lead">Oto Twoja lista spraw po narodzinach dziecka.</p>
+
+        <Link className="calc-cta" to="/kalkulatory">
+          <span className="calc-cta-icon" aria-hidden="true">🧮</span>
+          <span className="calc-cta-body">
+            <span className="calc-cta-title">Policz swoje świadczenia</span>
+            <span className="calc-cta-desc">
+              Siedem kalkulatorów: chorobowy, macierzyński, rodzicielski, adopcja, podstawa wymiaru i dokumenty.
+            </span>
+          </span>
+          <span className="calc-cta-arrow" aria-hidden="true">→</span>
+        </Link>
 
         <section className="info-card" aria-label="Twoje dane">
           <h2>Twoje dane z mObywatela</h2>
