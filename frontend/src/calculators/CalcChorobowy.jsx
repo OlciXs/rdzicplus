@@ -33,24 +33,32 @@ export default function CalcChorobowy() {
   /* ---- 1. prawo do zasiłku ---- */
   const potrzeba = s.status === "obw" ? CFG.oczekiwanieObowiazkowe : CFG.oczekiwanieDobrowolne;
   const maPrawo = dUb >= potrzeba;
-  const zalegloscBlokada = num(s.zaleglosc) > CFG.progZaleglosci;
+  // Blokada za zaległość (art. 2a UZ) dotyczy tylko osób, które same opłacają składki
+  // (działalność, osoby współpracujące, duchowni) – nie pracowników.
+  const zalegloscBlokada = s.status === "dobr" && num(s.zaleglosc) > CFG.progZaleglosci;
+  // Bez prawa (okres oczekiwania) lub przy blokadzie nic nie jest wypłacane.
+  const wyplata = maPrawo && !zalegloscBlokada;
+
+  /* ---- 4. okres zasiłkowy (liczony najpierw – ogranicza płatne dni) ---- */
+  const okresMax = kodB ? CFG.okresZasilkowyCiaza : CFG.okresZasilkowy;
+  const pozostaloPrzed = Math.max(0, okresMax - num(s.wykorzZasilk));
+  const dniPlatne = Math.min(dNz, pozostaloPrzed);
+  const poTymOkresie = Math.max(0, pozostaloPrzed - dNz);
 
   /* ---- 2. wynagrodzenie chorobowe vs zasiłek ---- */
   const limitWyn = wiek50 ? CFG.wynagrodzenieChorobowe50 : CFG.wynagrodzenieChorobowe;
   const dostepneWyn = Math.max(0, limitWyn - num(s.wykorzWynagr));
-  const dniWynagr = s.status === "obw" ? Math.min(dNz, dostepneWyn) : 0;
-  const dniZasilku = dNz - dniWynagr;
+  const dniWynagr = s.status === "obw" ? Math.min(dniPlatne, dostepneWyn) : 0;
+  const dniZasilku = dniPlatne - dniWynagr;
 
   /* ---- 3. wysokość ---- */
   const stawka = kodB ? CFG.stChorobowyCiaza : CFG.stChorobowy;
+  // Wynagrodzenie chorobowe: 100% w ciąży (KP art. 92 § 1 pkt 2), standardowo 80%.
+  const stawkaWyn = kodB ? CFG.stChorobowyCiaza : CFG.stChorobowy;
   const dzienStawka = podstawa / CFG.dniMiesiaca;
-  const kwotaWynagr = dzienStawka * dniWynagr;
-  const kwotaZasilku = zasilek(podstawa, stawka, dniZasilku);
+  const kwotaWynagr = wyplata ? (dzienStawka * stawkaWyn * dniWynagr) / 100 : 0;
+  const kwotaZasilku = wyplata ? zasilek(podstawa, stawka, dniZasilku) : 0;
   const kwotaRazem = kwotaWynagr + kwotaZasilku;
-
-  /* ---- 4. okres zasiłkowy ---- */
-  const okresMax = kodB ? CFG.okresZasilkowyCiaza : CFG.okresZasilkowy;
-  const poTymOkresie = Math.max(0, okresMax - num(s.wykorzZasilk) - dNz);
 
   /* ---- 6. utrata pracy ---- */
   const powodUtraty =
@@ -180,12 +188,18 @@ export default function CalcChorobowy() {
             ]}
             rows={[
               ...(dniWynagr > 0
-                ? [{ cells: ["Wynagrodzenie chorobowe (pracodawca)", dniWynagr, "100%", zl(dzienStawka), zl(kwotaWynagr)] }]
+                ? [{ cells: ["Wynagrodzenie chorobowe (pracodawca)", dniWynagr, `${stawkaWyn}%`, zl((dzienStawka * stawkaWyn) / 100), zl(kwotaWynagr)] }]
                 : []),
               { cells: ["Zasiłek chorobowy", Math.max(0, dniZasilku), `${stawka}%`, zl((dzienStawka * stawka) / 100), zl(kwotaZasilku)] },
               { cells: ["Łącznie za okres niezdolności", dNz, "", "", zl(kwotaRazem)], total: true },
             ]}
           />
+          {!wyplata && (
+            <p className="alert-inline">
+              <Badge tone="err">0 ZŁ</Badge> Kwoty wynoszą 0 zł, bo{" "}
+              {!maPrawo ? "nie minął okres oczekiwania (punkt 1)" : "zaległość składkowa blokuje wypłatę (art. 2a UZ)"}.
+            </p>
+          )}
           {!kodB && <p className="note">Bez kodu „B”: stawka {CFG.stChorobowy}%, okres zasiłkowy {CFG.okresZasilkowy} dni.</p>}
         </section>
 
@@ -195,8 +209,8 @@ export default function CalcChorobowy() {
             <>Maksymalny okres zasiłkowy: <b>{okresMax} dni</b> {kodB ? "(ciąża – kod B)" : "(standardowo)"}. Po tym epizodzie pozostaje <b>{poTymOkresie} dni</b>.</>,
             <>Przerwa ≤ {CFG.przerwaZnaczaOkres} dni nie zeruje okresu zasiłkowego – wyjątek: nowa niezdolność w ciąży (kod „B”) liczona jest od nowa (art. 9 ust. 2).</>,
           ]} />
-          {poTymOkresie < dNz && (
-            <p><Badge tone="warn">UWAGA</Badge> Ten epizod dłuższy niż pozostały okres zasiłkowy – zasiłek max {poTymOkresie} dni, dalej możliwe świadczenie rehabilitacyjne.</p>
+          {dNz > pozostaloPrzed && (
+            <p><Badge tone="warn">UWAGA</Badge> Ten epizod ({dNz} dni) jest dłuższy niż pozostały okres zasiłkowy – płatne jest max {pozostaloPrzed} dni, dalej możliwe świadczenie rehabilitacyjne.</p>
           )}
         </section>
 

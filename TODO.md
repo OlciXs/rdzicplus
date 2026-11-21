@@ -6,6 +6,54 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 
 ---
 
+## Stan projektu (sobota 21.11, 16:05)
+
+**Działa** (sprawdzone lokalnie w przeglądarce i przez API):
+- logowanie mObywatelem (symulacja): kod → wybór jednej z 3 fikcyjnych osób → sesja z tokenem, PESEL maskowany na froncie
+- dashboard z listą spraw po porodzie (checkboxy), wylogowanie, sesja przetrwa odświeżenie strony
+- **routing + 7 kalkulatorów a–g** (Montarex23, „Kalkulatory oraz routing”): strona powitalna `/`, lista `/kalkulatory`, osobny adres dla każdego kalkulatora, strona 404, `/panel` tylko dla zalogowanych. Adresy w README
+- RWD na telefonie (375 px, bez poziomego scrolla, także strony kalkulatorów), build produkcyjny frontendu
+- „baza” w pliku `backend/data/db.json` (Ola, `backend/db.js`), schowana za obiektem `db`
+- Docker (`docker-compose.yml`, Dockerfile dla obu części) + GitHub Actions z deployem na Google Cloud (Enard)
+
+**Nie działa:** deploy. **Wszystkie 5 uruchomień w GitHub Actions zakończyło się błędem**, więc demo online jeszcze nie istnieje. Ostatnie padło po ~1,5 min, czyli pewnie na kroku na maszynie wirtualnej (prawdopodobnie `PROJECT_ID`, patrz niżej). Logi widać tylko po zalogowaniu na GitHubie.
+
+**Jeszcze nie ma:** uploadu PDF / przykładowych spraw, panelu admina, testów wyliczeń, planera osi czasu, generatora wniosków. **Uwaga architektoniczna:** wszystkie wyliczenia siedzą wewnątrz komponentów React (`frontend/src/calculators/Calc*.jsx`), a parametry w `frontend/src/calculators/config.js`. Przez to nie da się ich przetestować, użyć przy uploadzie PDF ani zmienić z panelu admina, więc pierwszym zadaniem jest wyciągnięcie ich do `engine/` (sekcja 2).
+
+### Poprawione w kalkulatorach (21.11, 16:00, przez Claude; bez commita, sprawdzone w przeglądarce)
+- [x] **c) Łączenie z pracą: zły wzór wydłużenia.** Było `urlop + urlop × etat` (½ etatu → 61,5 tyg.), jest `urlop ÷ (1 − etat)` zgodnie z KP art. 182¹f (½ etatu → 82 tyg., ¼ etatu → 54,67 tyg., „Za życiem” → 130 tyg.)
+- [x] **a) Chorobowy:** przy braku prawa (okres oczekiwania) lub blokadzie za zaległość kwoty były liczone jak normalnie, a teraz wynoszą 0 zł z powodem. Blokada za zaległość dotyczy już tylko ubezpieczonych dobrowolnie, nie pracowników. Wynagrodzenie chorobowe bez kodu B liczy się po 80% (było zawsze 100%). Płatne dni są ograniczone do pozostałego okresu zasiłkowego (było: 300 dni L4 = 300 dni płatnych; jest 270), a ostrzeżenie o przekroczeniu okresu nie pojawia się już fałszywie
+- [x] **d) Oboje rodzice:** w wariancie 81,5% 9 tygodni ojca liczone po 70% (tekst o tym mówił, ale wyliczenie brało 81,5%). Mniej niż 9 tygodni u rodzica to teraz ostrzeżenie o stracie, a nie „BŁĄD planu”
+- [x] **e) Adopcja:** kwota rodzicielskiego dla jednego rodzica liczona z 32 tygodni (41 − 9 dla drugiego rodzica), a nie z całych 41
+- [x] **b) Macierzyński:** martwe urodzenie dawało 57 dni zamiast 56; etykieta „zasiłek dzienny (100%)” pokazuje faktyczną stawkę
+- [x] **f) Podstawa:** minimum dla dobrowolnych 4 877,11 zł przeniesione do `config.js` (było wpisane na sztywno jako 4 877,53 zł)
+- [x] **RWD:** na telefonie tabele wyników rozpychały strony kalkulatorów do ~500 px. Poprawione w `themes.css` (`minmax(0, 1fr)`), teraz tabela przewija się w swojej karcie
+
+### Znane braki w kalkulatorach (do zrobienia)
+- [ ] Każdy kalkulator każe osobno wpisać „podstawę wymiaru”. Wynik kalkulatora f) powinien przechodzić do pozostałych (wspólny profil sprawy, §3.6 pliku z danymi)
+- [ ] b) Macierzyński: brak podwyższenia do 1 000 zł (świadczenie rodzicielskie) i brak kwot urlopu rodzicielskiego miesiąc po miesiącu
+- [ ] f) Podstawa: minimum 4 147,09 zł stosowane bez względu na wymiar etatu (powinno być proporcjonalne); miesiące < 50% czasu pracy trzeba wyłączać ręcznie
+- [ ] e) Adopcja: urlop „na warunkach macierzyńskiego” nie kończy się, gdy dziecko osiąga 7/10/14 lat; wartość 62 tyg. dla „Za życiem” jest niepotwierdzona (sekcja 12, pkt 5)
+- [ ] d) Oboje: „max 5 części” jest sprawdzane osobno dla każdego rodzica. Potwierdzić w KP art. 182¹c, czy limit jest na rodzica, czy łączny
+- [ ] a) Chorobowy: kod B ma zerować wcześniejsze okresy zasiłkowe bez ciąży; teraz pole „wykorzystane dni” jest liczone zawsze
+- [ ] Zaokrąglenia: kwoty liczone na liczbach zmiennoprzecinkowych, bez zaokrąglania stawki dziennej do grosza (sekcja 12, pkt 1)
+- [ ] `npm audit` we frontendzie: 2 umiarkowane podatności (esbuild – tylko serwer deweloperski; react-router). Poprawka wymaga podbicia wersji (`npm audit fix --force`), więc lepiej po oddaniu albo na spokojnie
+
+**Lekcja z dzisiaj:** commit „Build and deploy” przypadkiem cofnął logowanie Oli w `server.js` (naprawione w `5b3ce25`). **Przed każdym pushem: `git pull`**, a przy konflikcie nie wybierać „swojej wersji” w ciemno.
+
+### Poprawki techniczne (P0, małe)
+- [ ] **Naprawić deploy (Enard):** przeczytać log z GitHub Actions (run #5), potem poprawki poniżej. Przed oddaniem demo MUSI działać online
+- [ ] **`docker-compose.yml`: `${PROJECT_ID}` bez wartości daje błędną nazwę obrazu** (`europe-central2-docker.pkg.dev//app-images/...`), więc lokalne `docker compose up --build` z README się wyłoży. Poprawka: `${PROJECT_ID:-local}`. Na VM `PROJECT_ID` musi być w `/opt/app/.env`, bo `sudo` gubi zmienne środowiskowe (Enard)
+- [ ] **Puste `backend/.dockerignore` i `frontend/.dockerignore`:** `COPY . .` wrzuci do obrazu `node_modules` z Windowsa i może zepsuć build w kontenerze. Wpisać do obu: `node_modules`, `dist`, `.env`, `data` (backend)
+- [ ] Pusty `frontend/nginx.conf`: usunąć albo wypełnić (teraz frontend w Dockerze chodzi na `vite preview`, nie na nginx)
+- [ ] `backend/data/db.json` dodać do `.gitignore` (i `git rm --cached`). Zmienia się przy każdym logowaniu, a `db.js` i tak tworzy go sam z danych startowych
+- [ ] Gdy deploy przejdzie: wpisać do README link do działającego demo
+- [ ] (drobne) Ostrzeżenie w Actions: `actions/checkout@v4` i `setup-gcloud@v2` działają na wycofywanym Node 20. Na razie nic nie psuje
+- [ ] Dashboard: usunąć krok „Świadczenie 800 plus” (poza zakresem zadania ZUS) i podmienić listę na kroki z kalkulatora (sekcja 8)
+- [ ] Dashboard: zapisywać zaznaczone checkboxy (teraz po odświeżeniu wracają do 0), np. w profilu użytkownika w `db`
+
+---
+
 ## O co chodzi (w minutę)
 
 Budujemy stronę WWW dla przyszłych rodziców. Użytkownik podaje swoją sytuację (albo „loguje się mObywatelem” i dane się „pobierają”, co jest tylko symulacją). Strona mówi mu wtedy:
@@ -27,10 +75,10 @@ Wagi oceny: związek z wyzwaniem 25% · kompletność + UX 25% · pomysł 20% ·
 ## 0. Decyzje na start (pierwsze 15 minut, razem)
 
 - [x] **Stack: już ustalony w commicie `init` od Oli.** Frontend: React 18 + Vite (`frontend/`, port 5173, proxy `/api` → backend). Backend: Node + Express (`backend/`, port 3001, ESM). To spełnia wymagania ZUS (React + backend JS przez REST). Zostajemy przy tym, bez przepisywania na Next.js.
-- [ ] **Silnik obliczeń jako trzeci folder `engine/`** (czysty JS bez Reacta i Expressa, ESM). Backend importuje go w `/api/calculate`, a frontend bezpośrednio, żeby planer osi czasu liczył na żywo bez zapytań do serwera. TypeScript opcjonalnie (szkielet Oli jest w JS, więc nie trzeba go przerabiać; typy można opisać w JSDoc).
-- [ ] **UI:** Tailwind (dodać do Vite) + ewentualnie gotowe komponenty (shadcn/ui działa z Vite).
-- [ ] **Deploy:** frontend (statyczny build Vite) na Vercel/Netlify, backend Express na Render/Railway (darmowe plany). Na froncie zmienna `VITE_API_URL` wskazująca backend w produkcji, bo proxy z `vite.config.js` działa tylko lokalnie.
-- [ ] **Gdzie trzymamy parametry admina.** Muszą przetrwać restart i redeploy backendu (na Render/Railway dysk jest tymczasowy), więc nie mogą siedzieć w zwykłym pliku na serwerze. Propozycja: jedna tabela w darmowym Postgresie (Supabase/Neon). Wartości domyślne w `engine/params.default.json`. Lokalnie wystarczy plik JSON, a bazę podpiąć przy deployu.
+- [ ] **Silnik obliczeń jako trzeci folder `engine/`** (czysty JS bez Reacta i Expressa, ESM). Backend importuje go w `/api/calculate`, a frontend bezpośrednio, żeby planer osi czasu liczył na żywo bez zapytań do serwera. TypeScript opcjonalnie (szkielet Oli jest w JS, więc nie trzeba go przerabiać; typy można opisać w JSDoc). **Nie piszemy od zera:** przenosimy wyliczenia z `frontend/src/calculators/Calc*.jsx` i `CFG` z `config.js`, a komponenty zostają jako UI wołające funkcje z `engine/`.
+- [x] **UI: style Oli w `frontend/src/themes.css`** (tokeny kolorów w zielono-granatowej, urzędowej palecie + klasy komponentów). Nowe ekrany robimy na tych samych klasach, bez Tailwinda.
+- [x] **Deploy: ustalony (Enard).** Docker Compose na maszynie w Google Cloud (GCE), obrazy w Artifact Registry, deploy z GitHub Actions przy każdym pushu na `main`. Frontend w kontenerze to `vite preview` z proxy `/api` → backend, więc `VITE_API_URL` nie jest potrzebne.
+- [x] **Gdzie trzymamy parametry admina: w tej samej „bazie” co użytkownicy** (`backend/db.js` → `data/db.json`). Na serwerze plik leży na wolumenie Dockera `backend-data`, więc przetrwa restart i redeploy. Wystarczy dodać do `db` metody `getParams()` / `setParams()`. Wartości domyślne w `engine/params.default.json`.
 - [ ] **Model AI do czytania PDF.** Wymagań co do modelu nie ma. Wybierzcie jeden (Claude / Mistral) i zapiszcie go do README i na slajd „gdzie użyto AI”.
 - [ ] **Podział ról.** Przykład dla 3–4 osób:
   - **Silnik + testy:** sekcje 2 i 4 niżej (najważniejsza osoba)
@@ -52,6 +100,8 @@ Wagi oceny: związek z wyzwaniem 25% · kompletność + UX 25% · pomysł 20% ·
 - [x] `backend/`: Express z `cors` i `express.json()`, endpoint `GET /api/hello`, `npm run dev` z `node --watch`
 - [x] `.gitignore`: `node_modules`, `dist`, `.env`
 - [x] README z instrukcją uruchomienia obu części
+- [x] Logowanie mObywatelem, sesje, `db.js` z plikową bazą, dashboard, style w jednym pliku `themes.css` (Ola, „nowe logowanie v2”)
+- [x] Docker + deploy na GCE (Enard)
 
 **Do zrobienia:**
 - [x] `.gitignore`: dodane `private-cases/`. **Przykładowych spraw ZUS nie wolno wrzucać do repo** (zakaz kopiowania i rozpowszechniania). Demo ładuje je z folderu poza repo albo z miejsca wskazanego przez ZUS.
@@ -63,8 +113,8 @@ Wagi oceny: związek z wyzwaniem 25% · kompletność + UX 25% · pomysł 20% ·
   - `POST /api/calculate`: przyjmuje `CaseProfile`, zwraca `Result`
   - `GET /api/params` i `PUT /api/params` (admin, chronione hasłem z `.env`)
   - `POST /api/extract`: upload PDF → AI → JSON (sekcja 6); potrzebny `multer` do plików
-  - `GET /api/mock/*`: dane mObywatel / ZUS / e-ZLA (sekcja 9)
-- [ ] Frontend: dodać routing (`react-router-dom`) i Tailwind, wywalić „Hello World”
+  - `GET /api/mock/*`: dane ZUS / e-ZLA / zadłużenie (sekcja 9). Logowanie mObywatelem już jest pod `/api/auth/*`
+- [ ] Frontend: dodać routing (`react-router-dom`), bo teraz `App.jsx` przełącza tylko Login ↔ Dashboard, a dojdą kalkulator, planer i admin. Style: Ola trzyma wszystko w `themes.css` (tokeny kolorów + klasy), więc **zostajemy przy tym zamiast Tailwinda**, żeby nie mieszać dwóch systemów
 - [ ] Docelowa struktura:
   ```
   /engine          – czysta logika, testowalna (NOWE)
@@ -83,6 +133,8 @@ Wagi oceny: związek z wyzwaniem 25% · kompletność + UX 25% · pomysł 20% ·
 ---
 
 ## 2. Silnik obliczeń: `/engine` (P0, rdzeń całego projektu)
+
+> **Stan:** wersje „w UI” wszystkich kalkulatorów a–g już działają w `frontend/src/calculators/` (Montarex23), z poprawkami opisanymi w „Stanie projektu”. Punkty niżej to lista reguł do przeniesienia do `engine/` jako czyste funkcje + testy. Przy przenoszeniu sprawdzać je z tą listą i z „Znanymi brakami”.
 
 ### 2.1 Model danych (zrobić jako pierwsze, bo wszyscy z niego korzystają)
 - [ ] `CaseProfile`, jeden obiekt na całą sprawę (szczegóły pól w §3 pliku z danymi):
@@ -156,6 +208,7 @@ Wagi oceny: związek z wyzwaniem 25% · kompletność + UX 25% · pomysł 20% ·
 
 ## 3. Parametry i panel admina (P0, wymóg z treści zadania)
 
+- [ ] Punkt startowy: obiekt `CFG` w `frontend/src/calculators/config.js` (już ma większość stawek i limitów). Przenieść go do `engine/params.default.json`
 - [ ] `params.default.json` ze wszystkimi wartościami z §4 pliku z danymi. Klucze semantyczne (`maternity.weeks.byChildren`, `rates.parental`), **a nie numery artykułów**
 - [ ] Każdy parametr ma: wartość, opis po polsku, podstawę prawną i datę „obowiązuje od”
 - [ ] `/admin`: tabela parametrów, edycja, zapis do bazy, przycisk „przywróć domyślne”. Proste hasło z env wystarczy
@@ -183,14 +236,16 @@ Wagi oceny: związek z wyzwaniem 25% · kompletność + UX 25% · pomysł 20% ·
 
 ## 5. UI kalkulatora (P0)
 
-- [ ] **Strona główna:** krótkie „co możesz sprawdzić” + 3 wejścia: „Zaloguj przez mObywatel (symulacja)” / „Wgraj lub wybierz przykładową sprawę” / „Wpisz dane ręcznie”
+- [x] Strony kalkulatorów a–g, lista kalkulatorów, okruszki, 404 (Montarex23)
+- [x] **Strona główna** `/` (Montarex23): „Czy mi przysługuje / Ile dostanę / Co i kiedy złożyć” + kafelki kalkulatorów + logowanie
+- [ ] Na stronie głównej brakuje trzeciego wejścia „Wgraj lub wybierz przykładową sprawę” (sekcja 6)
 - [ ] **Kreator (wizard)** zamiast jednego wielkiego formularza: kim jesteś (ciąża / jestem rodzicem / adopcja) → zatrudnienie → zarobki → dziecko → drugi rodzic → wynik. Pytania, które nie dotyczą sytuacji, są ukryte
 - [ ] Profil wypełniony raz zasila wszystkie kalkulatory i wnioski (powtarzające się pola PESEL, imię, płatnik, §3.6)
 - [ ] **Ekran wyniku:**
   - [ ] karty: „Czy mi przysługuje”, „Ile dostanę miesięcznie”, „Jak długo”, „Gdzie i do kiedy złożyć”, „Uwaga!”
-  - [ ] rozwijane „Jak to policzyliśmy”: lista kroków z wzorem i podstawą prawną
-  - [ ] przy wyniku „NIE” jasny powód i co można zrobić
-- [ ] RWD: sprawdzić na telefonie (375 px). Jury patrzy też na komórce
+  - [~] rozwijane „Jak to policzyliśmy”: kalkulatory mają już tabele i punkty z artykułami ustawy; brakuje jednolitej listy kroków ze wzorami
+  - [x] przy wyniku „NIE” jasny powód (chorobowy, adopcja); dopilnować w pozostałych
+- [x] RWD: sprawdzone na telefonie (375 px) dla strony głównej, panelu i wszystkich 7 kalkulatorów
 - [ ] Prosty, urzędowo-przyjazny język bez paragrafów w głównym tekście (paragrafy tylko w „Jak to policzyliśmy”)
 - [ ] Dostępność: kontrast, etykiety pól, nawigacja klawiaturą (instytucja publiczna = WCAG)
 
@@ -230,7 +285,8 @@ Wagi oceny: związek z wyzwaniem 25% · kompletność + UX 25% · pomysł 20% ·
 
 ## 9. Symulacje integracji (P0, wszystkie wymienione w treści, tylko mocki)
 
-- [ ] Logowanie mObywatelem: fałszywy ekran autoryzacji z wyborem jednej z 3–4 person testowych (np. „Anna, etat, 1. ciąża”, „Kasia, JDG z zaległością”, „Ola i Piotr, bliźnięta”, „Marek, adopcja”)
+- [x] Logowanie mObywatelem: kod logowania + ekran „aplikacji mObywatel” z wyborem osoby (Ola)
+- [ ] Podpiąć do 3 osób z `db.js` (Bożena, Marzena, Katarzyna) **różne sytuacje ubezpieczeniowe**, żeby demo pokazywało różne wyniki kalkulatora, np. Bożena: etat 6 000 zł, 1. ciąża · Marzena: JDG z zaległością składkową · Katarzyna: zlecenie, bliźnięta. Ewentualnie dodać 4. osobę: tata / adopcja
 - [ ] „Pobieram dane z ZUS”: okresy ubezpieczenia, płatnik, wynagrodzenia (ubezpieczony / nieubezpieczony)
 - [ ] Zaświadczenie o niezaleganiu / zadłużeniu składkowym na dzień porodu (ważne dla JDG)
 - [ ] Podgląd e-ZLA: lista zwolnień z kodami (B!), która zasila licznik 182/270

@@ -37,7 +37,9 @@ export default function CalcAdopcja() {
   const stMac = wz81 ? CFG.stSredniowany : CFG.stMacierzynski;
   const stRodz = wz81 ? CFG.stSredniowany : CFG.stRodzicielski;
   const kMac = zasilek(podstawa, stMac, tygMacierzy * 7);
-  const kRodz = zasilek(podstawa, stRodz, pool * 7);
+  // Jeden rodzic nie może wykorzystać 9 tygodni zarezerwowanych dla drugiego rodzica.
+  const tygRodzWlasne = Math.max(0, pool - CFG.wyliczneRodzicielskie);
+  const kRodz = zasilek(podstawa, stRodz, tygRodzWlasne * 7);
   const kOjc = zasilek(podstawa, CFG.stMacierzynski, CFG.tygodnieOjcowski * 7);
   const razem = kMac + kRodz + (s.ojcowski ? kOjc : 0);
 
@@ -148,7 +150,7 @@ export default function CalcAdopcja() {
             cols={[{ label: "Świadczenie" }, { label: "", align: "right" }]}
             rows={[
               { cells: [`Na warunkach urlopu macierzyńskiego (${tygMacierzy} tyg., ${stMac}%)`, zl(kMac)] },
-              { cells: [`Urlop rodzicielski (${pool} tyg., ${stRodz}%)`, zl(kRodz)] },
+              { cells: [`Urlop rodzicielski – Twoja część (${tygRodzWlasne} z ${pool} tyg., ${stRodz}%; ${CFG.wyliczneRodzicielskie} tyg. zostaje dla drugiego rodzica)`, zl(kRodz)] },
               ...(s.ojcowski
                 ? [{ cells: ["Urlop ojcowski (2 tyg., 100%)", zl(kOjc)] }]
                 : []),

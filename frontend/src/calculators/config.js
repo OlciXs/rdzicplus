@@ -23,6 +23,9 @@ export const CFG = {
   minPodstawaPracownik: 4147.09, // minimalne wynagrodzenie - 13,71% (art. 45 UZ)
   maxPodstawaZasilku: 20321.3, // limit podstawy zasiłku (od maks. składki 23 550 zł) - wg załącznika
   maxPodstawaSkladki: 23550, // 250% prognozowanego przeciętnego wynagrodzenia 2026
+  // najniższa podstawa składek dla przedsiębiorców (60% × 9 420 = 5 652 zł) minus składki
+  // 9,76% + 1,5% + 2,45% liczone osobno (551,64 + 84,78 + 138,47). DO POTWIERDZENIA w ZUS.
+  minPodstawaDobrowolni: 4877.11,
   progZaleglosci: 48.06, // 1% minimalnego wynagrodzenia - blokada zasiłków (art. 2a UZ)
 
   // zasiłek chorobowy

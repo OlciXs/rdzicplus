@@ -48,8 +48,9 @@ export default function CalcMacierzynski() {
       ]} />
     );
   } else if (s.szczegol === "martwe") {
-    let koniec = porod ? addDays(porod, CFG.martweUrodzenieTygodnie * 7) : null;
-    if (s.zgon) koniec = new Date(Math.max(koniec ?? 0, addDays(new Date(s.zgon), CFG.zgonPo8TygDni)));
+    // Ostatni dzień: 8 tygodni = 56 dni licząc dzień porodu; „nie krócej niż 7 dni od zgonu” = dzień zgonu + 6.
+    let koniec = porod ? addDays(porod, CFG.martweUrodzenieTygodnie * 7 - 1) : null;
+    if (s.zgon) koniec = new Date(Math.max(koniec ?? 0, addDays(new Date(s.zgon), CFG.zgonPo8TygDni - 1)));
     const dni = porod && koniec ? Math.round((koniec - porod) / 86400000) + 1 : 0;
     tygMac = dni / 7;
     blokMac = (
@@ -214,7 +215,7 @@ export default function CalcMacierzynski() {
               { cells: ["Wymiar macierzyński", tyg(tygMac)] },
               { cells: ["Pula rodzicielska", tyg(pool)] },
               { cells: ["Uzupełniający", tyg(tygUzup)] },
-              { cells: ["Zasiłek dzienny – matka (100%)", zl((pM / 30) * stMac / 100)] },
+              { cells: [`Zasiłek dzienny – matka (${stMac}%)`, zl((pM / 30) * stMac / 100)] },
               { cells: ["Łącznie matka", zl(mT)], total: true },
             ]}
           />

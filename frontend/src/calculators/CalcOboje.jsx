@@ -36,18 +36,22 @@ export default function CalcOboje() {
 
   const err = [];
   const warn = [];
+  // Niewykorzystanie wyłącznych 9 tygodni jest dozwolone – to strata, nie błąd planu.
   if (tM < CFG.wyliczneRodzicielskie)
-    err.push(`Matka ma mniej niż ${CFG.wyliczneRodzicielskie} tygodni – traci ${CFG.wyliczneRodzicielskie - tM} tyg. wyłącznych (nieprzenoszalne na ojca).`);
+    warn.push(`Matka ma mniej niż ${CFG.wyliczneRodzicielskie} tygodni – traci ${CFG.wyliczneRodzicielskie - Math.max(0, tM)} tyg. wyłącznych (nieprzenoszalne na ojca).`);
   if (tO < CFG.wyliczneRodzicielskie)
-    err.push(`Ojciec ma mniej niż ${CFG.wyliczneRodzicielskie} tygodni – traci ${CFG.wyliczneRodzicielskie - Math.max(0, tO)} tyg. wyłącznych (nieprzenoszalne na matkę).`);
+    warn.push(`Ojciec ma mniej niż ${CFG.wyliczneRodzicielskie} tygodni – traci ${CFG.wyliczneRodzicielskie - Math.max(0, tO)} tyg. wyłącznych (nieprzenoszalne na matkę).`);
   if (tM + tO > pool)
     err.push(`Łącznie ${tM + tO} tyg. przekracza pulę ${pool} tyg. – do zwymiarowania na nowo.`);
   if (cM > CFG.maxCzesci || cO > CFG.maxCzesci)
     err.push(`Urlop rodzicielski można dzielić na maksymalnie ${CFG.maxCzesci} części (liczba części = liczba wniosków).`);
   if (ur) warn.push(`Do wykorzystania do 31.12.${ur.getFullYear() + CFG.limitRokZycia} (koniec roku kalendarzowego, w którym dziecko kończy ${CFG.limitRokZycia} lat).`);
 
+  // Wariant 81,5%: 9 tygodni zarezerwowanych dla drugiego rodzica (ojca) jest zawsze
+  // płatne 70% (UZ art. 31 ust. 3f); reszta jego tygodni pochodzi z puli matki (81,5%).
+  const tOWyl = wz81 ? Math.min(Math.max(0, tO), CFG.wyliczneRodzicielskie) : 0;
   const kM = zasilek(pM, stRodz, tM * 7);
-  const kO = zasilek(pO, stRodz, tO * 7);
+  const kO = zasilek(pO, CFG.stRodzicielski, tOWyl * 7) + zasilek(pO, stRodz, (tO - tOWyl) * 7);
 
   return (
     <div className="calc">
@@ -139,15 +143,15 @@ export default function CalcOboje() {
             ]}
             rows={[
               { cells: ["Matka", tM, `${stRodz}%`, zl(kM)] },
-              { cells: ["Ojciec", tO, `${stRodz}%`, zl(kO)] },
+              { cells: ["Ojciec", tO, wz81 ? `70% (${tOWyl} tyg.) / ${stRodz}%` : `${stRodz}%`, zl(kO)] },
               { cells: ["Łącznie (rodzicielski)", tM + tO, "", zl(kM + kO)], total: true },
             ]}
           />
           <p className="note">
             {wz81
-              ? "W wariancie 81,5% każdy z rodziców ma 81,5% za macierzyński i rodzicielski (wyjątek: wyłączna część 9 tyg. – zawsze 70%)."
+              ? "W wariancie 81,5% matka ma 81,5% za macierzyński i rodzicielski; 9 tygodni zarezerwowanych dla ojca jest płatne 70%, a jego dalsze tygodnie (przejęte z puli matki) 81,5%."
               : "W wariancie zmiennym: 100% za macierzyński, 70% za rodzicielski."}{" "}
-            Stawka wyłącznych 9 tygodni każdego z rodziców niezależnie od wariantu: {CFG.stRodzicielski}% (UZ art. 31 ust. 3f).
+            Stawka 9 tygodni zarezerwowanych dla ojca, niezależnie od wariantu: {CFG.stRodzicielski}% (UZ art. 31 ust. 3f).
           </p>
         </section>
 

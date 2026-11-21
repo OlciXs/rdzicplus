@@ -24,9 +24,12 @@ export default function CalcLaczenie() {
 
   const W = tygodnieRodz(n, zaZ, false);
   const cap = (zaZ ? CFG.limitLaczenieZaZyciem : CFG.limitLaczenie)[n];
-  const wydlKwoty = W * f;
-  const Wext = Math.min(cap, W + wydlKwoty);
-  const uderzonoWLimit = W + wydlKwoty > cap;
+  // KP art. 182¹f: urlop łączony z pracą wydłuża się proporcjonalnie do wymiaru pracy:
+  // wymiar ÷ (1 − etat). Przy 1/2 etatu: 41 → 82 tyg. (= limit), 43 → 86 tyg.
+  const WextRaw = f > 0 && f < 1 ? W / (1 - f) : W;
+  const Wext = Math.min(cap, WextRaw);
+  const wydlKwoty = Wext - W;
+  const uderzonoWLimit = WextRaw > cap + 1e-9;
 
   const dzienPelny = zasilek(podstawa, stawka, 1);
   const dzienPomn = dzienPelny * (1 - f);
@@ -90,7 +93,7 @@ export default function CalcLaczenie() {
             cols={[{ label: "Pozycja" }, { label: "", align: "right" }]}
             rows={[
               { cells: ["Bazowy urlop rodzicielski", tyg(W)] },
-              { cells: ["Wydłużenie (tygodnie pracy × wymiar etatu)", tyg(wydlKwoty)] },
+              { cells: ["Wydłużenie (urlop ÷ (1 − wymiar pracy) − urlop)", tyg(wydlKwoty)] },
               { cells: [`Urlop po wydłużeniu (limit ${cap} tyg.)`, tyg(Wext)], total: true },
             ]}
           />

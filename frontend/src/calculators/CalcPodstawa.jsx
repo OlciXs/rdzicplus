@@ -68,8 +68,8 @@ export default function CalcPodstawa() {
     if (podstawa > CFG.maxPodstawaZasilku) {
       clampNote = `Ograniczono do maksymalnej podstawy ${zl(CFG.maxPodstawaZasilku)} (limit od maksymalnej podstawy dobrowolnej składki chorobowej ${zl(CFG.maxPodstawaSkladki)} − 13,71%).`;
       podstawa = CFG.maxPodstawaZasilku;
-    } else if (podstawa < 4877.53) {
-      clampNote = "Uwaga: podstawa poniżej typowego minimum dla ubezpieczonych dobrowolnie (przy najniższej zadeklarowanej podstawie składek tzw. duży ZUS 5 652 zł podstawa zasiłku to ok. 4 877,53 zł). Zweryfikuj minimalną podstawę z ZUS.";
+    } else if (podstawa < CFG.minPodstawaDobrowolni) {
+      clampNote = `Uwaga: podstawa poniżej typowego minimum dla ubezpieczonych dobrowolnie (przy najniższej zadeklarowanej podstawie składek tzw. duży ZUS 5 652 zł podstawa zasiłku to ok. ${zl(CFG.minPodstawaDobrowolni)}). Zweryfikuj minimalną podstawę z ZUS.`;
     }
   }
 
