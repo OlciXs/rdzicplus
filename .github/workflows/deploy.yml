@@ -48,6 +48,15 @@ jobs:
           docker push "${IMAGE_URI}:latest"
           docker push "${IMAGE_URI}:${{ github.sha }}"
 
+      - name: Check if db.json changed
+        id: db_check
+        run: |
+          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -qx "backend/data/db.json"; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Copy docker-compose.yml to VM
         run: |
           gcloud compute scp docker-compose.yml ${{ secrets.GCE_INSTANCE }}:/tmp/docker-compose.yml \
@@ -56,6 +65,16 @@ jobs:
 
       - name: Pull and restart on VM
         run: |
+          DB_CMD=""
+          if [ "${{ steps.db_check.outputs.changed }}" == "true" ]; then
+            DB_CMD='
+              CID=$(sudo docker compose -f /opt/app/docker-compose.yml ps -q backend) &&
+              sudo docker rm -f "$CID" &&
+              sudo docker volume rm -f app_backend-data &&
+              sudo docker compose -f /opt/app/docker-compose.yml up -d --remove-orphans &&
+            '
+          fi
+
           gcloud compute ssh ${{ secrets.GCE_INSTANCE }} \
             --zone=${{ secrets.GCE_ZONE }} \
             --tunnel-through-iap \
@@ -63,6 +82,8 @@ jobs:
               sudo mkdir -p /opt/app &&
               sudo mv /tmp/docker-compose.yml /opt/app/docker-compose.yml &&
               sudo docker compose -f /opt/app/docker-compose.yml pull &&
+              ${DB_CMD}
               sudo docker compose -f /opt/app/docker-compose.yml up -d --remove-orphans &&
+              sudo docker compose -f /opt/app/docker-compose.yml restart &&
               sudo docker image prune -f
             "
