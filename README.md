@@ -38,6 +38,7 @@ który można odświeżyć lub wysłać komuś linkiem.
 | `/logowanie` | Logowanie (symulacja mObywatela: Bożena, Marzena, Mariusz) |
 | `/panel` | Panel użytkownika — **wymaga zalogowania** |
 | `/profil` | „Moje dane” (dane do wniosków, podstawiane w kalkulatorach) — **wymaga zalogowania** |
+| `/wnioski` | **Złóż wniosek**: 14 wniosków → każdy wariant oceniony na podstawie „Moje dane” (przysługuje / nie i dlaczego / brakuje danych) — **wymaga zalogowania**; `?w=<id>` otwiera konkretny wniosek |
 | `/zus` | Symulacja „Moje dane z ZUS”: ubezpieczenie, podstawa, e-ZLA, zaświadczenie o niezaleganiu, wnioski PUE — **wymaga zalogowania** |
 | `/odpis-aktu` | Symulacja wniosku o odpis aktu urodzenia (gov.pl) — **wymaga zalogowania** |
 | `/kalkulatory` | Lista kalkulatorów |
@@ -99,6 +100,11 @@ Rodzic wypełnia „Moje dane”, wybiera wniosek, a silnik ocenia **każdy wari
 | `engine/wnioski/kontekst.js` | profil z `GET /api/profile` → fakty dla reguł (tak / nie / brak danych) |
 | `engine/wnioski/ocena.js` | `ocenWniosek(profil, wniosekId)`, `przegladWnioskow(profil)` i ostrzeżenia V1–V40 z `docs/02-dane-do-wnioskow-2026.md` |
 | `engine/wnioski/wnioski.test.js` | testy na rodzinach: etat w ciąży, działalność z długiem, zlecenie (90 dni), studentka, utrata pracy w ciąży, ojciec przejmujący urlop (14 tyg., szpital, zgon, matka nieubezpieczona), wcześniak, martwe urodzenie, adopcja, 81,5%, rodzicielski, opiekuńczy |
+
+Ekran: `frontend/src/pages/Wnioski.jsx` (`/wnioski`) – kafelki wniosków z licznikami (najpierw to, co przysługuje),
+ostrzeżenia dla całej sprawy, a po wyborze wniosku karta każdego wariantu: wymiar, wysokość, gdzie złożyć, termin,
+dokumenty, rozwijane warunki ✓/✗/? i linki „uzupełnij w »Moje dane«” prowadzące do właściwego kroku profilu
+(`/profil?krok=dziecko` itd.).
 
 Przykład:
 
