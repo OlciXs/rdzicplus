@@ -4,6 +4,7 @@ import { ktoWyplaca } from "../engine/index.js";
 import {
   Badge, Field, NumberInput, Select, Check, Section, Bullets, List,
 } from "./ui.jsx";
+import { useProfileDefaults } from "./useProfileDefaults.js";
 
 const ETAPY = [
   { value: "ciazaL4", label: "Ciąża – niezdolność do pracy (e-ZLA z kodem B)" },
@@ -94,6 +95,7 @@ const ZAGROZENIA = [
 export default function CalcDokumenty() {
   const [s, set] = useState({ status: "pracownik", liczba: "30", etap: "ciazaL4", zaleglosc: false });
   const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
+  useProfileDefaults(set, "dokumenty");
 
   const status = s.status;
   const etap = s.etap;

@@ -478,3 +478,16 @@ a.pager-chip { text-decoration: none; }
   .bar::-webkit-progress-value { transition: none; }
   .calc-tile, .calc-cta, .calc-tile-arrow { transition: none; }
 }
+
+/* =====================================================================
+   FORMULARZ „MOJE DANE” (/profil)
+   ===================================================================== */
+.profile-form { display: grid; gap: 4px; }
+.profile-form .calc-group { margin-bottom: 12px; }
+.group-hint { margin: -4px 0 14px; color: var(--color-muted); font-size: 0.9rem; }
+.input.is-invalid { border-color: var(--color-danger); background: var(--color-danger-soft); }
+.field-error { font-size: 0.85rem; font-weight: 600; color: var(--color-danger); }
+.form-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding-top: 8px; }
+.form-actions .btn-primary { min-width: 180px; }
+.form-ok { color: var(--color-primary-hover); font-weight: 700; }
+.field-static { font-weight: 600; min-height: 44px; display: flex; align-items: center; }

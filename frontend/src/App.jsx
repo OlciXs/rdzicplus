@@ -9,6 +9,7 @@ import Login from "./pages/Login.jsx";
 import Landing from "./pages/Landing.jsx";
 import KalkulatoryList from "./pages/KalkulatoryList.jsx";
 import Kalkulator from "./pages/Kalkulator.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Admin from "./pages/Admin.jsx";
 
@@ -77,6 +78,14 @@ export default function App() {
           element={
             <RequireAuth loading={loading} user={user}>
               <Dashboard />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/profil"
+          element={
+            <RequireAuth loading={loading} user={user}>
+              <ProfilePage />
             </RequireAuth>
           }
         />

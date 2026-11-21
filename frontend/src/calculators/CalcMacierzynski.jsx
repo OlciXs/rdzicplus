@@ -5,6 +5,7 @@ import {
   Badge, Field, NumberInput, DateInput, Select, Check, Section,
   ResultTable, Bullets,
 } from "./ui.jsx";
+import { useProfileDefaults } from "./useProfileDefaults.js";
 
 export default function CalcMacierzynski() {
   const [s, set] = useState({
@@ -24,6 +25,7 @@ export default function CalcMacierzynski() {
     hosp: "0",
   });
   const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
+  useProfileDefaults(set, "macierzynski");
 
   const n = num(s.dzieci);
   const porod = s.porod ? new Date(s.porod) : null;

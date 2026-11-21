@@ -30,6 +30,30 @@ function load() {
 
 const data = load();
 
+const emptyProfile = (user) => ({
+  ubezpieczony: {
+    imie: user?.imie || "",
+    nazwisko: user?.nazwisko || "",
+    peselMasked: user ? "*".repeat(7) + user.pesel.slice(-4) : "",
+    dataUrodzenia: "",
+    adres: "",
+    rachunek: "",
+    statusUbezpieczenia: "",
+    podstawaWymiaru: "",
+  },
+  platnik: { nazwa: "", adres: "", nip: "", regon: "" },
+  drugiRodzic: { imie: "", nazwisko: "", pesel: "", podstawaWymiaru: "" },
+  dziecko: {
+    imie: "",
+    nazwisko: "",
+    pesel: "",
+    dataUrodzenia: "",
+    miejsceUrodzenia: "",
+    liczbaDzieci: "",
+    zaZyciem: false,
+  },
+});
+
 function save() {
   fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
 }
@@ -50,6 +74,36 @@ export const db = {
   getProfile: (id) => data.mobywatelProfiles.find((p) => p.id === id),
 
   getUser: (id) => data.users.find((u) => u.id === id),
+
+  getOrCreateProfile(userId) {
+    const user = data.users.find((u) => u.id === userId);
+    if (!user) return null;
+    if (!user.profile) user.profile = emptyProfile(user);
+    if (!user.profileUpdatedAt) user.profileUpdatedAt = null;
+    save();
+    return { profile: user.profile, updatedAt: user.profileUpdatedAt };
+  },
+
+  saveProfile(userId, nextProfile) {
+    const user = data.users.find((u) => u.id === userId);
+    if (!user) return null;
+    user.profile = emptyProfile(user);
+
+    for (const section of ["ubezpieczony", "platnik", "drugiRodzic", "dziecko"]) {
+      const source = nextProfile?.[section];
+      if (!source || typeof source !== "object") continue;
+      for (const key of Object.keys(user.profile[section])) {
+        if (source[key] !== undefined) user.profile[section][key] = source[key];
+      }
+    }
+
+    user.profile.ubezpieczony.imie = user.imie;
+    user.profile.ubezpieczony.nazwisko = user.nazwisko;
+    user.profile.ubezpieczony.peselMasked = "*".repeat(7) + user.pesel.slice(-4);
+    user.profileUpdatedAt = new Date().toISOString();
+    save();
+    return { profile: user.profile, updatedAt: user.profileUpdatedAt };
+  },
 
   // Po zalogowaniu zapisujemy (lub odświeżamy) dane osoby: PESEL, imię, nazwisko
   upsertUserFromProfile(profile) {

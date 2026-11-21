@@ -97,6 +97,17 @@ app.post("/api/auth/logout", requireAuth, (req, res) => {
   res.json({ ok: true });
 });
 
+<<<<<<< HEAD
+app.get("/api/profile", requireAuth, (req, res) => {
+  const result = db.getOrCreateProfile(req.user.id);
+  res.json(result);
+});
+
+app.put("/api/profile", requireAuth, (req, res) => {
+  const result = db.saveProfile(req.user.id, req.body);
+  if (!result) return res.status(404).json({ error: "Nie znaleziono profilu." });
+  res.json({ ok: true, ...result });
+=======
 /* ---------- Parametry kalkulatorów (panel admina) ----------
    Silnik obliczeń jest we froncie (frontend/src/engine). Backend przechowuje tylko
    zmiany wprowadzone w panelu admina; front nakłada je na wartości domyślne.
@@ -141,6 +152,7 @@ app.put("/api/params", requireAdmin, (req, res) => {
 
 app.delete("/api/params", requireAdmin, (req, res) => {
   res.json({ overrides: db.setParamOverrides({}) });
+>>>>>>> 52e363674be897ed0c8d14817c5f24a61c8cbc9a
 });
 
 app.listen(PORT, () => {

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import AppHeader from "../components/AppHeader.jsx";
 import { useAuth } from "../auth.js";
+import { useProfile } from "../profile.js";
 
 const STEPS = [
   {
@@ -36,8 +37,20 @@ const STEPS = [
   },
 ];
 
+// Kluczowe pola profilu, które najczęściej brakują kalkulatorom (do paska uzupełnienia).
+const KEY_FIELDS = [
+  ["ubezpieczony", "adres"],
+  ["ubezpieczony", "rachunek"],
+  ["ubezpieczony", "statusUbezpieczenia"],
+  ["ubezpieczony", "podstawaWymiaru"],
+  ["platnik", "nazwa"],
+  ["platnik", "nip"],
+  ["dziecko", "dataUrodzenia"],
+];
+
 export default function Dashboard() {
   const { user, logout } = useAuth();
+  const { profile } = useProfile();
   const [done, setDone] = useState([]);
 
   const toggle = (id) =>
@@ -46,11 +59,20 @@ export default function Dashboard() {
   const percent = Math.round((done.length / STEPS.length) * 100);
   const next = STEPS.find((s) => !done.includes(s.id));
 
+  const filled = profile
+    ? KEY_FIELDS.filter(([s, f]) => {
+        const v = profile[s][f];
+        return v !== "" && v !== null && v !== undefined;
+      }).length
+    : 0;
+  const profileComplete = profile && filled === KEY_FIELDS.length;
+
   return (
     <div className="app">
       <AppHeader
         actions={
           <>
+            <Link className="btn btn-outline" to="/profil">Moje dane</Link>
             <Link className="btn btn-primary" to="/kalkulatory">Kalkulatory świadczeń</Link>
             <button className="btn btn-outline" onClick={logout}>Wyloguj</button>
           </>
@@ -71,6 +93,20 @@ export default function Dashboard() {
           </span>
           <span className="calc-cta-arrow" aria-hidden="true">→</span>
         </Link>
+
+        {!profileComplete && (
+          <Link className="calc-cta" to="/profil">
+            <span className="calc-cta-icon" aria-hidden="true">📝</span>
+            <span className="calc-cta-body">
+              <span className="calc-cta-title">Uzupełnij swoje dane</span>
+              <span className="calc-cta-desc">
+                Wpisz je raz, a kalkulatory same je podstawią
+                {profile ? ` (uzupełniono ${filled} z ${KEY_FIELDS.length} kluczowych pól).` : "."}
+              </span>
+            </span>
+            <span className="calc-cta-arrow" aria-hidden="true">→</span>
+          </Link>
+        )}
 
         <section className="info-card" aria-label="Twoje dane">
           <h2>Twoje dane z mObywatela</h2>
