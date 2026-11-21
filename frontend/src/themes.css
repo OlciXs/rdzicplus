@@ -489,6 +489,34 @@ a.pager-chip { text-decoration: none; }
 .form-ok { color: var(--color-primary-hover); font-weight: 700; }
 .field-static { font-weight: 600; min-height: 44px; display: flex; align-items: center; }
 
+/* Pasek „dane z profilu” w kalkulatorach (components/ui.jsx → ProfilInfo) */
+.profil-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border, #d6dbe3);
+  background: var(--color-surface-2, #f5f7fa);
+  font-size: 0.87rem;
+}
+.profil-info-opis { color: var(--color-muted); line-height: 1.5; }
+.profil-info-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.profil-info-lista li { line-height: 1.5; }
+.profil-info-lista strong { font-weight: 600; }
+
+@media (max-width: 640px) {
+  .profil-info-lista { flex-direction: column; gap: 2px; }
+}
+
 /* ---------- wniosek do druku (pages/Druk.jsx) ---------- */
 .check-row { display: flex; gap: 10px; align-items: flex-start; margin: 8px 0; line-height: 1.45; }
 .check-row input { margin-top: 4px; width: 18px; height: 18px; flex: none; }

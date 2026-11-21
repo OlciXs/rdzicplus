@@ -1,4 +1,5 @@
 import { useId } from "react";
+import { useAuth } from "../auth.js";
 
 /* Wspólne klocki UI dla kalkulatorów - wszystkie klasy są w themes.css. */
 
@@ -152,5 +153,49 @@ export function List({ title, items, tone }) {
         <li key={i}>{it}</li>
       ))}
     </ul>
+  );
+}
+
+/**
+ * Pasek „dane z profilu”: pokazuje, co kalkulator podstawił z „Moich danych”.
+ * Dzięki temu użytkownik wie, że nie musi nic przepisywać — i co ewentualnie zmienić.
+ *
+ * @param {object} props
+ * @param {Array<{pole: string, etykieta: string, wartosc: string}>} props.pola
+ * @param {boolean} props.zalogowany
+ */
+export function ProfilInfo({ pola = [], zalogowany }) {
+  // Zalogowany, ale profil jeszcze się wczytuje – nic nie pokazujemy (wcześniej mignął
+  // komunikat „Wypełnij »Moje dane« po zalogowaniu”, mimo że użytkownik jest zalogowany).
+  const { user } = useAuth() ?? {};
+  if (!zalogowany && user) return null;
+  if (!zalogowany) {
+    return (
+      <p className="note" role="status">
+        Wypełnij „Moje dane” po zalogowaniu — kalkulatory podstawią Twoje kwoty i daty same.
+      </p>
+    );
+  }
+  if (!pola.length) {
+    return (
+      <p className="note" role="status">
+        Brak danych w profilu dla tego kalkulatora — uzupełnij „Moje dane”, żeby nie wpisywać ich ręcznie.
+      </p>
+    );
+  }
+  return (
+    <div className="profil-info" role="status">
+      <Badge>Z PROFILU</Badge>
+      <span className="profil-info-opis">
+        Te wartości wzięliśmy z „Moich danych” — możesz je zmienić poniżej:
+      </span>
+      <ul className="profil-info-lista">
+        {pola.map((p) => (
+          <li key={p.pole}>
+            <strong>{p.etykieta}:</strong> {p.wartosc}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

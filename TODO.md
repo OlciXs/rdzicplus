@@ -14,9 +14,30 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 > - kroki (2)–(3) od strony silnika – Claude, 20:40, bez commita: `frontend/src/engine/wnioski/` – **14 wniosków, 45 wariantów** (w tym 9 informacyjnych), ocena każdego wariantu na podstawie profilu Oli (`dostepny` / `niedostepny` + powód / `brak_danych` + które pola / `nie_dotyczy` / `informacja`), wymiar, wysokość, adresat (pracodawca / ZUS / gmina), formularz, termin z konkretną datą, dokumenty, pola do uzupełnienia, ostrzeżenia V1–V40. **38 testów** na rodzinach (razem 88). Opis w README → „Wnioski i warianty”
 > - ekran „Złóż wniosek” – Claude, 21:00, bez commita: `/wnioski` (kafelek w panelu + pozycja w menu): kafelki 14 wniosków z licznikami (przysługuje / brak danych / nie przysługuje, „nie dotyczy” wyszarzone na końcu), ostrzeżenia dla sprawy, karty wariantów z powodami, terminami z datą, dokumentami i warunkami ✓/✗/?; linki „uzupełnij” otwierają „Moje dane” na właściwym kroku (dodane `?krok=` w `ProfilePage.jsx`). Sprawdzone w przeglądarce (pusty profil → „ZACZNIJ TU”; profil Bożeny → chorobowy 2 przysługuje, macierzyński 2 przysługuje) i na telefonie
 > - **generator wniosków do druku / PDF** – Claude, 21.11 w nocy, bez commita: `/wnioski/druk?v=…` (przycisk „🖨️ Przygotuj wniosek do druku” na karcie wariantu, który przysługuje albo czeka na dane). **11 wariantów:** W1, W2, W3, W5, W22, W4, W21, W25, W12, W28, W11. Pola z „Moje dane” (do poprawienia na ekranie, nie nadpisują profilu), oświadczenia J1/J2/J14/J20 i 81,5% jako checkboxy, lista załączników, kontrola terminów i okresów na żywo (np. ojcowski 7 dni przed i do 12. miesiąca, rodzicielski 21 dni i max 32 tyg. na rodzica, 6 tyg. przed porodem, 14 tyg. matki przed przejęciem, ½ etatu przy łączeniu). Osoba bez umowy o pracę dostaje „ściągę” z danymi do ZAM w eZUS zamiast pisma do pracodawcy. Druk / PDF przez okno drukowania przeglądarki (style `@media print`). Silnik: `engine/wnioski/druki.js`, 15 testów + fuzz na 1000 profilach (znalazł ujemne liczby z profilu i wyjątek przy absurdalnych tygodniach – naprawione)
-> **Następne:** symulowana „wysyłka” wniosku (do pracodawcy / do ZUS przez PUE) z numerem i statusem w „Dane z ZUS”; kalendarz terminów od daty porodu; drobne: `db.json` – cofnąć `mob-mariuszz` (test Enarda) i dodać plik do `.gitignore`.
+> - **symulowana wysyłka wniosku** – Claude, 21.11 w nocy, bez commita: na ekranie druku sekcja „Wyślij do pracodawcy / do ZUS przez PUE (symulacja)” – aktywna tylko dla kompletnego wniosku bez błędów i po zaznaczeniu „dane zgodne z prawdą”. Backend `POST /api/wnioski/wyslij` (walidacja, numer `WN-…` albo `ZUS-ZAM-…` + UPO), wysłane widać w „Dane z ZUS” → „Twoje wnioski” z etapem 1/3 → 2/3 (po 20 s) → 3/3 (po 1 min) i przyciskiem „Odśwież statusy”. W pamięci serwera, jak odpisy – po restarcie znikają
+> **Następne:** kalendarz terminów od daty porodu (co i do kiedy złożyć – z rejestru wariantów, eksport .ics); drobne: `db.json` – cofnąć `mob-mariuszz` (test Enarda) i dodać plik do `.gitignore`.
 > **Do potwierdzenia w generatorze:** treść pism oparta na `docs/02` (szkic z Mistrala) – sprawdzić z rozporządzeniem o wnioskach; W1 po porodzie (urlop przysługuje z mocy prawa, pismo to raczej „informacja + wniosek o 81,5%”); zakres danych ZAM
 > **Do weryfikacji (oznaczone w kodzie `do_potwierdzenia`):** W4 uzupełniający dla nie-pracowników, W12 łączenie z pracą (wydłużona część, pole I14), W44 podwyższenie (szacunek podatku), W47 chorobowy po ustaniu (14 dni), W11 staż 6 mies., W19 świadczenie rodzicielskie (poza ZUS). W dokumentach Mistrala jest też nieaktualny **Z-3b** (zlikwidowany 24.10.2026) – w rejestrze go nie używamy.
+
+### Przegląd po PR #9 i #10 (Claude, 21.11 ~23:00, bez commita)
+Sprawdzone: 230 testów (7 plików), build, API 44/44 przez Dockera, wszystkie strony 200, 7 kalkulatorów z profilem w przeglądarce (komputer + telefon), druk, panel, „Dane z ZUS”.
+
+**Naprawione:**
+- [x] **Merge PR #9 (`calc`) usunął style ekranu druku** (`themes.css`: kartka pisma, checkboxy, `@media print` – na wydruku byłoby menu i przyciski). Przywrócone obok nowych stylów paska „Z PROFILU”
+- [x] **Kalkulator g) dokumenty:** profil „po porodzie” wstawiał etap `poPorodzie`, którego nie ma na liście – pole pokazywało „Ciąża – L4”, a lista dokumentów liczyła się dla nieznanego etapu (test to utrwalał). Teraz: `porod`, `adopcja`, `martwe`, `przedPorodem`; po porodzie stare L4 z kodem B nie cofa etapu do ciąży. Osoba współpracująca → „działalność”; duchowny/marynarz nie są na liście, więc nic nie wstawiamy
+- [x] **b) macierzyński:** zgon dziecka zawsze dawał „zgon po 8 tyg.” – teraz z dat: przed 8. tygodniem = wariant „martwe” (art. 180 § 6 k.p.); brak odpowiedzi o urlopie ojcowskim (u matki tego pytania nie ma) wyłączał urlop ojcowski w wyliczeniu
+- [x] **d) oboje rodzice:** wykorzystany rodzicielski zalogowanego OJCA trafiał w kolumnę matki; ujemne tygodnie z profilu były podstawiane
+- [x] **e) adopcja:** zawodowa rodzina zastępcza dostawała tryb „rodzina zastępcza” (kalkulator pokazywał urlop, do którego nie ma prawa – art. 183 § 1 k.p.)
+- [x] **a) chorobowy:** próg zaległości wpisany na sztywno (48,06) – teraz z parametrów admina
+- [x] **f) podstawa:** pasek „Z PROFILU” był tylko przy „brak danych”, a nie przy wyniku; przy ½ etatu komunikat mówił „Podniesiono do minimum 4 147,10 zł”, a wynik to 2 073,55 zł – teraz kwota z silnika i wzór
+- [x] **Pasek „Z PROFILU”** pokazywał wartości techniczne („obw”, „porod”, „81.5”, „0.5”, daty RRRR-MM-DD) i niejasną „Data urodzenia” w a) (to data matki) – teraz tekst, zł, %, daty po polsku; nie miga „Wypełnij Moje dane po zalogowaniu” zalogowanemu w trakcie wczytywania
+- [x] Nowe testy (14): każda podstawiana wartość musi być na liście wyboru kalkulatora (sprawdzane na 1 680 kombinacjach profilu) + czytelność paska; na starym kodzie 8 z nich nie przechodzi
+
+**Do decyzji (nie zmieniałem):**
+- [ ] Profil ma „Wymiar czasu pracy: pełny / część etatu”, a kalkulator f) potrzebuje ułamka – „część” zamieniamy na ½ (zgadywanie). Lepiej w profilu zapytać o ułamek (¼, ½, ¾)
+- [ ] a) chorobowy: osoba bez ubezpieczenia chorobowego (dzieło, student, brak) zostaje przy domyślnym „obowiązkowe” – kalkulator nie ma opcji „brak ubezpieczenia”
+- [ ] Panel: karta „Twoje dane z mObywatela” pokazuje też adres i rachunek, które pochodzą z „Moje dane”, nie z mObywatela (rachunek w całości)
+- [ ] `backend/data/db.json` znowu z testowymi logowaniami (Ola, 2 commity) – każdy taki commit kasuje bazę na serwerze przy deployu (patrz niżej, `.gitignore`)
 
 ### Przegląd i testy zaawansowane (Claude, sobota 21.11 wieczorem, bez commita)
 Sprawdzone: **171 testów** (5 plików, w tym nowy `fuzz.test.js` – 6000 losowych przypadków), build, 34 testy brzegowe API (bezpośrednio i przez proxy frontu w Dockerze), Docker (`docker compose up --build`: oba kontenery healthy, wszystkie strony 200), przeglądarka (logowanie, panel, profil, ZUS, odpis, 12 wniosków, kalkulator macierzyński, admin) – bez `NaN`/`undefined`, bez błędów w konsoli.
@@ -326,7 +347,7 @@ Wagi oceny: związek z wyzwaniem 25% · kompletność + UX 25% · pomysł 20% ·
 - [ ] P0: na podstawie profilu lista „Twoje dokumenty” (co, do kogo, termin, link do wzoru na zus.pl)
 - [ ] P0: kalendarz terminów od daty porodu (14 / 21 / 7 dni, 12 miesięcy, 6 lat, §2.7 „Terminy wniosków”)
 - [x] P1: **generator wniosków urlopowych do pracodawcy** – `/wnioski/druk` (11 wariantów, autouzupełnianie z profilu, kontrola terminów, druk/PDF z przeglądarki, ściąga do ZAM dla nie-pracowników). Zostało: potwierdzić treść z rozporządzeniem RWN
-- [ ] P1: symulowana „wysyłka do pracodawcy / do ZUS (PUE)” z potwierdzeniem
+- [x] P1: symulowana „wysyłka do pracodawcy / do ZUS (PUE)” z potwierdzeniem – ekran druku + „Dane z ZUS”
 - [ ] P2: eksport terminów do kalendarza (.ics)
 
 ---

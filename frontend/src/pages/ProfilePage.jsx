@@ -4,6 +4,10 @@ import AppHeader from "../components/AppHeader.jsx";
 import { useAuth } from "../auth.js";
 import { useProfile } from "../profile.js";
 
+import {
+  ROLE, ETAPY_DLA, HINT_ETAPU, ROLE_DLA, jestOpcjonalne,
+} from "../profile-logic/etapy.js";
+
 /* =====================================================================
    FORMULARZ ETAPOWY "MOJE DANE"
    Zbiera dane potrzebne do wyboru i wypełnienia wniosków ZUS / pracodawcy.
@@ -49,16 +53,6 @@ const GRUPA = {
 };
 
 const TAK_NIE = [["tak", "Tak"], ["nie", "Nie"]];
-const ETAPY = [
-  ["ciaza", "Jestem w ciąży (dziecko jeszcze się nie urodziło)"],
-  ["po_porodzie", "Dziecko już się urodziło"],
-  ["przyjecie", "Przyjęłam/em dziecko na wychowanie (adopcja / piecza zastępcza)"],
-];
-const ROLE = [
-  ["matka", "Matka dziecka (także adopcyjna / zastępcza)"],
-  ["ojciec", "Ojciec dziecka (także adopcyjny / zastępczy)"],
-  ["inny", "Inny członek najbliższej rodziny (np. babcia, dziadek)"],
-];
 const RODZAJE_PRZYJECIA = [
   ["przysposobienie", "Przysposobienie (adopcja)"],
   ["rodzina_zastepcza", "Rodzina zastępcza niezawodowa"],
@@ -125,10 +119,12 @@ const STEPS = [
         data: "sytuacja",
         title: "Na jakim etapie jesteś?",
         fields: [
-          { name: "etap", label: "Etap", type: "select", options: ETAPY, wide: true },
+          { name: "etap", label: "Etap", type: "select", wide: true,
+            options: (c) => ETAPY_DLA(c.plec, c.rola),
+            hint: (c) => HINT_ETAPU(c.plec, c.rola) },
           {
             name: "rola", label: "Kim jesteś dla dziecka?", type: "select", wide: true,
-            options: (c) => ROLE.filter(([v]) => !(c.plec === "K" && v === "ojciec") && !(c.plec === "M" && v === "matka")),
+            options: (c) => ROLE_DLA(c.plec),
             hint: "Podpowiedzieliśmy na podstawie PESEL - od roli zależy, jakie uprawnienia masz (np. urlop ojcowski tylko dla ojca).",
           },
           { name: "typPrzyjecia", label: "Rodzaj przyjęcia dziecka", type: "select", options: RODZAJE_PRZYJECIA, wide: true, if: (c) => c.etap === "przyjecie",
@@ -218,11 +214,16 @@ const STEPS = [
           { name: "przewidywanaDataPorodu", label: "Przewidywana data porodu", type: "date", if: (c) => c.etap === "ciaza", hint: "Z karty ciąży lub od lekarza prowadzącego." },
           { name: "liczbaDzieci", label: "Liczba dzieci z jednego porodu", type: "number", min: 1, max: 10, if: (c) => c.etap !== "przyjecie",
             hint: "1 = pojedynczy poród, 2 = bliźnięta itd. Wpływa na długość urlopu." },
-          { name: "imie", label: "Imię dziecka", if: (c) => c.etap && c.etap !== "ciaza" },
-          { name: "nazwisko", label: "Nazwisko dziecka", if: (c) => c.etap && c.etap !== "ciaza" },
-          { name: "pesel", label: "PESEL dziecka (jeśli nadany)", inputMode: "numeric", kind: "pesel", if: (c) => c.etap && c.etap !== "ciaza" },
-          { name: "dataUrodzenia", label: "Data urodzenia", type: "date", max: "today", if: (c) => c.etap && c.etap !== "ciaza" },
-          { name: "miejsceUrodzenia", label: "Miejsce urodzenia", if: (c) => c.etap === "po_porodzie" },
+          // Dane z aktu urodzenia. Przed porodem zwykle ich nie znamy, ale można je
+          // przygotować zawczasu — dlatego są widoczne też w ciąży, tylko opcjonalne.
+          { name: "imie", label: "Imię dziecka", optional: (c) => c.etap === "ciaza", if: (c) => !!c.etap,
+            hint: (c) => (c.etap === "ciaza" ? "Możesz uzupełnić, gdy już znasz imię (albo zostawić na później)." : undefined) },
+          { name: "nazwisko", label: "Nazwisko dziecka", optional: (c) => c.etap === "ciaza", if: (c) => !!c.etap },
+          { name: "pesel", label: "PESEL dziecka (jeśli nadany)", inputMode: "numeric", kind: "pesel", optional: (c) => c.etap === "ciaza", if: (c) => !!c.etap },
+          { name: "dataUrodzenia", label: "Data urodzenia", type: "date", max: "today",
+            optional: (c) => c.etap === "ciaza", if: (c) => c.etap && c.etap !== "ciaza" },
+          { name: "miejsceUrodzenia", label: "Miejsce urodzenia", optional: (c) => c.etap === "ciaza",
+            if: (c) => c.etap === "po_porodzie" || c.etap === "ciaza" },
           yn("martwe", "Czy dziecko urodziło się martwe?", { if: (c) => c.etap === "po_porodzie" }),
           yn("zmarlo", "Czy dziecko zmarło po urodzeniu?", { if: (c) => c.etap === "po_porodzie" && c.d.martwe === "nie" }),
           { name: "dataZgonu", label: "Data zgonu dziecka", type: "date", if: (c) => tak(c.d.zmarlo) },
@@ -406,12 +407,13 @@ function validate(form, sections) {
 
 const isFilled = (v) => !(v === "" || v === null || v === undefined || v === false);
 
+
 const stepProgress = (step, form) => {
   const c = ctxOf(form);
   let total = 0, done = 0;
   for (const sec of visibleSections(step, c)) {
     for (const f of visibleFields(sec, c)) {
-      if (f.optional) continue;
+      if (jestOpcjonalne(f, c)) continue;
       total += 1;
       if (isFilled(form[sec.data]?.[f.name])) done += 1;
     }
@@ -497,7 +499,11 @@ function Field({ sec, f, form, c, errors, set }) {
       {err ? (
         <span id={`${id}-err`} className="field-error" role="alert">{err}</span>
       ) : (
-        f.hint && <span className="field-hint">{f.hint}</span>
+        (() => {
+          // `hint` może być tekstem albo funkcją kontekstu (np. inna podpowiedź dla ojca).
+          const hint = typeof f.hint === "function" ? f.hint(c) : f.hint;
+          return hint ? <span className="field-hint">{hint}</span> : null;
+        })()
       )}
     </div>
   );
@@ -664,7 +670,7 @@ export default function ProfilePage() {
                 })}
               </ul>
               <dl className="data-list">
-                <div><dt>Etap</dt><dd>{ETAPY.find(([v]) => v === form.sytuacja.etap)?.[1] ?? "-"}</dd></div>
+                <div><dt>Etap</dt><dd>{ETAPY_DLA(form.ubezpieczony?.plec, form.sytuacja?.rola).find(([v]) => v === form.sytuacja.etap)?.[1] ?? "-"}</dd></div>
                 <div><dt>Rola</dt><dd>{ROLE.find(([v]) => v === form.sytuacja.rola)?.[1] ?? "-"}</dd></div>
                 <div><dt>Tytuł ubezpieczenia</dt><dd>{okolicznosci(form.ubezpieczony.statusUbezpieczenia)}</dd></div>
                 <div><dt>Drugi rodzic</dt><dd>{form.drugiRodzic.brak ? "brak" : [form.drugiRodzic.imie, form.drugiRodzic.nazwisko].filter(Boolean).join(" ") || "-"}</dd></div>

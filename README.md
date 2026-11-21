@@ -75,12 +75,52 @@ zbierają dane z formularza i wyświetlają wynik.
 | `engine/platnik.js` | g) płatnik (> 20 ubezpieczonych) czy ZUS |
 | `engine/engine.test.js` | testy z ręcznie policzonymi wartościami |
 | `engine/wnioski/` | **wnioski i ich warianty**: co przysługuje przy danym profilu (niżej) |
+| `calculators/useProfileDefaults.js` | **podstawianie danych z „Moich danych”** do kalkulatorów: komplet pól (podstawa, daty, staż ubezpieczenia, kod B, liczba ubezpieczonych, zaległość, wymiar etatu, tydzień ciąży, dni hospitalizacji) + pasek „Z PROFILU” pokazujący, co zostało wstawione |
 
-Testy (161: kalkulatory, warianty wniosków, regresje do `RAPORT_BLEDOW.md` i spójność z bazą wiedzy):
+Testy (249: kalkulatory, podstawianie profilu, logika formularza (płeć/rola), warianty wniosków, regresje do `RAPORT_BLEDOW.md` i spójność z bazą wiedzy):
 
 ```bash
 cd frontend && npm test
 ```
+
+## Formularz „Moje dane” — logika zależna od płci i roli
+
+Etykiety i widoczność pól zależą od tego, kim jesteś — żeby nie było pytań bez sensu:
+
+| Sytuacja | Co widzisz |
+| --- | --- |
+| Kobieta, rola „matka” | etap **„Jestem w ciąży”** |
+| Mężczyzna (każda rola) lub rola „ojciec” | etap **„Moja partnerka jest w ciąży”** + podpowiedź, że chodzi o ciążę drugiego rodzica |
+| Kobieta | role: matka, inny członek rodziny (bez „ojciec”) |
+| Mężczyzna | role: ojciec, inny członek rodziny (bez „matka”) |
+
+**Dane z aktu urodzenia** (imię, nazwisko, PESEL, miejsce urodzenia dziecka) można uzupełnić
+**także w ciąży** — wtedy jako opcjonalne, bo zwykle jeszcze ich nie znasz, ale możesz przygotować
+je zawczasu. Data urodzenia pojawia się dopiero po porodzie. Pola opcjonalne nie blokują
+ukończenia kroku (nie liczą się do paska postępu).
+
+Logika jest w `src/profile-logic/etapy.js` (czysty JS, bez Reacta) i pokryta testami
+`etapy.test.js` — m.in. sprawdzają, że żadna etykieta nie mówi mężczyźnie, że jest w ciąży,
+a klucze etapów (`ciaza` / `po_porodzie` / `przyjecie`) pozostają zgodne z silnikiem wniosków.
+
+## Kalkulatory a „Moje dane”
+
+Kalkulatory nie każą niczego przepisywać. Po zalogowaniu dane lecą z profilu:
+
+| Kalkulator | Co podstawia z profilu |
+| --- | --- |
+| a) chorobowy | tytuł ubezpieczenia (obowiązkowe/dobrowolne), podstawa, data urodzenia, **staż ubezpieczenia** (liczony z daty), **liczba ubezpieczonych u płatnika**, początek zwolnienia, **kod B** (ze `zdrowie.zwolnienie`), zaległość (kwota powyżej progu = blokada) |
+| b) macierzyński | data porodu/PDP, podstawy obojga rodziców, „Za życiem”, martwe urodzenie/zgon, wniosek 81,5%, **dni hospitalizacji** (liczone z dat), tydzień ciąży, masa, plan ojcowski |
+| c) łączenie z pracą | podstawa, liczba dzieci, **wymiar pracy**, stawka 81,5%/70% |
+| d) oboje rodzice | podstawy obojga, wykorzystane tygodnie macierzyńskiego i rodzicielskiego, liczba części, wniosek 81,5% |
+| e) adopcja | tryb (przysposobienie/rodzina zastępcza), data przyjęcia, data urodzenia, odroczenie szkolne, „Za życiem” |
+| f) podstawa wymiaru | status, **wymiar etatu** (minimum liczone proporcjonalnie — art. 45 ust. 1 u.z.) |
+| g) dokumenty | tytuł, liczba ubezpieczonych, zaległość, etap sprawy |
+
+Płeć z PESEL-u decyduje, czy Twoje dane trafiają w pola „matka”, czy „ojciec”; dane drugiego rodzica
+idą w pole przeciwne. Pasek **„Z PROFILU”** na górze kalkulatora pokazuje, co zostało podstawione —
+nic nie jest nadpisywane ponownie, więc możesz dowolnie zmienić wartości. Niezalogowany widzi
+zachętę do wypełnienia „Moich danych” i kalkulator na wartościach domyślnych.
 
 ## Wnioski i warianty („każdy wariant” – wymaganie mentorów ZUS)
 
@@ -108,6 +148,8 @@ Rodzic wypełnia „Moje dane”, wybiera wniosek, a silnik ocenia **każdy wari
 Wniosek do druku: `frontend/src/pages/Druk.jsx` (`/wnioski/druk?v=W21`) + silnik `engine/wnioski/druki.js` – pismo do pracodawcy
 (albo dane do ZAM dla osoby bez umowy o pracę) wypełnione z „Moje dane”, z oświadczeniami, załącznikami i kontrolą terminów;
 „Drukuj / zapisz jako PDF” otwiera okno drukowania przeglądarki. Testy: `engine/wnioski/druki.test.js` i fuzz.
+Kompletny wniosek bez błędów można też „wysłać” (symulacja, `POST /api/wnioski/wyslij` w `backend/zus-mock.js`) –
+dostaje numer (przy ZAM także UPO) i status, który zmienia się w czasie w „Dane z ZUS” → „Twoje wnioski”.
 
 Ekran: `frontend/src/pages/Wnioski.jsx` (`/wnioski`) – kafelki wniosków z licznikami (najpierw to, co przysługuje),
 ostrzeżenia dla całej sprawy, a po wyborze wniosku karta każdego wariantu: wymiar, wysokość, gdzie złożyć, termin,
