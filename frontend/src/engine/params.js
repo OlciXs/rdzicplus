@@ -30,6 +30,9 @@ export const DEFAULT_PARAMS = Object.freeze({
   minPodstawaDobrowolni: 4877.11,
   progZaleglosci: 48.06, // 1% minimalnego wynagrodzenia - blokada zasiłków (art. 2a UZ)
   progPlatnika: 20, // > 20 ubezpieczonych (stan na 30 XI) → zasiłki wypłaca płatnik, inaczej ZUS (art. 61 UZ)
+  swiadczenieRodzicielskie: 1000, // zł/mies. – kwota, do której podwyższa się niski zasiłek macierzyński (art. 31 ust. 3a UZ)
+  zasilekPogrzebowy: 7000, // zł
+  limitOpiekunczyDni: 60, // łącznie w roku kalendarzowym
 
   // zasiłek chorobowy
   oczekiwanieObowiazkowe: 30, // dni ubezpieczenia (obowiązkowe)
@@ -100,6 +103,9 @@ export const PARAM_GROUPS = [
       minPodstawaDobrowolni: "Typowe minimum – dobrowolni",
       progZaleglosci: "Próg zaległości blokującej zasiłek",
       progPlatnika: "Płatnik wypłaca zasiłki powyżej (osób)",
+      swiadczenieRodzicielskie: "Świadczenie rodzicielskie – minimum zasiłku macierzyńskiego",
+      zasilekPogrzebowy: "Zasiłek pogrzebowy",
+      limitOpiekunczyDni: "Zasiłek opiekuńczy – limit dni w roku",
     },
   },
   {
