@@ -168,3 +168,55 @@ describe("druki – odporność", () => {
     }
   });
 });
+
+describe("druki – odczyt dziecka z tablicy (regresja ZADANIE-3)", () => {
+  const profilZDzieckiemWTablicy = profil({
+    sytuacja: { etap: "po_porodzie", rola: "matka" },
+    dziecko: {
+      imie: "",
+      nazwisko: "",
+      dataUrodzenia: "",
+      miejsceUrodzenia: "",
+      dzieci: [
+        { imie: "Zosia", nazwisko: "Nowak", dataUrodzenia: "2026-11-10", miejsceUrodzenia: "Warszawa" }
+      ]
+    }
+  });
+
+  it("W21: dane dziecka z tablicy trafiają do pól wniosku", () => {
+    const d = druk(profilZDzieckiemWTablicy, "W21");
+    expect(wartosc(d, "dzieckoImie")).toBe("Zosia");
+    expect(wartosc(d, "dzieckoNazwisko")).toBe("Nowak");
+    expect(wartosc(d, "dzieckoUr")).toBe("2026-11-10");
+  });
+
+  it("W21: treść wniosku zawiera dane dziecka z tablicy", () => {
+    const d = druk(profilZDzieckiemWTablicy, "W21");
+    expect(d.tresc[0]).toContain("Zosia Nowak");
+    expect(d.tresc[0]).toContain("ur. 10.11.2026");
+  });
+
+  it("W25: dane dziecka z tablicy trafiają do pól wniosku", () => {
+    const d = druk(profilZDzieckiemWTablicy, "W25");
+    expect(wartosc(d, "dzieckoImie")).toBe("Zosia");
+    expect(wartosc(d, "dzieckoNazwisko")).toBe("Nowak");
+    expect(wartosc(d, "dzieckoUr")).toBe("2026-11-10");
+  });
+
+  it("W1: data urodzenia z tablicy używana w polu porodu", () => {
+    const d = druk(profilZDzieckiemWTablicy, "W1");
+    expect(wartosc(d, "porod")).toBe("2026-11-10");
+  });
+
+  it("pusty profil nie powoduje błędu", () => {
+    const d = przygotujDruk(null, "W21", { dzis: DZIS });
+    expect(d).not.toBeNull();
+    expect(d.pola.length).toBeGreaterThan(0);
+  });
+
+  it("profil z pustym dziecko nie powoduje błędu", () => {
+    const d = przygotujDruk(profil({ dziecko: { imie: "", nazwisko: "", zaZyciem: false } }), "W21", { dzis: DZIS });
+    expect(d).not.toBeNull();
+    expect(wartosc(d, "dzieckoImie")).toBe("");
+  });
+});

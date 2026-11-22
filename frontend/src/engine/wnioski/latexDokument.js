@@ -12,6 +12,7 @@
    z tej samej preambuły, żeby każda opcja drukowania miała co zapisać.
    ===================================================================== */
 import { D } from "./druki.js";
+import { pobierzDaneDziecka } from "./dzieckoHelper.js";
 import latexDane from "./latex_szablony.json";
 
 /* Wygenerowane przez `python3 latex/gen_latex.py` z latex/szablony/*.tex.
@@ -92,6 +93,7 @@ function daneZProfilu(profil = {}) {
   const dz = profil.dziecko ?? {};
   const dr = profil.drugiRodzic ?? {};
   const ur = profil.urlopy ?? {};
+  const d = pobierzDaneDziecka(profil);
   return {
     imie: scal(u.imie, u.nazwisko),
     adres: tekst(u.adres),
@@ -100,18 +102,18 @@ function daneZProfilu(profil = {}) {
     platnik_nazwa: tekst(pl.nazwa),
     platnik_nip: tekst(pl.nip),
     platnik_adres: tekst(pl.adres),
-    dziecko_imie: scal(dz.imie, dz.nazwisko),
-    dziecko_pesel: tekst(dz.pesel),
-    liczba_dzieci: tekst(dz.liczbaDzieci),
+    dziecko_imie: scal(d.imie, d.nazwisko),
+    dziecko_pesel: tekst(d.pesel),
+    liczba_dzieci: tekst(d.liczbaDzieci),
     drugi_rodzic: scal(dr.imie, dr.nazwisko),
-    tydzien_ciazy: TYDZIEN_CIAZY[tekst(dz.tydzienCiazy)] ?? tekst(dz.tydzienCiazy),
-    masa: tekst(dz.masaUrodzenia),
-    szpital_od: dataPL(dz.szpitalOd),
-    szpital_do: dataPL(dz.szpitalDo),
+    tydzien_ciazy: TYDZIEN_CIAZY[tekst(d.tydzienCiazy || dz.tydzienCiazy)] || tekst(d.tydzienCiazy || dz.tydzienCiazy),
+    masa: tekst(d.masaUrodzenia || dz.masaUrodzenia),
+    szpital_od: dataPL(d.szpitalOd || dz.szpitalOd),
+    szpital_do: dataPL(d.szpitalDo || dz.szpitalDo),
     wymiar_etatu: tekst(u.wymiarEtatu) === "pelny" ? "1" : tekst(u.wymiarEtatu) === "czesc" ? "część" : tekst(u.wymiarEtatu),
     podstawa: tekst(u.podstawaWymiaru),
     tygodnie_matka: tekst(ur.macierzynskiWykorzystanoTyg),
-    data_zdarzenia: dataPL(dz.dataZgonu || dr.dataOkolicznosci),
+    data_zdarzenia: dataPL(d.dataZgonu || dz.dataZgonu || dr.dataOkolicznosci),
   };
 }
 
@@ -124,7 +126,7 @@ export function daneDoLatex(druk, profil = {}) {
   const pola = Object.fromEntries((druk?.pola ?? []).map((p) => [p.id, tekst(p.wartosc)]));
   const p = (id) => pola[id] ?? "";
 
-  const dziecko = profil.dziecko ?? {};
+  const d = pobierzDaneDziecka(profil);
   const urlopy = profil.urlopy ?? {};
   const drugiRodzic = profil.drugiRodzic ?? {};
 
@@ -133,8 +135,8 @@ export function daneDoLatex(druk, profil = {}) {
 
   const urlopOd = p("od") || p("urlopOd") || urlopy.rodzicielskiOd || urlopy.urlopPrzedPorodemOd;
   const urlopDo = p("do") || p("urlopDo") || urlopy.rodzicielskiDo;
-  const pdp = p("pdp") || dziecko.przewidywanaDataPorodu;
-  const dataPorodu = p("porod") || p("dzieckoUr") || dziecko.dataUrodzenia || dziecko.przewidywanaDataPorodu;
+  const pdp = p("pdp") || d.przewidywanaDataPorodu;
+  const dataPorodu = p("porod") || p("dzieckoUr") || d.dataUrodzenia || d.przewidywanaDataPorodu;
 
   // Wymiar urlopu: najpierw z dat, potem z pól przekazanych przez ekran.
   let tygodnie = p("tygodnie");
@@ -146,8 +148,13 @@ export function daneDoLatex(druk, profil = {}) {
   }
 
   const dniHospitalizacji = (() => {
-    const d = dniMiedzy(dziecko.szpitalOd, dziecko.szpitalDo);
-    return d === null || d < 0 ? "" : String(d + 1);
+    const szpOd = d.szpitalOd;
+    const szpDo = d.szpitalDo;
+    const dz = profil.dziecko ?? {};
+    const d1 = dniMiedzy(szpOd, szpDo);
+    const d2 = dniMiedzy(dz.szpitalOd, dz.szpitalDo);
+    const result = d1 !== null && d1 >= 0 ? d1 : (d2 !== null && d2 >= 0 ? d2 : null);
+    return result === null || result < 0 ? "" : String(result + 1);
   })();
 
   return {

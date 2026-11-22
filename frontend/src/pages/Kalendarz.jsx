@@ -4,6 +4,7 @@ import AppHeader from "../components/AppHeader.jsx";
 import { useProfile } from "../profile.js";
 import { CFG } from "../calculators/config.js";
 import { terminyWnioskow, doIcs } from "../engine/index.js";
+import { etykietaTerminu, klasaBadga } from "./kalendarzEtykiety.js";
 
 /* =====================================================================
    Kalendarz terminów. Daty liczy silnik (src/engine/wnioski/kalendarz.js) –
@@ -14,7 +15,6 @@ import { terminyWnioskow, doIcs } from "../engine/index.js";
 // Daty z silnika to „RRRR-MM-DD” – w kalendarzu porównujemy je jako tekst (bez stref czasowych).
 const isoDnia = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const fmt = (iso) => (iso ? new Date(`${iso}T12:00:00`).toLocaleDateString("pl-PL", { day: "numeric", month: "long", year: "numeric" }) : "—");
-const dniDo = (iso, dzis) => Math.round((Date.parse(`${iso}T00:00:00Z`) - Date.parse(`${dzis}T00:00:00Z`)) / 86400000);
 
 const TYP = {
   termin: { etykieta: "Termin wniosku", klasa: "deadline" },
@@ -106,10 +106,14 @@ export default function Kalendarz() {
               return (
                 <div className={`calendar-day ${day ? "" : "calendar-empty"} ${dzien === dzis ? "calendar-today" : ""}`} key={i}>
                   {day && <span className="calendar-day-number">{day}</span>}
-                  {dayEvents.map((e) => (
-                    <a className={`calendar-dot ${TYP[e.typ].klasa}`} href={`#t-${e.id}`} title={e.tytul} key={e.id}>{TYP[e.typ].etykieta}</a>
-                  ))}
-                  {reminders.map((e) => <a className="calendar-dot reminder" href={`#t-${e.id}`} title={`Za 7 dni: ${e.tytul}`} key={`r-${e.id}`}>Za 7 dni</a>)}
+                  {dayEvents.map((e) => {
+                    const etykieta = etykietaTerminu(e, dzis);
+                    return <a className={`calendar-dot ${TYP[e.typ].klasa}`} href={`#t-${e.id}`} title={`${etykieta}: ${e.tytul}`} key={e.id}>{etykieta}</a>;
+                  })}
+                  {reminders.map((e) => {
+                    const etykieta = etykietaTerminu(e, dzis, "przypomnienie");
+                    return <a className="calendar-dot reminder" href={`#t-${e.id}`} title={`${etykieta}: ${e.tytul}`} key={`r-${e.id}`}>{etykieta}</a>;
+                  })}
                 </div>
               );
             })}
@@ -124,16 +128,13 @@ export default function Kalendarz() {
               <Link className="btn btn-primary" to="/profil?krok=dziecko">Uzupełnij dane dziecka</Link>
             </div>
           ) : events.map((e) => {
-            const ile = dniDo(e.data, dzis);
             const pilny = e.typ === "termin" || e.typ === "koniec";
-            const badge = !pilny ? { t: TYP[e.typ].etykieta, c: "b-ok" }
-              : ile < 0 ? { t: "Termin minął", c: "b-err" }
-              : ile <= 7 ? { t: ile === 0 ? "Dziś ostatni dzień" : `Pilne – ${ile} dni`, c: "b-warn" }
-              : { t: `Za ${ile} dni`, c: "b-ok" };
+            const badgeText = etykietaTerminu(e, dzis);
+            const badgeClass = klasaBadga(e, dzis);
             return (
               <article id={`t-${e.id}`} className={`calendar-event ${completed[e.id] ? "is-completed" : ""}`} key={e.id}>
                 <div className="calendar-event-main">
-                  <span className={`badge ${badge.c}`}>{badge.t}</span>{" "}
+                  <span className={`badge ${badgeClass}`}>{badgeText}</span>{" "}
                   {e.pewnosc !== "pewne" && <span className="badge b-warn">{e.pewnosc === "szacunek" ? "data szacunkowa" : "do potwierdzenia"}</span>}
                   <h3>{e.tytul}</h3>
                   <dl className="data-list">

@@ -18,6 +18,7 @@ import { DEFAULT_PARAMS } from "../params.js";
 import { tygodnieMac, tygodnieRodz } from "../helpers.js";
 import { kontekstSprawy } from "./kontekst.js";
 import { uzupelniajacyWymiar } from "./rejestr.js";
+import { pobierzDaneDziecka } from "./dzieckoHelper.js";
 
 const DAY = 86400000;
 
@@ -67,11 +68,14 @@ const dniOkresu = (v, od, doDnia) => {
 };
 
 /* ---------- wspólne pola ---------- */
-const polaDziecka = (k) => [
-  pole("dzieckoImie", "Imię dziecka", "text", k.profil.dziecko?.imie),
-  pole("dzieckoNazwisko", "Nazwisko dziecka", "text", k.profil.dziecko?.nazwisko),
-  pole("dzieckoUr", "Data urodzenia dziecka", "date", iso(k.profil.dziecko?.dataUrodzenia)),
-];
+const polaDziecka = (k) => {
+  const d = pobierzDaneDziecka(k.profil);
+  return [
+    pole("dzieckoImie", "Imię dziecka", "text", d.imie),
+    pole("dzieckoNazwisko", "Nazwisko dziecka", "text", d.nazwisko),
+    pole("dzieckoUr", "Data urodzenia dziecka", "date", iso(d.dataUrodzenia)),
+  ];
+};
 const dziecko = (v) => `${T(v.dzieckoImie)} ${v.dzieckoNazwisko ? v.dzieckoNazwisko : ""}`.trim() + `, ur. ${D(v.dzieckoUr)}`;
 const tygDzieci = (k) => tygodnieMac(k.liczbaDzieci ?? 1, k.P);
 
@@ -85,9 +89,10 @@ const SZABLONY = {
     zam: "zasiłek macierzyński",
     podstawa: "art. 180 § 1 k.p.; wniosek o pełny wymiar – art. 179¹ k.p.",
     pola: (k) => {
-      const ur = iso(k.profil.dziecko?.dataUrodzenia) || iso(k.profil.dziecko?.przewidywanaDataPorodu);
+      const d = pobierzDaneDziecka(k.profil);
+      const ur = iso(d.dataUrodzenia) || iso(d.przewidywanaDataPorodu);
       return [
-        pole("porod", "Data porodu", "date", ur, { pomoc: k.profil.dziecko?.dataUrodzenia ? undefined : "Przed porodem wpisaliśmy przewidywaną datę – popraw po porodzie." }),
+        pole("porod", "Data porodu", "date", ur, { pomoc: d.dataUrodzenia ? undefined : "Przed porodem wpisaliśmy przewidywaną datę – popraw po porodzie." }),
         pole("liczbaDzieci", "Liczba dzieci urodzonych przy jednym porodzie", "number", k.liczbaDzieci ?? 1),
         pole("od", "Urlop od", "date", ur),
         pole("do", "Urlop do", "date", ur ? plus(ur, tygDzieci(k) * 7 - 1) : "", { pomoc: `${tygDzieci(k)} tygodni (wyliczone z liczby dzieci)` }),
@@ -119,10 +124,13 @@ const SZABLONY = {
     tytul: "Wniosek o udzielenie części urlopu macierzyńskiego przed przewidywaną datą porodu",
     zam: "zasiłek macierzyński przed porodem",
     podstawa: "art. 180 § 2 k.p.; § 2 rozporządzenia o wnioskach",
-    pola: (k) => [
-      pole("pdp", "Przewidywana data porodu", "date", iso(k.profil.dziecko?.przewidywanaDataPorodu)),
-      pole("od", "Urlop od", "date", iso(k.profil.urlopy?.urlopPrzedPorodemOd), { pomoc: `Najwcześniej ${k.P.przedPorodemMax} tygodni przed przewidywaną datą porodu` }),
-    ],
+    pola: (k) => {
+      const d = pobierzDaneDziecka(k.profil);
+      return [
+        pole("pdp", "Przewidywana data porodu", "date", iso(d.przewidywanaDataPorodu)),
+        pole("od", "Urlop od", "date", iso(k.profil.urlopy?.urlopPrzedPorodemOd), { pomoc: `Najwcześniej ${k.P.przedPorodemMax} tygodni przed przewidywaną datą porodu` }),
+      ];
+    },
     oswiadczenia: () => [],
     tresc: (v) => [
       `Na podstawie art. 180 § 2 Kodeksu pracy proszę o udzielenie mi części urlopu macierzyńskiego przypadającej przed przewidywaną datą porodu, od dnia ${D(v.od)}.`,
@@ -144,7 +152,8 @@ const SZABLONY = {
     zam: "rezygnacja z pobierania zasiłku macierzyńskiego",
     podstawa: "art. 180 § 4 i § 8 k.p.; § 3 rozporządzenia o wnioskach",
     pola: (k) => {
-      const ur = iso(k.profil.dziecko?.dataUrodzenia);
+      const d = pobierzDaneDziecka(k.profil);
+      const ur = iso(d.dataUrodzenia);
       const tyg = nieuj(k.macierzynskiWykorzystanoTyg, k.P.wylaczneMacierzynskieMatki);
       return [
         pole("powrot", "Termin powrotu do pracy", "date", ur ? plus(ur, tyg * 7) : "", { pomoc: "Pierwszy dzień po wykorzystanej części urlopu" }),
@@ -159,7 +168,8 @@ const SZABLONY = {
     zalaczniki: () => ["Kopia wniosku ojca dziecka o udzielenie pozostałej części urlopu macierzyńskiego (albo kopia jego oświadczenia o przerwaniu działalności zarobkowej)"],
     kontrola: (v, k) => {
       const o = terminPrzed(v, "powrot", 7, "Powrót do pracy");
-      const ur = iso(k.profil.dziecko?.dataUrodzenia);
+      const d = pobierzDaneDziecka(k.profil);
+      const ur = iso(d.dataUrodzenia);
       const tyg = roznica(ur, v.powrot);
       if (tyg !== null && tyg < k.P.wylaczneMacierzynskieMatki * 7) o.push({ poziom: "blad", tekst: `Matka musi wykorzystać co najmniej ${k.P.wylaczneMacierzynskieMatki} tygodni po porodzie – powrót najwcześniej ${D(plus(ur, k.P.wylaczneMacierzynskieMatki * 7))}.` });
       return o;
@@ -172,7 +182,8 @@ const SZABLONY = {
     zam: "zasiłek macierzyński za pozostałą część urlopu",
     podstawa: "art. 180 § 5 i § 9 k.p.; § 5 rozporządzenia o wnioskach",
     pola: (k) => {
-      const ur = iso(k.profil.dziecko?.dataUrodzenia);
+      const d = pobierzDaneDziecka(k.profil);
+      const ur = iso(d.dataUrodzenia);
       const tyg = nieuj(k.macierzynskiWykorzystanoTyg, k.P.wylaczneMacierzynskieMatki);
       return [
         ...polaDziecka(k),
@@ -350,7 +361,8 @@ const SZABLONY = {
     zam: "zasiłek za okres urlopu na warunkach urlopu macierzyńskiego",
     podstawa: "art. 183 k.p.; § 18 rozporządzenia o wnioskach",
     pola: (k) => {
-      const przyj = iso(k.profil.dziecko?.dataPrzyjecia);
+      const d = pobierzDaneDziecka(k.profil);
+      const przyj = iso(d.dataPrzyjecia);
       return [
         ...polaDziecka(k),
         pole("przyjecie", "Data przyjęcia dziecka na wychowanie", "date", przyj),
