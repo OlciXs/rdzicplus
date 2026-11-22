@@ -147,7 +147,10 @@ Rodzic wypełnia „Moje dane”, wybiera wniosek, a silnik ocenia **każdy wari
 
 Wniosek do druku: `frontend/src/pages/Druk.jsx` (`/wnioski/druk?v=W21`) + silnik `engine/wnioski/druki.js` – pismo do pracodawcy
 (albo dane do ZAM dla osoby bez umowy o pracę) wypełnione z „Moje dane”, z oświadczeniami, załącznikami i kontrolą terminów;
-„Drukuj / zapisz jako PDF” otwiera okno drukowania przeglądarki. Testy: `engine/wnioski/druki.test.js` i fuzz.
+przycisk „Zapisz PDF” pobiera **PDF z wypełnionego szablonu LaTeX-a** (`engine/wnioski/latexDokument.js`
+przygotowuje treść, `engine/wnioski/pdfDokument.js` składa PDF przez jsPDF z polską czcionką),
+zamiast otwierać okno drukowania (mockup). Testy: `engine/wnioski/druki.test.js`, `latexDokument.test.js`,
+`pdfDokument.test.js` i fuzz.
 Kompletny wniosek bez błędów można też „wysłać” (symulacja, `POST /api/wnioski/wyslij` w `backend/zus-mock.js`) –
 dostaje numer (przy ZAM także UPO) i status, który zmienia się w czasie w „Dane z ZUS” → „Twoje wnioski”.
 
@@ -172,7 +175,11 @@ z pomocą AI (Mistral) na podstawie materiałów ZUS; wymaga weryfikacji z przep
 16 pism do ZUS/pracodawcy z `szablony_pism_2026.yaml` jest wygenerowanych do **LaTeX-a**:
 `latex/szablony/P01.tex … P16.tex` (każdy kompiluje się osobno), `latex/szablony_pism.tex`
 (wszystkie razem ze spisem treści) oraz `latex/decyzje_zus.tex` (struktura decyzji ZUS + wzór odwołania).
-Pola do wypełnienia to kropkowana linia z podpisem — drukuje się profesjonalnie.
+Pola do wypełnienia to kropkowana linia z podpisem. Ekran `/wnioski/druk` podstawia w te pola dane z formularza
+(imiona, adresy, daty, dziecko, płatnika) i **zapisuje gotowy PDF** – nie otwiera już okna drukowania.
+LaTeX jest źródłem układu i treści (bloki warunkowe są filtrowane według sprawy), a PDF składa jsPDF
+z czcionką DejaVu (`frontend/public/fonts`). Dla wariantów bez własnego szablonu powstaje dokument ogólny
+z tej samej preambuły.
 
 ```bash
 python3 latex/gen_latex.py            # YAML → .tex (po każdej zmianie szablonów)

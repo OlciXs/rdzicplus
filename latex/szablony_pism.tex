@@ -34,7 +34,7 @@
 }
 
 % --- blok warunkowy: treść pokazywana tylko, gdy pole prawdziwe --------
-\newenvironment{warunek}{%
+\newenvironment{warunek}[1]{%
   \par\smallskip\noindent\begin{minipage}{\linewidth}%
   \color{black}%
 }{%
@@ -111,15 +111,15 @@ z urodzeniem \Pole{liczba dzieci pl} dziecka (dzieci) przy jednym porodzie.
 Poród nastąpił dnia \Pole{data porodu}.
 Urlop macierzyński ma trwać od dnia \Pole{urlop od} do dnia \Pole{urlop do}.
 
-\begin{warunek}
+\begin{warunek}{jesli_dziecko}
 Dziecko: \Pole{dziecko imie}, PESEL \Pole{dziecko pesel}.
 \end{warunek}
 
-\begin{warunek}
+\begin{warunek}{jesli_martwe}
 Do wniosku załączam zaświadczenie szpitalne, że dziecko urodziło się martwe.
 \end{warunek}
 
-\begin{warunek}
+\begin{warunek}{jesli_pelny_wymiar}
 Jednocześnie, na podstawie art. 179\textsuperscript{1} Kodeksu pracy, wnoszę o udzielenie mi\\[-2pt]
 bezpośrednio po urlopie macierzyńskim urlopu rodzicielskiego w pełnym wymiarze.\\[-2pt]
 Oświadczam, że zasiłek macierzyński za cały okres będzie wynosił 81,5\% podstawy.
@@ -265,7 +265,7 @@ moją rzecz. Rezygnacja matki z urlopu rodzicielskiego na rzecz ojca wymaga:
 [ ] pisemnego wniosku matki o rezygnację z urlopu rodzicielskiego w tej części,
 [ ] mojego wniosku o udzielenie urlopu rodzicielskiego.
 
-\begin{warunek}
+\begin{warunek}{jesli_matka_nieubezpieczona}
 Matka dziecka nie jest objęta ubezpieczeniem chorobowym, dlatego przysługuje\\[-2pt]
 mi urlop rodzicielski na podstawie art. 182\textsuperscript{1}a \S{} 2\textsuperscript{1} Kodeksu pracy.
 \end{warunek}
@@ -291,13 +291,13 @@ Na podstawie art. 182\textsuperscript{1}a \S{} 2 Kodeksu pracy oświadczam, że 
 rodzicielskiego w wymiarze \Pole{tygodnie} tygodni, w okresie od \Pole{urlop od} do \Pole{urlop do},
 na rzecz ojca dziecka --- \Pole{drugi rodzic}.
 
-\begin{warunek}
+\begin{warunek}{jesli_po_14_tyg}
 Macierzyński urlop został przez mnie wykorzystany w wymiarze co najmniej\\[-2pt]
 14 tygodni po porodzie, a ojciec dziecka złożył wniosek o przyznanie mu\\[-2pt]
 prawa do zasiłku macierzyńskiego za pozostały okres.
 \end{warunek}
 
-\begin{warunek}
+\begin{warunek}{jesli_po_8_tyg}
 Posiadam orzeczenie o niezdolności do samodzielnej egzystencji, dlatego\\[-2pt]
 mogę zrezygnować z urlopu macierzyńskiego po wykorzystaniu 8 tygodni.
 \end{warunek}
@@ -432,12 +432,12 @@ od \Pole{urlop od} do \Pole{urlop do}, w związku z:
 Dziecko: \Pole{dziecko imie}, urodzone \Pole{data porodu}.
 Przyjęcie dziecka na wychowanie nastąpiło dnia \Pole{data zdarzenia}.
 
-\begin{warunek}
+\begin{warunek}{jesli_przysposobienie}
 Urlop przysługuje mi w wymiarze 20 tygodni (przy jednym dziecku), a przy\\[-2pt]
 przyjęciu dziecka w wieku do 3 lat --- do ukończenia przez dziecko 4 lat.
 \end{warunek}
 
-\begin{warunek}
+\begin{warunek}{jesli_zastępca}
 Urlop przysługuje mi w wymiarze wynikającym z art. 183 \S{} 1 k.p.;\\[-2pt]
 rodzina zastępcza zawodowa nie ma prawa do tego urlopu.
 \end{warunek}

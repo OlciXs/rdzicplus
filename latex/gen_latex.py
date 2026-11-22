@@ -11,6 +11,7 @@ Uruchomienie:  python3 latex/gen_latex.py
 Kompilacja:    tectonic -X compile latex/szablony/P01.tex   (albo całości)
 """
 
+import json
 import os
 import re
 import yaml
@@ -87,7 +88,7 @@ PLACEHOLDER = re.compile(r"\{\{([a-z_ąćęłńóśźż]+)\}\}")
 
 
 def renderuj_tresc(tresc: str, wariant: str) -> str:
-    """
+    r"""
     Zamienia treść z YAML na ciało LaTeX-a.
 
     - bloki {{#jesli_x}}...{{/jesli_x}} → środowisko warunkowe
@@ -99,7 +100,7 @@ def renderuj_tresc(tresc: str, wariant: str) -> str:
     bloki = []
 
     def zbierz(m):
-        bloki.append(m.group(2))
+        bloki.append((m.group(1), m.group(2)))
         return f"@@WARUNEK{len(bloki) - 1}@@"
 
     t = WARUNEK.sub(zbierz, tresc)
@@ -116,9 +117,12 @@ def renderuj_tresc(tresc: str, wariant: str) -> str:
     t = "".join(czesci)
 
     # wstaw z powrotem bloki warunkowe (renderowane rekurencyjnie)
-    for i, tresc_bloku in enumerate(bloki):
+    for i, (nazwa, tresc_bloku) in enumerate(bloki):
         wewn = renderuj_tresc(tresc_bloku.strip(), wariant + "?")
-        t = t.replace(f"@@WARUNEK{i}@@", "\\begin{warunek}\n" + wewn.strip() + "\n\\end{warunek}")
+        t = t.replace(
+            f"@@WARUNEK{i}@@",
+            "\\begin{warunek}{%s}\n%s\n\\end{warunek}" % (nazwa, wewn.strip()),
+        )
 
     return formatuj_akapity(t)
 
@@ -200,7 +204,7 @@ PREAMBULA = r"""% ==============================================================
 }
 
 % --- blok warunkowy: treść pokazywana tylko, gdy pole prawdziwe --------
-\newenvironment{warunek}{%
+\newenvironment{warunek}[1]{%
   \par\smallskip\noindent\begin{minipage}{\linewidth}%
   \color{black}%
 }{%
@@ -320,8 +324,36 @@ def main():
     with open(os.path.join(TU, "szablony_pism.tex"), "w", encoding="utf-8") as f:
         f.write("\n\n".join(czesci))
 
+    # --- kopia dla frontendu (obraz Dockera buduje się tylko z katalogu frontend) ---
+    # Ekran /wnioski/druk podmienia w tych plikach \Pole{…} na dane i zapisuje .tex.
+    front_dir = os.path.join(ROOT, "frontend", "src", "engine", "wnioski")
+    os.makedirs(front_dir, exist_ok=True)
+
+    def czytaj(sciezka: str) -> str:
+        with open(sciezka, encoding="utf-8") as f:
+            return f.read()
+
+    frontend_dane = {
+        "schema": "rodzicplus-latex-szablony/1",
+        "preamble": PREAMBULA,
+        "szablony": [
+            {
+                "id": s["id"],
+                "nazwa": s["nazwa"],
+                "wariant": s.get("wariant"),
+                "kanal": s.get("kanal"),
+                "tex": czytaj(os.path.join(TU, "szablony", f"{s['id']}.tex")),
+            }
+            for s in dane["szablony"]
+        ],
+    }
+    with open(os.path.join(front_dir, "latex_szablony.json"), "w", encoding="utf-8") as f:
+        json.dump(frontend_dane, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+
     print(f"Zapisano preambułę i {len(utworzone)} plików .tex: {', '.join(utworzone)}")
     print("Zapisano dokument zbiorczy: szablony_pism.tex")
+    print("Zapisano kopię dla frontendu: latex_szablony.json")
 
     # --- decyzje ZUS: struktura do zrozumienia pisma / odwołania ---
     decz = ["\\section*{Decyzje ZUS --- struktura pisma}",

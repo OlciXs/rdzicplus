@@ -34,7 +34,7 @@
 }
 
 % --- blok warunkowy: treść pokazywana tylko, gdy pole prawdziwe --------
-\newenvironment{warunek}{%
+\newenvironment{warunek}[1]{%
   \par\smallskip\noindent\begin{minipage}{\linewidth}%
   \color{black}%
 }{%
@@ -105,15 +105,15 @@ z urodzeniem \Pole{liczba dzieci pl} dziecka (dzieci) przy jednym porodzie.
 Poród nastąpił dnia \Pole{data porodu}.
 Urlop macierzyński ma trwać od dnia \Pole{urlop od} do dnia \Pole{urlop do}.
 
-\begin{warunek}
+\begin{warunek}{jesli_dziecko}
 Dziecko: \Pole{dziecko imie}, PESEL \Pole{dziecko pesel}.
 \end{warunek}
 
-\begin{warunek}
+\begin{warunek}{jesli_martwe}
 Do wniosku załączam zaświadczenie szpitalne, że dziecko urodziło się martwe.
 \end{warunek}
 
-\begin{warunek}
+\begin{warunek}{jesli_pelny_wymiar}
 Jednocześnie, na podstawie art. 179\textsuperscript{1} Kodeksu pracy, wnoszę o udzielenie mi\\[-2pt]
 bezpośrednio po urlopie macierzyńskim urlopu rodzicielskiego w pełnym wymiarze.\\[-2pt]
 Oświadczam, że zasiłek macierzyński za cały okres będzie wynosił 81,5\% podstawy.

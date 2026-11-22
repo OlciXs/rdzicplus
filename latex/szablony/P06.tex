@@ -34,7 +34,7 @@
 }
 
 % --- blok warunkowy: treść pokazywana tylko, gdy pole prawdziwe --------
-\newenvironment{warunek}{%
+\newenvironment{warunek}[1]{%
   \par\smallskip\noindent\begin{minipage}{\linewidth}%
   \color{black}%
 }{%
@@ -98,7 +98,7 @@ moją rzecz. Rezygnacja matki z urlopu rodzicielskiego na rzecz ojca wymaga:
 [ ] pisemnego wniosku matki o rezygnację z urlopu rodzicielskiego w tej części,
 [ ] mojego wniosku o udzielenie urlopu rodzicielskiego.
 
-\begin{warunek}
+\begin{warunek}{jesli_matka_nieubezpieczona}
 Matka dziecka nie jest objęta ubezpieczeniem chorobowym, dlatego przysługuje\\[-2pt]
 mi urlop rodzicielski na podstawie art. 182\textsuperscript{1}a \S{} 2\textsuperscript{1} Kodeksu pracy.
 \end{warunek}

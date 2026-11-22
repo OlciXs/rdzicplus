@@ -11,17 +11,21 @@ import { describe, it, expect } from "vitest";
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { parse } from "yaml";
+import { SZABLONY_LATEX, szablonyDlaWariantu } from "./latexDokument.js";
 
 // Katalog główny repo = 4 poziomy nad frontend/src/engine/wnioski (było 5 – poza repo, ENOENT w CI).
 const KORZEN = resolve(__dirname, "../../../../");
 const YAML = resolve(KORZEN, "szablony_pism_2026.yaml");
+const BAZA = resolve(__dirname, "../dane/zus_dane_2026.json");
 const LATEX = resolve(KORZEN, "latex");
+const FRONTEND_JSON = resolve(__dirname, "latex_szablony.json");
 
 const saPliki = existsSync(YAML) && existsSync(LATEX) ? describe : describe.skip;
 
 saPliki("LaTeX — zgodność z szablonami pism", () => {
   // describe.skip też wykonuje to ciało przy zbieraniu testów – czytamy plik tylko, gdy istnieje.
   const dane = existsSync(YAML) ? parse(readFileSync(YAML, "utf-8")) : { szablony: [] };
+  const baza = existsSync(BAZA) ? JSON.parse(readFileSync(BAZA, "utf-8")) : { variants: [] };
   const ids = dane.szablony.map((s) => s.id);
   const katalog = resolve(LATEX, "szablony");
 
@@ -81,9 +85,36 @@ saPliki("LaTeX — zgodność z szablonami pism", () => {
     expect(existsSync(resolve(LATEX, "decyzje_zus.tex"))).toBe(true);
   });
 
+  it("kopia dla frontendu jest aktualna (preamble + wszystkie .tex)", () => {
+    expect(existsSync(FRONTEND_JSON), "brak latex_szablony.json — uruchom latex/gen_latex.py").toBe(true);
+    const kopia = JSON.parse(readFileSync(FRONTEND_JSON, "utf-8"));
+    expect(kopia.preamble).toBe(readFileSync(resolve(LATEX, "preamble.tex"), "utf-8"));
+    expect(kopia.szablony.map((s) => s.id).sort()).toEqual([...ids].sort());
+    for (const s of kopia.szablony) {
+      const tex = readFileSync(resolve(katalog, `${s.id}.tex`), "utf-8");
+      expect(s.nazwa, `${s.id}: nazwa`).toBe(dane.szablony.find((x) => x.id === s.id).nazwa);
+      expect(s.tex, `${s.id}: nieaktualna kopia w latex_szablony.json`).toBe(tex);
+    }
+  });
+
   it("polskie znaki nie są gubione (brak inputenc + T1)", () => {
     const pre = readFileSync(resolve(LATEX, "preamble.tex"), "utf-8");
     expect(pre).not.toContain("\\usepackage[utf8]{inputenc}");
     expect(pre).not.toContain("\\usepackage[T1]{fontenc}");
+  });
+
+  it("mapowanie wariant wniosku → szablon LaTeX jest zgodne z YAML-em", () => {
+    const benefit = Object.fromEntries(baza.variants.map((v) => [v.id, v.benefit]));
+    const oczekiwane = {};
+    for (const s of dane.szablony) {
+      const w = benefit[s.wariant];
+      if (!w) continue;
+      (oczekiwane[w] ??= []).push(s.id);
+    }
+
+    expect(SZABLONY_LATEX).toEqual(oczekiwane);
+    for (const [wariant, lista] of Object.entries(SZABLONY_LATEX)) {
+      expect(szablonyDlaWariantu(wariant).map((s) => s.id), wariant).toEqual(lista);
+    }
   });
 });

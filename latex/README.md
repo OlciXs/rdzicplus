@@ -7,7 +7,7 @@ z `../szablony_pism_2026.yaml`.
 
 | Plik / katalog | Zawartość |
 | --- | --- |
-| `gen_latex.py` | generator: czyta YAML → pisze pliki `.tex` |
+| `gen_latex.py` | generator: czyta YAML → pisze pliki `.tex` i kopię `../frontend/src/engine/wnioski/latex_szablony.json` dla ekranu `/wnioski/druk` |
 | `preamble.tex` | wspólna preambuła (fonty, kolory ZUS, makra pism) |
 | `szablony/P01.tex … P16.tex` | **16 pojedynczych pism** — każdy kompiluje się sam |
 | `szablony_pism.tex` | wszystkie szablony w jednym dokumencie (ze spisem treści) |
@@ -37,10 +37,11 @@ Pierwsze uruchomienie Tectonic pobiera pakiety z sieci (kilkadziesiąt MB).
 Po każdej zmianie `szablony_pism_2026.yaml`:
 
 ```bash
-python3 latex/gen_latex.py
+python3 latex/gen_latex.py       # .tex + kopia JSON dla frontendu
 ```
 
-Test `latex.test.js` pilnuje, żeby pliki `.tex` nie rozjechały się z YAML-em.
+Test `latex.test.js` pilnuje, żeby pliki `.tex` i kopia `latex_szablony.json`
+nie rozjechały się z YAML-em.
 
 ## Jak wygląda pismo
 
@@ -55,7 +56,12 @@ Test `latex.test.js` pilnuje, żeby pliki `.tex` nie rozjechały się z YAML-em.
 ## Pola
 
 `\Pole{nazwa}` → kropkowana linia z podpisem. Wartości podstawia aplikacja
-z profilu (patrz `szablony_pism_2026.yaml` → `placeholdery`) albo wpisuje się ręcznie.
+z profilu i formularza wniosku (patrz `szablony_pism_2026.yaml` → `placeholdery`),
+albo wpisuje się ręcznie. Ekran `/wnioski/druk` zapisuje wypełniony **PDF**
+(`frontend/src/engine/wnioski/latexDokument.js` przygotowuje LaTeX,
+`pdfDokument.js` składa PDF); w mockupie to zamiast drukowania.
+Bloki `\begin{warunek}{nazwa}` są w PDF filtrowane według danych sprawy
+(np. martwe urodzenie, pełny wymiar 81,5%, przysposobienie).
 
 ## Ważne
 

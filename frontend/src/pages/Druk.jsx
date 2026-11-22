@@ -6,13 +6,16 @@ import { api } from "../api.js";
 import { CFG } from "../calculators/config.js";
 import { przygotujDruk, ocenWniosek, wariantById } from "../engine/index.js";
 import { D } from "../engine/wnioski/druki.js";
+import { szablonyDlaWariantu } from "../engine/wnioski/latexDokument.js";
+import { zapiszDokumentPdf } from "../engine/wnioski/pdfDokument.js";
 
 /* =====================================================================
    Wniosek do druku: /wnioski/druk?v=W21
    Dane z „Moje dane” są podstawione w pola; rodzic może je poprawić
    (zmiany zostają tylko na tym ekranie – nie zapisujemy ich w profilu).
-   „Drukuj / zapisz PDF” = okno drukowania przeglądarki (style @media print).
+   „Zapisz PDF” = plik PDF z wypełnionego szablonu LaTeX (mockup zamiast drukowania).
    Treść i kontrole terminów: src/engine/wnioski/druki.js
+   Szablony LaTeX-a: latex/szablony/P01.tex … P16.tex
    ===================================================================== */
 
 const POZIOM = { blad: "err", ostrzezenie: "warn", info: "warn" };
@@ -45,11 +48,20 @@ export default function Druk() {
   const ustaw = (id, v) => {
     setWartosci((w) => ({ ...w, [id]: v }));
     setWyslany(null); // po zmianie danych trzeba wysłać od nowa
+    setZapisany(null); // zapisany plik byłby już nieaktualny
+    setBladZapisu("");
   };
   const [potwierdzenie, setPotwierdzenie] = useState(false);
   const [wysylanie, setWysylanie] = useState(false);
   const [wyslany, setWyslany] = useState(null);
   const [bladWysylki, setBladWysylki] = useState("");
+  const [szablonId, setSzablonId] = useState(null);
+  const [zapisany, setZapisany] = useState(null);
+  const [zapisywanie, setZapisywanie] = useState(false);
+  const [bladZapisu, setBladZapisu] = useState("");
+
+  const szablony = useMemo(() => szablonyDlaWariantu(wariantId), [wariantId]);
+  const wybranySzablon = szablony.some((s) => s.id === szablonId) ? szablonId : szablony[0]?.id ?? null;
 
   const druk = useMemo(
     () => (profile ? przygotujDruk(profile, wariantId, { params: CFG, wartosci }) : null),
@@ -85,6 +97,19 @@ export default function Druk() {
     : druk.brakujace.length > 0 ? `Uzupełnij: ${druk.brakujace.join(", ")}.`
     : ocena?.status === "niedostepny" ? "Według „Moje dane” ten wariant Ci nie przysługuje."
     : null;
+
+  const zapiszDokument = async () => {
+    setZapisywanie(true);
+    setBladZapisu("");
+    try {
+      const dokument = await zapiszDokumentPdf(druk, profile, { szablonId: wybranySzablon });
+      setZapisany(dokument);
+    } catch (err) {
+      setBladZapisu(err.message || "Nie udało się zapisać PDF.");
+    } finally {
+      setZapisywanie(false);
+    }
+  };
 
   const wyslij = async () => {
     setWysylanie(true);
@@ -122,8 +147,8 @@ export default function Druk() {
           <p><Link to={ocena ? `/wnioski?w=${ocena.wniosek}` : "/wnioski"}>← Wróć do wariantów</Link></p>
           <h1>{druk.tytul}</h1>
           <p className="lead">
-            Pola wypełniliśmy na podstawie „Moje dane”. Sprawdź je, popraw, jeśli trzeba, a potem wydrukuj
-            albo zapisz jako PDF i podpisz. Zmiany wprowadzone tutaj nie trafiają do profilu.
+            Pola wypełniliśmy na podstawie „Moje dane”. Sprawdź je, popraw, jeśli trzeba, a potem zapisz
+            dokument PDF z gotowymi danymi. Zmiany wprowadzone tutaj nie trafiają do profilu.
           </p>
 
           {ocena && ocena.status !== "dostepny" && (
@@ -175,12 +200,46 @@ export default function Druk() {
             </section>
           )}
 
-          <p>
-            <button type="button" className="btn btn-primary" onClick={() => window.print()}>
-              Drukuj / zapisz jako PDF
-            </button>
+          <section className="druk-zapis" aria-labelledby="druk-zapis-tytul">
+            <h2 className="calc-group-title" id="druk-zapis-tytul">Dokument do druku (PDF)</h2>
+            {szablony.length > 0 ? (
+              <div className="druk-zapis-opcje">
+                {szablony.length > 1 && (
+                  <label className="field">
+                    <span className="field-label">Szablon pisma</span>
+                    <select className="input" value={wybranySzablon ?? ""} onChange={(e) => { setSzablonId(e.target.value); setZapisany(null); setBladZapisu(""); }}>
+                      {szablony.map((s) => <option key={s.id} value={s.id}>{s.id} – {s.nazwa}</option>)}
+                    </select>
+                  </label>
+                )}
+                <button type="button" className="btn btn-primary" onClick={zapiszDokument} disabled={zapisywanie}>
+                  {zapisywanie ? "Przygotowuję PDF…" : "Zapisz PDF"}
+                </button>
+                <p className="note">
+                  PDF powstanie z szablonu {wybranySzablon} z danymi z formularza.
+                </p>
+              </div>
+            ) : (
+              <div className="druk-zapis-opcje">
+                <button type="button" className="btn btn-primary" onClick={zapiszDokument} disabled={zapisywanie}>
+                  {zapisywanie ? "Przygotowuję PDF…" : "Zapisz PDF"}
+                </button>
+                <p className="note">
+                  Dla tego wariantu nie ma jeszcze osobnego szablonu LaTeX – PDF powstanie z dokumentu ogólnego
+                  z tymi samymi danymi.
+                </p>
+              </div>
+            )}
+            {bladZapisu && <p className="field-error" role="alert">{bladZapisu}</p>}
+            {zapisany && (
+              <p className="alert-inline" role="status">
+                <span className="badge b-ok">Zapisano</span>{" "}
+                <code>{zapisany.plik}</code>
+                {zapisany.szablonId ? ` – szablon ${zapisany.szablonId}.` : " – dokument ogólny."}
+              </p>
+            )}
             {bledy.length > 0 && <span className="note"> – we wniosku są błędy (wyżej), popraw je przed złożeniem.</span>}
-          </p>
+          </section>
 
           <section className="result-card" aria-labelledby="druk-wyslij">
             <h2 className="result-title" id="druk-wyslij">
@@ -249,6 +308,8 @@ export default function Druk() {
           {druk.tryb === "pracodawca"
             ? "Wzór pisma opiera się na rozporządzeniu w sprawie wniosków dotyczących uprawnień pracowników związanych z rodzicielstwem – wymaga potwierdzenia przez ZUS / dział kadr. Pracodawca może mieć własny formularz."
             : "To nie jest formularz ZUS – to zestawienie danych, które przepiszesz do wniosku ZAM w eZUS. Zakres danych wymaga potwierdzenia przez ZUS."}
+          {" "}Zapisany plik PDF zawiera dane widoczne w formularzu – to mockup, więc zamiast drukowania
+          pobieramy dokument do dalszej obróbki.
         </p>
       </main>
     </div>

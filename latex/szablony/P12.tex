@@ -34,7 +34,7 @@
 }
 
 % --- blok warunkowy: treść pokazywana tylko, gdy pole prawdziwe --------
-\newenvironment{warunek}{%
+\newenvironment{warunek}[1]{%
   \par\smallskip\noindent\begin{minipage}{\linewidth}%
   \color{black}%
 }{%
@@ -99,12 +99,12 @@ od \Pole{urlop od} do \Pole{urlop do}, w związku z:
 Dziecko: \Pole{dziecko imie}, urodzone \Pole{data porodu}.
 Przyjęcie dziecka na wychowanie nastąpiło dnia \Pole{data zdarzenia}.
 
-\begin{warunek}
+\begin{warunek}{jesli_przysposobienie}
 Urlop przysługuje mi w wymiarze 20 tygodni (przy jednym dziecku), a przy\\[-2pt]
 przyjęciu dziecka w wieku do 3 lat --- do ukończenia przez dziecko 4 lat.
 \end{warunek}
 
-\begin{warunek}
+\begin{warunek}{jesli_zastępca}
 Urlop przysługuje mi w wymiarze wynikającym z art. 183 \S{} 1 k.p.;\\[-2pt]
 rodzina zastępcza zawodowa nie ma prawa do tego urlopu.
 \end{warunek}

@@ -34,7 +34,7 @@
 }
 
 % --- blok warunkowy: treść pokazywana tylko, gdy pole prawdziwe --------
-\newenvironment{warunek}{%
+\newenvironment{warunek}[1]{%
   \par\smallskip\noindent\begin{minipage}{\linewidth}%
   \color{black}%
 }{%
@@ -92,13 +92,13 @@ Na podstawie art. 182\textsuperscript{1}a \S{} 2 Kodeksu pracy oświadczam, że 
 rodzicielskiego w wymiarze \Pole{tygodnie} tygodni, w okresie od \Pole{urlop od} do \Pole{urlop do},
 na rzecz ojca dziecka --- \Pole{drugi rodzic}.
 
-\begin{warunek}
+\begin{warunek}{jesli_po_14_tyg}
 Macierzyński urlop został przez mnie wykorzystany w wymiarze co najmniej\\[-2pt]
 14 tygodni po porodzie, a ojciec dziecka złożył wniosek o przyznanie mu\\[-2pt]
 prawa do zasiłku macierzyńskiego za pozostały okres.
 \end{warunek}
 
-\begin{warunek}
+\begin{warunek}{jesli_po_8_tyg}
 Posiadam orzeczenie o niezdolności do samodzielnej egzystencji, dlatego\\[-2pt]
 mogę zrezygnować z urlopu macierzyńskiego po wykorzystaniu 8 tygodni.
 \end{warunek}
