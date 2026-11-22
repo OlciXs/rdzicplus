@@ -211,7 +211,8 @@ const STEPS = [
         data: "dziecko",
         title: "Dziecko",
         fields: [
-          { name: "przewidywanaDataPorodu", label: "Przewidywana data porodu", type: "date", if: (c) => c.etap === "ciaza", hint: "Z karty ciąży lub od lekarza prowadzącego." },
+          { name: "przewidywanaDataPorodu", label: "Przewidywana data porodu", type: "date", if: (c) => c.etap === "ciaza",
+            hint: "Z karty ciąży lub od lekarza prowadzącego. Wniosek o urlop macierzyński przed porodem i inne terminy liczymy od tej daty — uzupełnij ją, żeby kalendarz pokazał terminy." },
           { name: "liczbaDzieci", label: "Liczba dzieci z jednego porodu", type: "number", min: 1, max: 10, if: (c) => c.etap !== "przyjecie",
             hint: "1 = pojedynczy poród, 2 = bliźnięta itd. Wpływa na długość urlopu." },
           yn("martwe", "Czy dziecko urodziło się martwe?", { if: (c) => c.etap === "po_porodzie" }),
@@ -397,6 +398,35 @@ function validate(form, sections) {
 
 const isFilled = (v) => !(v === "" || v === null || v === undefined || v === false);
 
+// Ciąża: terminy wniosków liczymy od przewidywanej daty porodu (pdp), więc przy
+// etapie "ciaza" w sekcji "dziecko" nie mogą zostać dane urodzonego dziecka
+// (inaczej kalendarz policzyłby terminy od starej daty urodzenia).
+// Zachowujemy: przewidywanaDataPorodu oraz liczbaDzieci (ciąża mnoga).
+const czyscDaneUrodzonegoDziecka = (d) => ({
+  ...d,
+  imie: "",
+  nazwisko: "",
+  pesel: "",
+  dataUrodzenia: "",
+  miejsceUrodzenia: "",
+  martwe: "",
+  zmarlo: "",
+  dataZgonu: "",
+  liczbaZyjacych: "",
+  zaGranica: "",
+  kraj: "",
+  pobytWSzpitalu: "",
+  tydzienCiazy: "",
+  masaUrodzenia: "",
+  szpitalOd: "",
+  szpitalDo: "",
+  dataPrzyjecia: "",
+  odroczonySzkolny: "",
+  niepelnosprawne: "",
+  zaZyciem: false,
+  dzieci: [],
+});
+
 
 const stepProgress = (step, form) => {
   const c = ctxOf(form);
@@ -434,6 +464,11 @@ const normalize = (p) => {
       dataUrodzenia: d.dataUrodzenia ?? "",
       miejsceUrodzenia: d.miejsceUrodzenia ?? "",
     }];
+  }
+  // Bezpiecznik dla profili zapisanych wcześniej: przy etapie "ciaza" czyścimy
+  // dane urodzonego dziecka (zachowujemy pdp i liczbaDzieci).
+  if (out.sytuacja.etap === "ciaza") {
+    out.dziecko = czyscDaneUrodzonegoDziecka(out.dziecko);
   }
   if (!out.sytuacja.rola) {
     if (out.ubezpieczony.plec === "K") out.sytuacja.rola = "matka";
@@ -588,7 +623,13 @@ export default function ProfilePage() {
         const dzieci = Array.from({ length: count }, (_, i) => ({ ...(f.dziecko.dzieci?.[i] ?? {}) }));
         nextSection.dzieci = dzieci;
       }
-      return { ...f, [section]: nextSection };
+      const next = { ...f, [section]: nextSection };
+      // Zmiana etapu na ciążę: natychmiast czyścimy dane urodzonego dziecka,
+      // żeby kalendarz liczył terminy od przewidywanej daty porodu (pdp).
+      if (section === "sytuacja" && name === "etap" && value === "ciaza") {
+        next.dziecko = czyscDaneUrodzonegoDziecka(next.dziecko);
+      }
+      return next;
     });
     setErrors((e) => {
       const next = { ...e };
@@ -757,7 +798,7 @@ export default function ProfilePage() {
           <div className="step-nav form-actions">
             {idx > 0 && <button type="button" className="btn" onClick={() => go(steps[idx - 1].id)}>← Wstecz</button>}
             <button className="btn btn-primary" type="submit" disabled={status === "saving"}>
-              {status === "saving" ? "Zapisuję…" : last ? "Zapisz dane" : "Dalej →"}
+              {status === "saving" ? "Zapisuję…" : last ? "Zakończ" : "Dalej →"}
             </button>
             {status === "saved" && <span className="form-ok" role="status">Zapisano ✓</span>}
             {status === "error" && <span className="field-error" role="alert">{errors._ ?? "Popraw zaznaczone pola."}</span>}
