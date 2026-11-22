@@ -703,7 +703,7 @@ To realizuje wymóg zadania „informacja skonkretyzowana, uwzględniająca indy
 | V10 | Łączenie z pracą — **> ½ etatu** | „Maksymalnie **połowa** pełnego wymiaru.” |
 | V11 | Łączenie — wydłużenie ponad **82/86/130/134 tyg.** | „Przekroczono limit wydłużenia.” |
 | V12 | Uzupełniający urlop — brak **terminu zakończenia urlopu macierzyńskiego** | „Wniosek **będzie wadliwy** (art. 180² § 6 k.p.).” |
-| V13 | Uzupełniający urlop — dziecko w szpitalu **< 5 dni** | „Warunek **co najmniej 5 dni** hospitalizacji nie jest spełniony.” |
+| V13 | Uzupełniający urlop — **po 37. tyg.** pobyt krótszy niż 2 kolejne dni albo zaczęty poza 5.–28. dniem po porodzie (skorygowane wg art. 180² § 1 KP; „5 dni” z poradnika ZUS nie wynika z ustawy) | „Warunek pobytu w szpitalu (art. 180² § 1 pkt 3 KP) nie jest spełniony.” |
 | V14 | Uzupełniający urlop — wniosek **< 21 dni** przed zakończeniem urlopu macierzyńskiego | „Termin wniosku: **co najmniej 21 dni** wcześniej.” |
 | V15 | Urlop ojcowski — wniosek **< 7 dni** przed rozpoczęciem | „Termin wniosku: **co najmniej 7 dni** wcześniej.” |
 | V16 | Urlop macierzyński przed porodem — wniosek **< 14 dni** przed rozpoczęciem | „Termin wniosku: **co najmniej 14 dni** wcześniej.” |

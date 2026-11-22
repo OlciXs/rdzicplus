@@ -18,6 +18,7 @@ import Support from "./pages/Support.jsx";
 import OfficialLinks from "./pages/OfficialLinks.jsx";
 import Druk from "./pages/Druk.jsx";
 import Kalendarz from "./pages/Kalendarz.jsx";
+import Powiadomienia from "./components/Powiadomienia.jsx";
 
 const TOKEN_KEY = "rodzicplus-token";
 
@@ -179,6 +180,8 @@ export default function App() {
 
         <Route path="*" element={<NotFound />} />
       </Routes>
+      {/* Przypomnienia o terminach (7 / 3 dni przed, w dniu terminu) + klawisz N = test */}
+      <Powiadomienia />
     </AuthContext.Provider>
   );
 }

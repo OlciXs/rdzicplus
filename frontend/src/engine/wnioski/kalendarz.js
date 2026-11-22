@@ -12,7 +12,8 @@
 
    terminyWnioskow(profil, { dzis, params }) → [{
      id, wariant, wniosek, data (RRRR-MM-DD), typ, tytul, opis, kto, dokument,
-     podstawa, zrodlo, pewnosc ("pewne" | "szacunek" | "do_potwierdzenia"), przypomnienie
+     podstawa, zrodlo, pewnosc ("pewne" | "szacunek" | "do_potwierdzenia"), warunkowy,
+     przypomnienie (7 dni przed – zgodność wstecz), przypomnienia: [{ dni: 7|3|0, data }]
    }]
    typ: "termin"  – ostatni dzień na złożenie wniosku (przegapienie kosztuje),
         "koniec"  – ostatni dzień, w którym można korzystać / zgłosić roszczenie,
@@ -27,6 +28,8 @@ import { kontekstSprawy } from "./kontekst.js";
 import { przegladWnioskow } from "./ocena.js";
 
 const DAY = 86400000;
+/** Ile dni przed terminem przypominamy (0 = w dniu terminu). */
+export const DNI_PRZYPOMNIEN = [7, 3, 0];
 const isoOk = (v) => {
   if (typeof v !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
   const t = Date.parse(`${v}T00:00:00Z`);
@@ -85,6 +88,11 @@ export function terminyWnioskow(profil, { dzis, params = DEFAULT_PARAMS } = {}) 
       dokument: e.dokument ?? v?.dokument ?? null,
       pewnosc: "pewne",
       przypomnienie: e.typ === "termin" || e.typ === "koniec" ? plus(e.data, -7) : null,
+      // Przypomnienia (prośba Oli): 7 i 3 dni przed terminem oraz w dniu terminu – tylko dla terminów,
+      // których przegapienie kosztuje (typ „termin” / „koniec”).
+      przypomnienia: e.typ === "termin" || e.typ === "koniec" ? DNI_PRZYPOMNIEN.map((dni) => ({ dni, data: plus(e.data, -dni) })) : [],
+      // Wariant „brakuje danych” – data jest warunkowa (spójnie z ocena.js: tam przy braku danych nie ma konkretnej daty).
+      warunkowy: v?.status === "brak_danych",
       ...e,
       id: `${wariant}-${e.id}`,
     });
@@ -132,7 +140,7 @@ export function terminyWnioskow(profil, { dzis, params = DEFAULT_PARAMS } = {}) 
   /* ---------- W41: 81,5% za cały okres ---------- */
   const dataW41 = k.etap === "przyjecie" ? przyj : porod;
   if (aktywny("W41") && dataW41) {
-    const odPorodu = k.etap === "przyjecie" ? "przyjęcia dziecka" : "porodu";
+    const odPorodu = k.etap === "przyjecie" ? "przyjęciu dziecka" : "porodzie"; // „po porodzie”, nie „po porodu”
     dodaj("W41", { id: "wniosek", typ: "termin", data: plus(dataW41, P.deadlineSredniowany), kto: "Mama", pewnosc: zPdp ? "szacunek" : "pewne",
       tytul: "Wniosek o zasiłek w pełnym wymiarze (81,5% za cały okres)",
       opis: `Do ${P.deadlineSredniowany} dni po ${odPorodu}${zPdp ? " (liczone od przewidywanej daty porodu)" : ""}. Później zostaje wariant 100% za macierzyński i 70% za rodzicielski.`,
@@ -301,7 +309,7 @@ export function terminyWnioskow(profil, { dzis, params = DEFAULT_PARAMS } = {}) 
 
 /* =====================================================================
    Eksport do kalendarza w telefonie (.ics, RFC 5545) – wydarzenia całodniowe
-   z przypomnieniem 7 dni i 1 dzień wcześniej.
+   z przypomnieniem 7 i 3 dni wcześniej oraz w dniu terminu (o 9:00).
    ===================================================================== */
 const escIcs = (s) => String(s ?? "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
 // Linie dłuższe niż 75 znaków zawijamy (RFC 5545 § 3.1) – liczymy znaki, nie bajty; wystarcza kalendarzom w telefonach.
@@ -315,7 +323,8 @@ export function doIcs(terminy, { teraz = new Date() } = {}) {
   const linie = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//RodzicPlus//Terminy wnioskow//PL", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
   for (const t of terminy) {
     if (!isoOk(t.data)) continue;
-    const alarmy = t.typ === "termin" || t.typ === "koniec" ? ["-P7D", "-P1D"] : [];
+    // Wydarzenie całodniowe zaczyna się o północy – alarm „w dniu terminu” ustawiamy na 9:00 (PT9H).
+    const alarmy = t.typ === "termin" || t.typ === "koniec" ? ["-P7D", "-P3D", "PT9H"] : [];
     linie.push(
       "BEGIN:VEVENT",
       `UID:${t.id}-${t.data}@rodzicplus`,

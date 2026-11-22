@@ -615,12 +615,13 @@ export const WARIANTY = [
         maChorobowe(k),
         w("Dziecko przebywało w szpitalu po porodzie", k.pobytWSzpitalu, ["dziecko.pobytWSzpitalu"]),
         w("Znamy tydzień ciąży i okres pobytu w szpitalu", wym ? true : k.pobytWSzpitalu === false ? null : null, ["dziecko.tydzienCiazy", "dziecko.szpitalOd"]),
+        // Art. 180² § 1 k.p.: po 37. tygodniu – min. 2 kolejne dni, pierwszy między 5. a 28. dniem;
+        // wcześniej – każdy tydzień pobytu (bez minimum). Spójnie z kalkulatorem macierzyńskim.
         ...(po37
-          ? [w("Po 37. tygodniu: pobyt min. 2 dni, zaczął się między 5. a 28. dniem po porodzie",
-              start === null || !wym ? null : start >= 5 && start <= 28 && wym.dniPobytu >= 2, ["dziecko.szpitalOd", "dziecko.dataUrodzenia"])]
-          // B-02 (spójnie z kalkulatorem macierzyńskim): co najmniej 5 dni w szpitalu.
-          : [w(`Dziecko było w szpitalu co najmniej ${k.P.minHospitalizacjaDni} dni`,
-              wym ? wym.dniPobytu >= k.P.minHospitalizacjaDni : null, ["dziecko.szpitalOd"])]),
+          ? [w(`Po 37. tygodniu: pobyt min. ${k.P.minHospitalizacjaDni} kolejne dni, zaczął się między 5. a 28. dniem po porodzie`,
+              start === null || !wym ? null : start >= 5 && start <= 28 && wym.dniPobytu >= k.P.minHospitalizacjaDni, ["dziecko.szpitalOd", "dziecko.dataUrodzenia"])]
+          : [w("Dziecko było w szpitalu po porodzie (liczy się każdy tydzień pobytu)",
+              wym ? wym.dniPobytu >= 1 : null, ["dziecko.szpitalOd"])]),
         w("Drugi rodzic nie korzysta z tego urlopu", k.drugiRodzicUzupelniajacy === null ? (k.drugi ? null : true) : !k.drugiRodzicUzupelniajacy, ["urlopy.drugiRodzicUzupelniajacy"]),
       ];
     },
@@ -873,8 +874,13 @@ export const SKLADANIE = {
     dokument: (k) =>
       k.pracownik === true
         ? "Nic nie składasz – e-ZLA z kodem B trafia do ZUS i pracodawcy, zaświadczenie Z-3 wystawia pracodawca"
-        : "Działalność: ZAM przez eZUS. Zlecenie u małego płatnika: ZAS-53. Oba do ZUS",
-    skladanie: (k) => (k.pracownik === true ? "automatycznie" : "wniosek"),
+        // Rozporządzenie z 27.09.2026, § 2–3: do zasiłku chorobowego z ZUS wystarcza zaświadczenie lekarskie
+        // (e-ZLA); przy działalności nie ma zaświadczenia płatnika, przy zleceniu wystawia je zleceniodawca.
+        // (Wcześniej było „ZAM” – to formularz zasiłku MACIERZYŃSKIEGO, nie chorobowego.)
+        : ["dg", "wspolpraca"].includes(k.tytul)
+          ? "Nic nie składasz – ZUS dostaje e-ZLA z kodem B od lekarza i sam wypłaca zasiłek"
+          : "Nic nie składasz sama – zleceniodawca przekazuje do ZUS zaświadczenie płatnika składek (Z-3a)",
+    skladanie: "automatycznie",
   },
   W36: { dokument: "Nic nie składasz – wystarczy kod B na e-ZLA", skladanie: "automatycznie" },
   W46: { dokument: "Karta wypadku w drodze do/z pracy – dołączasz do zwolnienia lekarskiego", skladanie: "dolacz" },
@@ -886,7 +892,6 @@ export const SKLADANIE = {
   // macierzyński
   W1: { dokument: PRAC_ALBO_ZAM("Wniosek o urlop macierzyński (do pracodawcy)"), skladanie: "wniosek" },
   W2: { dokument: "Wniosek o część urlopu macierzyńskiego przed porodem + zaświadczenie lekarskie o terminie porodu", skladanie: "wniosek" },
-  W3: { dokument: PRAC_ALBO_ZAM("Wniosek o urlop macierzyński (podajesz liczbę dzieci)"), skladanie: "wniosek" },
   W10: { dokument: "Wniosek o zasiłek macierzyński (ZAM albo przez pracodawcę) + odpis aktu urodzenia / zgonu", skladanie: "wniosek" },
   W15: { dokument: PRAC_ALBO_ZAM("Wniosek o urlop macierzyński + dokumenty zagraniczne"), skladanie: "wniosek" },
   W39: { dokument: "ZAM – wniosek o zasiłek macierzyński do ZUS + dokumenty o utracie pracy (upadłość, likwidacja, śmierć pracodawcy)", skladanie: "wniosek" },

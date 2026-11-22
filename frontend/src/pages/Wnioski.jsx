@@ -50,7 +50,10 @@ const fmtDate = (date) => date ? date.toLocaleDateString("pl-PL") : "";
 // Konkretny termin z silnika kalendarza (engine/wnioski/kalendarz.js) – to samo źródło co /kalendarz.
 // Najbliższy nadchodzący termin wniosku / ostatni dzień; gdy wszystkie minęły – ostatni z nich.
 function deadlineForVariant(v, terminy) {
-  const dzisIso = new Date().toISOString().slice(0, 10);
+  // Spójnie z ocena.js: konkretną datę pokazujemy tylko, gdy wariant przysługuje (przy „brakuje danych” – nie).
+  if (v.status !== "dostepny") return null;
+  const d = new Date(); // dzień lokalny – toISOString() po północy w Polsce dawał jeszcze „wczoraj”
+  const dzisIso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   const pilne = (terminy ?? []).filter((t) => t.wariant === v.id && (t.typ === "termin" || t.typ === "koniec"));
   const t = pilne.find((x) => x.data >= dzisIso) ?? pilne[pilne.length - 1];
   return t ? parseDate(t.data) : null;

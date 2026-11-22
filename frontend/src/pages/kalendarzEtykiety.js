@@ -9,11 +9,13 @@
  * @param {object} e - zdarzenie z silnika (ma: data, typ, przypomnienie)
  * @param {string} dzis - data dzisiejsza w formacie RRRR-MM-DD
  * @param {"termin"|"przypomnienie"} [rodzaj="termin"] - czy liczymy termin, czy jego przypomnienie
+ * @param {string} [dataPrzypomnienia] - data konkretnego przypomnienia (7 / 3 dni przed); domyślnie e.przypomnienie
  * @returns {string} etykieta do wyświetlenia
  */
-export function etykietaTerminu(e, dzis, rodzaj = "termin") {
+export function etykietaTerminu(e, dzis, rodzaj = "termin", dataPrzypomnienia) {
   if (rodzaj === "przypomnienie") {
-    const dni = dniDo(e.przypomnienie || e.data, dzis);
+    // Przypomnienie nigdy nie jest „pilne” – pilny bywa tylko sam termin (zgłoszenie Oli z 18.11).
+    const dni = dniDo(dataPrzypomnienia || e.przypomnienie || e.data, dzis);
     if (dni === 0) return "Przypomnienie – dziś";
     if (dni > 0) return `Przypomnienie – za ${dni} ${dni === 1 ? "dzień" : "dni"}`;
     return `Przypomnienie – ${Math.abs(dni)} ${Math.abs(dni) === 1 ? "dzień" : "dni"} temu`;
@@ -47,10 +49,10 @@ export function etykietaTerminu(e, dzis, rodzaj = "termin") {
  * @param {"termin"|"przypomnienie"} [rodzaj="termin"]
  * @returns {string} klasa CSS
  */
-export function klasaBadga(e, dzis, rodzaj = "termin") {
+export function klasaBadga(e, dzis, rodzaj = "termin", dataPrzypomnienia) {
   if (rodzaj === "przypomnienie") {
-    const dni = dniDo(e.przypomnienie || e.data, dzis);
-    if (dni < 0) return "b-err";
+    const dni = dniDo(dataPrzypomnienia || e.przypomnienie || e.data, dzis);
+    if (dni < 0) return "b-neutral"; // minione przypomnienie to nie błąd – błędem jest dopiero minięty termin
     if (dni <= 7) return "b-warn";
     return "b-ok";
   }

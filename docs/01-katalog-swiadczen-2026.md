@@ -233,7 +233,7 @@ najniższej masy / najdłuższej hospitalizacji oraz „dzieci pozostałych przy
 |---|---|
 | Podstawa | art. 180² k.p., art. 26–27 rozporządzenia MFPRiPS (Dz.U. 2026 poz. 1316) |
 | Komu | **pracownicy** albo **pracownikowi – ojcu** (jedno z rodziców) — art. 180² § 1 |
-| Warunek bazowy | dziecko przebywa w szpitalu **co najmniej 5 dni** po narodzinach (Poradnik ZUS) |
+| Warunek bazowy | ~~co najmniej 5 dni~~ (Poradnik ZUS) – **skorygowane wg art. 180² § 1 KP:** przed 37. tyg. ciąży liczy się każdy tydzień pobytu (bez minimum); po 37. tyg. – co najmniej 2 kolejne dni, pierwszy między 5. a 28. dniem po porodzie |
 | Kiedy | **bezpośrednio po** wykorzystaniu urlopu macierzyńskiego |
 | Jednorazowo | **bez dzielenia na części** |
 | Termin wniosku | **co najmniej 21 dni** przed zakończeniem korzystania z urlopu macierzyńskiego |

@@ -357,13 +357,30 @@ describe("spójność rejestru z kalkulatorami (przegląd 21.11, 21:45)", () => 
     dziecko: { dataUrodzenia: "2026-09-01", martwe: "nie", pobytWSzpitalu: "tak", tydzienCiazy: "28_37", masaUrodzenia: "1800", szpitalOd: od, szpitalDo: doDnia },
     drugiRodzic: { brak: true },
   });
-  it("uzupełniający: 3 dni w szpitalu to za mało (min. 5), 5 dni wystarcza", () => {
-    expect(status(szpital("2026-09-01", "2026-09-03"), "uzupelniajacy", "W4").status).toBe("niedostepny");
-    expect(status(szpital("2026-09-01", "2026-09-05"), "uzupelniajacy", "W4").status).toBe("dostepny");
+  it("uzupełniający przed 37. tyg.: każdy dzień w szpitalu się liczy (art. 180² § 1 pkt 2 k.p.)", () => {
+    const v = status(szpital("2026-09-01", "2026-09-03"), "uzupelniajacy", "W4");
+    expect(v.status).toBe("dostepny");
+    expect(v.wymiar).toMatch(/^1 tyg./);
   });
   it("odwrócone daty pobytu nie dają ujemnych tygodni", () => {
     const v = status(szpital("2026-09-20", "2026-09-01"), "uzupelniajacy", "W4");
     expect(v.status).toBe("niedostepny");
     expect(v.wymiar).not.toMatch(/-\d/);
+  });
+});
+
+describe("SKLADANIE – spójność z rejestrem", () => {
+  it("każdy wpis „co składasz” wskazuje istniejący wariant (po usunięciu W3 został martwy wpis)", async () => {
+    const { SKLADANIE, WARIANTY } = await import("./rejestr.js");
+    const ids = new Set(WARIANTY.map((v) => v.id));
+    expect(Object.keys(SKLADANIE).filter((id) => !ids.has(id))).toEqual([]);
+  });
+  it("W34: działalność i zlecenie nie dostają formularza macierzyńskiego ZAM przy zasiłku chorobowym", () => {
+    for (const statusUbezpieczenia of ["dg", "zlecenie"]) {
+      const p = profil({ sytuacja: { etap: "ciaza", rola: "matka" }, ubezpieczony: { statusUbezpieczenia, ubezpieczenieOd: "2020-01-01", zaleglosci: "nie" }, zdrowie: { zwolnienie: "B" } });
+      const v = status(p, "chorobowy", "W34");
+      expect(v.dokument).not.toMatch(/ZAM/);
+      expect(v.skladanie).toBe("automatycznie");
+    }
   });
 });

@@ -70,17 +70,23 @@ describe("B-01 · limit 14 dni wynagrodzenia chorobowego po 50. roku życia", ()
   });
 });
 
-describe("B-02 · uzupełniający urlop wymaga co najmniej 5 dni hospitalizacji", () => {
-  const hosp = (dni) =>
+// B-02 skorygowane wg art. 180² § 1 k.p. (wyciąg KP + załącznik do zadania): przed 37. tygodniem
+// liczy się każdy tydzień pobytu (bez minimum), po 37. tygodniu – min. 2 kolejne dni.
+// Raport B-02 i poradnik ZUS podawały „co najmniej 5 dni” – ustawa tego nie zawiera.
+describe("B-02 · uzupełniający urlop – minimum pobytu w szpitalu wg art. 180² k.p.", () => {
+  const hosp = (dni, tydzienCiazy = 26, masa = 900) =>
     zasilekMacierzynski({
       dzieci: 1, porod: "2026-03-01", podstawaMatki: 5000,
-      tydzienCiazy: 26, masa: 900, dniHospitalizacji: dni,
+      tydzienCiazy, masa, dniHospitalizacji: dni,
     }).tygUzup;
 
-  it("3 dni → brak urlopu", () => expect(hosp(3)).toBe(0));
-  it("4 dni → brak urlopu", () => expect(hosp(4)).toBe(0));
-  it("5 dni → 1 tydzień", () => expect(hosp(5)).toBe(1));
-  it("30 dni → 5 tygodni", () => expect(hosp(30)).toBe(5));
+  it("wcześniak: 1 dzień w szpitalu → 1 tydzień (niepełny tydzień w górę)", () => expect(hosp(1)).toBe(1));
+  it("wcześniak: 3 dni → 1 tydzień", () => expect(hosp(3)).toBe(1));
+  it("wcześniak: 30 dni → 5 tygodni", () => expect(hosp(30)).toBe(5));
+  it("28–37 tydz.: 4 dni → 1 tydzień", () => expect(hosp(4, 33, 2000)).toBe(1));
+  it("po 37. tyg.: 1 dzień → brak urlopu", () => expect(hosp(1, 39, 3400)).toBe(0));
+  it("po 37. tyg.: 2 kolejne dni → 1 tydzień", () => expect(hosp(2, 39, 3400)).toBe(1));
+  it("nieznany tydzień ciąży → ostrzejsza reguła (min. 2 dni)", () => expect(hosp(1, 0, 0)).toBe(0));
 });
 
 // B-03 (skorygowane): 70% z art. 31 ust. 3f dotyczy 9 tygodni URLOPU RODZICIELSKIEGO drugiego

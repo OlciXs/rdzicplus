@@ -25,7 +25,8 @@ const STATUSY = { pracownik: "Pracownik (umowa o pracę)", zlecenie: "Umowa zlec
 
 const fmt = (iso) => (iso ? new Date(iso).toLocaleDateString("pl-PL") : "–");
 const dni = (od, doDnia) => Math.round((new Date(doDnia) - new Date(od)) / 86400000) + 1;
-const dzis = () => new Date().toISOString().slice(0, 10);
+// Lokalna data (toISOString() to UTC – po północy w Polsce dawało jeszcze „wczoraj”).
+const dzis = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
 
 export default function Zus() {
   const { profile } = useProfile();
