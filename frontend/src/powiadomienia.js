@@ -9,7 +9,13 @@
 
 const fmt = (iso) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}`;
 const KLUCZ_WYSLANE = "rodzicplus-powiadomione";
+export const KLUCZ_POWIADOMIEN = "rodzicplus-calendar-notifications";
 export const ZDARZENIE = "rodzicplus:powiadomienie";
+
+export const powiadomieniaWlaczone = () => {
+  try { return localStorage.getItem(KLUCZ_POWIADOMIEN) === "1"; }
+  catch { return false; }
+};
 
 /** Lokalna data „RRRR-MM-DD” (bez przesunięcia strefy). */
 export const dzisLokalnie = (d = new Date()) =>
