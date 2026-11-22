@@ -38,6 +38,7 @@ export default function AppHeader({ actions = null, children = null }) {
                 <Link to="/wsparcie"><Icon name="heart" /> Wsparcie</Link>
                 <Link to="/informacje"><Icon name="info" /> Informacje urzędowe</Link>
                 <Link to="/kalkulatory"><Icon name="calc" /> Kalkulatory</Link>
+                <Link to="/porownanie"><Icon name="calc" /> Porównanie</Link>
 
                 <span className="menu-sep" aria-hidden="true"></span>
                 <button type="button" className="menu-logout" onClick={logout}>Wyloguj się</button>
@@ -47,6 +48,7 @@ export default function AppHeader({ actions = null, children = null }) {
                 <span className="menu-section">Start</span>
                 <Link to="/logowanie"><Icon name="person" /> Zaloguj się</Link>
                 <Link to="/kalkulatory"><Icon name="calc" /> Kalkulatory</Link>
+                <Link to="/porownanie"><Icon name="calc" /> Porównanie</Link>
               </>
             )}
           </div>

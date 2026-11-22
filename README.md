@@ -69,6 +69,7 @@ który można odświeżyć lub wysłać komuś linkiem.
 | `/kalkulatory/adopcja-rodzina-zastepcza` | e) Adopcja i rodzina zastępcza |
 | `/kalkulatory/podstawa-wymiaru` | f) Podstawa wymiaru zasiłku |
 | `/kalkulatory/dokumenty-i-terminy` | g) Dokumenty, terminy i zagrożenia |
+| `/porownanie` | Porównanie 4 scenariuszy macierzyńskiego i rodzicielskiego — dostępne publicznie |
 | `/admin` | Panel administratora: parametry kalkulatorów (brak linku w menu – wejście tylko przez adres) |
 | dowolny inny | Strona 404 |
 
@@ -93,11 +94,12 @@ zbierają dane z formularza i wyświetlają wynik.
 | `engine/oboje.js` | d) podział rodzicielskiego, walidacja planu, 9 tyg. ojca po 70% |
 | `engine/adopcja.js` | e) adopcja / rodzina zastępcza: limity wieku, kwoty |
 | `engine/platnik.js` | g) płatnik (> 20 ubezpieczonych) czy ZUS |
+| `engine/porownanie.js` | Porównanie W1–W4, sumy mamy/taty/rodziny i daty porodu/PDP |
 | `engine/engine.test.js` | testy z ręcznie policzonymi wartościami |
 | `engine/wnioski/` | **wnioski i ich warianty**: co przysługuje przy danym profilu (niżej) |
 | `calculators/useProfileDefaults.js` | **podstawianie danych z „Moich danych”** do kalkulatorów: komplet pól (podstawa, daty, staż ubezpieczenia, kod B, liczba ubezpieczonych, zaległość, wymiar etatu, tydzień ciąży, dni hospitalizacji) + pasek „Z PROFILU” pokazujący, co zostało wstawione |
 
-Testy (265: kalkulatory, podstawianie profilu, logika formularza (płeć/rola), warianty wniosków, regresje do `RAPORT_BLEDOW.md`, spójność z bazą wiedzy oraz zgodność szablonów pism i LaTeX-a z YAML-em):
+Testy (361: kalkulatory, podstawianie profilu, porównanie W1–W4, logika formularza (płeć/rola), warianty wniosków, regresje do `RAPORT_BLEDOW.md`, spójność z bazą wiedzy oraz zgodność szablonów pism i LaTeX-a z YAML-em):
 
 ```bash
 cd frontend && npm test

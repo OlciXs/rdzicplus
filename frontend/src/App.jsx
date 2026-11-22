@@ -20,6 +20,7 @@ import OfficialLinks from "./pages/OfficialLinks.jsx";
 import Druk from "./pages/Druk.jsx";
 import Kalendarz from "./pages/Kalendarz.jsx";
 import Powiadomienia from "./components/Powiadomienia.jsx";
+import Porownanie from "./pages/Porownanie.jsx";
 
 const TOKEN_KEY = "rodzicplus-token";
 
@@ -174,6 +175,7 @@ export default function App() {
         {/* Kalkulator zintegrowany (rekomendacja z treści zadania) – trasa stała ma pierwszeństwo przed :slug */}
         <Route path="/kalkulatory/zintegrowany" element={<KalkulatorZintegrowany />} />
         <Route path="/kalkulatory/:slug" element={<Kalkulator />} />
+        <Route path="/porownanie" element={<Porownanie />} />
 
         {/* Przekierowania zgodności ze starym adresem */}
         <Route path="/kalkulatory/index" element={<Navigate to="/kalkulatory" replace />} />

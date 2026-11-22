@@ -6,6 +6,7 @@ import {
   WNIOSKI, POLA, ocenWniosek, przegladWnioskow,
   podstawaWymiaru, chorobowyWCiazy, zasilekMacierzynski, laczenieZPraca, obojeRodzice, adopcja,
   DEFAULT_PARAMS, przygotujDruk, DRUKI,
+  porownaj,
 } from "./index.js";
 
 // --- generator liczb pseudolosowych (mulberry32) ---
@@ -221,6 +222,42 @@ describe("fuzz: kalkulatory na 3000 losowych wejściach", () => {
       }
     }
     expect(bledy.slice(0, 15)).toEqual([]);
+  });
+
+  describe("fuzz: porównanie 3000 losowych wejść", () => {
+    it("niezmienniki kwot i pul scenariuszy", () => {
+      const bledy = [];
+      for (let i = 0; i < 3000; i++) {
+        try {
+          const r = porownaj({
+            dzieci: smiec(),
+            porod: date(),
+            przewidywanaDataPorodu: date(),
+            podstawaMatki: smiec(),
+            podstawaOjca: smiec(),
+            mamaUbezpieczona: R() < 0.5 ? true : R() < 0.8 ? false : null,
+            tataUbezpieczony: R() < 0.5 ? true : R() < 0.8 ? false : null,
+            zalegloscMatki: smiec(),
+            zalegloscTaty: smiec(),
+            dobrowolnaMama: R() < 0.3,
+            wniosek815: R() < 0.5 ? true : R() < 0.8 ? false : null,
+            rownolegle: R() < 0.5,
+          }, DEFAULT_PARAMS, "2026-11-21");
+
+          for (const s of r.scenariusze) {
+            const nums = [s.sumaMama, s.sumaTata, s.sumaRodziny, s.tygodniePrzepadajace, s.rowzinski.wykorzystano];
+            if (nums.some((v) => !Number.isFinite(v) || v < 0)) bledy.push(`porównanie #${i} ${s.id}: ujemna/Nan kwota lub liczba`);
+            if (s.status === "dostepny" && s.powody.length) bledy.push(`porównanie #${i} ${s.id}: dostępny z powodami`);
+            if (s.rowzinski.wykorzystano > s.rowzinski.pula) bledy.push(`porównanie #${i} ${s.id}: użycie > pula`);
+            if (Math.abs(s.rowzinski.przepada - (s.rowzinski.pula - s.rowzinski.wykorzystano)) > 0.001) bledy.push(`porównanie #${i} ${s.id}: przepada != pula-wykorzystano`);
+            if (![0, DEFAULT_PARAMS.wylaczneRodzicielskie].includes(s.rowzinski.udzialTaty)) bledy.push(`porównanie #${i} ${s.id}: udział taty=${s.rowzinski.udzialTaty}`);
+          }
+        } catch (e) {
+          bledy.push(`porównanie #${i}: wyjątek ${e.message}`);
+        }
+      }
+      expect(bledy.slice(0, 15)).toEqual([]);
+    });
   });
 
   it("niezmienniki biznesowe kalkulatorów", () => {

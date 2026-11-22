@@ -12,10 +12,11 @@ import { laczenieZPraca } from "./laczenie.js";
 import { obojeRodzice } from "./oboje.js";
 import { adopcja } from "./adopcja.js";
 import { ktoWyplaca } from "./platnik.js";
+import { porownaj } from "./porownanie.js";
 
 export { DEFAULT_PARAMS, mergeParams, diffParams, PARAM_GROUPS } from "./params.js";
 export * from "./helpers.js";
-export { podstawaWymiaru, chorobowyWCiazy, zasilekMacierzynski, laczenieZPraca, obojeRodzice, adopcja, ktoWyplaca };
+export { podstawaWymiaru, chorobowyWCiazy, zasilekMacierzynski, laczenieZPraca, obojeRodzice, adopcja, ktoWyplaca, porownaj };
 
 // Wnioski i ich warianty (profil → co przysługuje): src/engine/wnioski/
 export { WNIOSKI, WARIANTY, POLA, wariantById, wniosekById } from "./wnioski/rejestr.js";

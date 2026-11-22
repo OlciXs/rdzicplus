@@ -143,8 +143,8 @@ export function terminyWnioskow(profil, { dzis, params = DEFAULT_PARAMS } = {}) 
     const odPorodu = k.etap === "przyjecie" ? "przyjęciu dziecka" : "porodzie"; // „po porodzie”, nie „po porodu”
     dodaj("W41", { id: "wniosek", typ: "termin", data: plus(dataW41, P.deadlineSredniowany), kto: "Mama", pewnosc: zPdp ? "szacunek" : "pewne",
       tytul: "Wniosek o zasiłek w pełnym wymiarze (81,5% za cały okres)",
-      opis: `Do ${P.deadlineSredniowany} dni po ${odPorodu}${zPdp ? " (liczone od przewidywanej daty porodu)" : ""}. Później zostaje wariant 100% za macierzyński i 70% za rodzicielski.`,
-      podstawa: "art. 179¹ KP; art. 31 ustawy zasiłkowej", zrodlo: `${PORADNIK}, s. 34` });
+      opis: `Do ${P.deadlineSredniowany} dni po ${odPorodu}${zPdp ? " (liczone od przewidywanej daty porodu)" : ""}; dzień ${P.deadlineSredniowany} jest włącznie. Później zostaje wariant 100% za macierzyński i 70% za rodzicielski.`,
+      podstawa: "Poradnik ZUS, s. 33-34; ustawa zasiłkowa", zrodlo: `${PORADNIK}, s. 33-34` });
   }
 
   /* ---------- W5 / W22: przejęcie urlopu po 14 tygodniach ---------- */

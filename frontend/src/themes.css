@@ -836,6 +836,33 @@ a.pager-chip { text-decoration: none; }
 }
 @media print { .toast-stack { display: none !important; } }
 
+/* Porównanie zasiłków */
+.porownanie-page { max-width: 1180px; }
+.por-profil { margin-bottom: 18px; }
+.por-presets { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.por-presets > span { color: var(--color-muted); font-weight: 600; }
+.por-toolbar { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 12px; color: var(--color-muted); }
+.por-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.por-fields label { display: grid; gap: 6px; font-weight: 600; }
+.por-fields input, .por-fields select { min-height: 38px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 8px; background: var(--color-surface); color: var(--color-text); }
+.por-fields .por-check { grid-column: 1 / -1; display: flex; align-items: center; font-weight: 500; }
+.por-table { min-width: 980px; }
+.por-table th, .por-table td { vertical-align: top; text-align: left; }
+.por-table th { background: var(--color-primary-soft); }
+.por-table td div { margin-bottom: 5px; }
+.por-note, .por-warning { border-left: 3px solid var(--color-border-strong, #9aa4b2); padding-left: 8px; }
+.por-warning { margin: 12px 0; padding: 10px; background: var(--color-warning-bg, #fff7df); }
+.por-source { color: var(--color-muted); font-size: 0.86rem; }
+.por-independent, .por-exclusions { margin-top: 16px; }
+.por-cards { display: none; }
+@media (max-width: 720px) {
+  .por-fields { grid-template-columns: 1fr; }
+  .por-table-wrap { display: none; }
+  .por-cards { display: grid; gap: 12px; }
+  .por-card { margin: 0; }
+  .por-toolbar { display: grid; }
+}
+
 /* ---------- filtry na stronie „Wsparcie” i wybór opcji w kalkulatorze zintegrowanym ---------- */
 .support-filtry, .zint-opcje { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
 button.pager-chip { font: inherit; cursor: pointer; }
