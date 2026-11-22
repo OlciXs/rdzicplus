@@ -710,3 +710,11 @@ a.pager-chip { text-decoration: none; }
   border: 0; background: none; font-size: 1.2rem; cursor: pointer; color: var(--color-muted);
 }
 @media print { .toast-stack { display: none !important; } }
+
+/* ---------- filtry na stronie „Wsparcie” i wybór opcji w kalkulatorze zintegrowanym ---------- */
+.support-filtry, .zint-opcje { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
+button.pager-chip { font: inherit; cursor: pointer; }
+.pager-chip.is-active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+.zint-sekcja { margin: 28px 0 0; padding-top: 18px; border-top: 2px solid var(--color-border); }
+.zint-tytul { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; margin: 0 0 12px; }
+.zint-tytul .note { margin: 0; font-weight: 400; }

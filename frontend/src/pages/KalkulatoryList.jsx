@@ -21,6 +21,16 @@ export default function KalkulatoryList() {
           </p>
         </div>
 
+        <Link className="calc-cta" to="/kalkulatory/zintegrowany">
+          <span className="calc-cta-icon" aria-hidden="true">🧮</span>
+          <span className="calc-cta-body">
+            <span className="calc-cta-title">Kalkulator zintegrowany – wszystko na jednej stronie</span>
+            <span className="calc-cta-desc">Zaznacz, co Cię dotyczy (ciąża, poród, podział urlopu, praca, adopcja…) – policzymy okresy, kwoty i terminy razem.</span>
+          </span>
+          <span className="calc-cta-arrow" aria-hidden="true">→</span>
+        </Link>
+
+        <h2>Albo wybierz jeden kalkulator</h2>
         <div className="calc-list">
           {CALCULATORS.map((c) => (
             <Link key={c.slug} className="calc-tile" to={calculatorPath(c.slug)}>

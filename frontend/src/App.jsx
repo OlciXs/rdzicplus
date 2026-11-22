@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import Login from "./pages/Login.jsx";
 import KalkulatoryList from "./pages/KalkulatoryList.jsx";
 import Kalkulator from "./pages/Kalkulator.jsx";
+import KalkulatorZintegrowany from "./pages/KalkulatorZintegrowany.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Admin from "./pages/Admin.jsx";
@@ -170,6 +171,8 @@ export default function App() {
 
         {/* Kalkulatory – dostępne publicznie */}
         <Route path="/kalkulatory" element={<KalkulatoryList />} />
+        {/* Kalkulator zintegrowany (rekomendacja z treści zadania) – trasa stała ma pierwszeństwo przed :slug */}
+        <Route path="/kalkulatory/zintegrowany" element={<KalkulatorZintegrowany />} />
         <Route path="/kalkulatory/:slug" element={<Kalkulator />} />
 
         {/* Przekierowania zgodności ze starym adresem */}
