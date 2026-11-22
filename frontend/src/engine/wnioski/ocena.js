@@ -47,6 +47,10 @@ export function ocenWariant(wariant, k) {
   const niespelnione = warunki.filter((x) => x.ok === false);
   const nieznane = warunki.filter((x) => x.ok === null);
   const status = niespelnione.length ? "niedostepny" : nieznane.length ? "brak_danych" : "dostepny";
+  // Konkretne daty w terminie pokazujemy tylko, gdy wariant jest w pełni oceniony.
+  // Przy „brak danych” data mogłaby wprowadzić w błąd (dotyczy np. W4, W41, W21, W28).
+  const konkretnyTermin = status === "dostepny";
+  const termin = typeof wariant.termin === "function" ? wariant.termin(k, konkretnyTermin) : wariant.termin;
 
   // Pola potrzebne do wypełnienia samego wniosku (nie decydują o prawie).
   const doUzupelnienia = etykiety((wariant.potrzebnePola ?? []).filter((p) => pusty(pobierz(k.profil, p))));
@@ -65,7 +69,7 @@ export function ocenWariant(wariant, k) {
     dokument: wartosc(SKLADANIE[wariant.id]?.dokument, k),
     skladanie: wartosc(SKLADANIE[wariant.id]?.skladanie, k) ?? "wniosek",
     formularz: wariant.formularz ?? null,
-    termin: wartosc(wariant.termin, k),
+    termin,
     dokumenty: wariant.dokumenty ?? [],
   };
 }

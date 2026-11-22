@@ -426,7 +426,7 @@ export const WARIANTY = [
     wysokosc: () => "81,5% przez cały okres",
     adresat: ADRES_ZASILKU,
     formularz: "Pisemny wniosek (art. 30a ustawy zasiłkowej)",
-    termin: (k) => (k.dataUrodzenia ? `Do ${fmtD(plusDni(k.dataUrodzenia, k.P.deadlineSredniowany))} (21 dni po porodzie)` : "Do 21 dni po porodzie"),
+    termin: (k, konkretny = true) => (konkretny && k.dataUrodzenia ? `Do ${fmtD(plusDni(k.dataUrodzenia, k.P.deadlineSredniowany))} (21 dni po porodzie)` : "Do 21 dni po porodzie"),
     dokumenty: [],
     potrzebnePola: [...BAZA, "dziecko.dataUrodzenia", "dziecko.liczbaDzieci"],
     podstawa: "art. 30a, art. 31 ust. 3 ustawy zasiłkowej",
@@ -621,7 +621,7 @@ export const WARIANTY = [
     wysokosc: () => "100%",
     adresat: ADRES_URLOPU,
     formularz: "Wniosek o uzupełniający urlop macierzyński (§ 14 rozporządzenia o wnioskach) – MUSI zawierać termin zakończenia urlopu macierzyńskiego",
-    termin: (k) => (k.terminKoncaMacierzynskiego ? `Do ${fmtD(plusDni(k.terminKoncaMacierzynskiego, -k.P.ochronaWkladDni.uzupelniajacy))} (21 dni przed końcem urlopu macierzyńskiego)` : "Co najmniej 21 dni przed końcem urlopu macierzyńskiego"),
+    termin: (k, konkretny = true) => (konkretny && k.terminKoncaMacierzynskiego ? `Do ${fmtD(plusDni(k.terminKoncaMacierzynskiego, -k.P.ochronaWkladDni.uzupelniajacy))} (21 dni przed końcem urlopu macierzyńskiego)` : "Co najmniej 21 dni przed końcem urlopu macierzyńskiego"),
     dokumenty: ["Zaświadczenie szpitala: okres pobytu, tydzień ciąży / masa urodzeniowa", "Oświadczenie drugiego rodzica, że nie korzysta z tego urlopu", AKT],
     potrzebnePola: [...BAZA, "urlopy.terminKoncaMacierzynskiego", "dziecko.masaUrodzenia"],
     podstawa: "art. 180² k.p.; § 26–27 rozporządzenia",
@@ -647,7 +647,7 @@ export const WARIANTY = [
     wysokosc: () => "100% podstawy",
     adresat: ADRES_URLOPU,
     formularz: "Wniosek o urlop ojcowski (§ 17 rozporządzenia o wnioskach); nie-pracownik: ZAM przed rozpoczęciem",
-    termin: (k) => (k.dataUrodzenia && k.etap === "po_porodzie"
+    termin: (k, konkretny = true) => (konkretny && k.dataUrodzenia && k.etap === "po_porodzie"
       ? `Wniosek min. 7 dni przed; wykorzystaj do ${fmtD(new Date(k.dataUrodzenia.getFullYear(), k.dataUrodzenia.getMonth() + k.P.deadlineOjcowskiMies, k.dataUrodzenia.getDate() - 1))}`
       : "Wniosek min. 7 dni przed; do 12. miesiąca życia dziecka"),
     dokumenty: [AKT, "Oświadczenie, czy korzystałeś już z urlopu ojcowskiego", "Przy adopcji: postanowienie sądu o przysposobieniu"],
@@ -721,7 +721,7 @@ export const WARIANTY = [
     wysokosc: () => "100% (albo 81,5% przy wniosku do 21 dni od przyjęcia)",
     adresat: ADRES_URLOPU,
     formularz: "Wniosek o urlop na warunkach urlopu macierzyńskiego (§ 18 rozporządzenia o wnioskach)",
-    termin: (k) => (k.dataPrzyjecia ? `Wniosek do ${fmtD(plusDni(k.dataPrzyjecia, 7))} (7 dni od przyjęcia); urlop najpóźniej od ${fmtD(plusDni(k.dataPrzyjecia, 21))}` : "Wniosek w 7 dni od przyjęcia; urlop najpóźniej 21 dni od przyjęcia"),
+    termin: (k, konkretny = true) => (konkretny && k.dataPrzyjecia ? `Wniosek do ${fmtD(plusDni(k.dataPrzyjecia, 7))} (7 dni od przyjęcia); urlop najpóźniej od ${fmtD(plusDni(k.dataPrzyjecia, 21))}` : "Wniosek w 7 dni od przyjęcia; urlop najpóźniej 21 dni od przyjęcia"),
     dokumenty: [
       "Oświadczenie o dacie przyjęcia dziecka",
       "Adopcja: kopia wniosku o przysposobienie z poświadczeniem sądu albo zaświadczenie sądu",

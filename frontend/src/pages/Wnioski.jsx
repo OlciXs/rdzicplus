@@ -128,7 +128,7 @@ function Wariant({ v, profile }) {
             )}
             {v.adresat && <div><dt>🏢 Komu</dt><dd>{v.adresat}</dd></div>}
             {v.termin && <div><dt>⏰ Do kiedy</dt><dd>{v.termin}</dd></div>}
-            {deadline && (
+            {v.status === "dostepny" && deadline && (
               <div>
                 <dt>📅 Konkretny termin</dt>
                 <dd>
