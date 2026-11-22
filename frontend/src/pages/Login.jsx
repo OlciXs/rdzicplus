@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import Logo from "../components/Logo.jsx";
+import Icon from "../components/Icons.jsx";
 import { api } from "../api.js";
 import { useAuth } from "../auth.js";
 
@@ -107,6 +108,14 @@ export default function Login() {
           <button className="btn btn-primary btn-big" onClick={start} disabled={busy}>
             {busy ? "Chwileczkę…" : "Zaloguj się mObywatelem"}
           </button>
+          <Link className="login-public-calc" to="/kalkulatory">
+            <span className="login-public-calc-icon" aria-hidden="true"><Icon name="calc" /></span>
+            <span>
+              <strong>Chcę najpierw użyć kalkulatora</strong>
+              <small>Bez logowania i bez podawania danych osobowych</small>
+            </span>
+            <span className="login-public-calc-arrow" aria-hidden="true">→</span>
+          </Link>
           <p className="hint">To wersja demonstracyjna: logowanie mObywatelem jest symulowane, do wyboru są 4 przykładowe profile z fikcyjnymi danymi.</p>
         </section>
       )}
@@ -212,10 +221,6 @@ export default function Login() {
           </button>
         </section>
       )}
-
-      <Link className="login-without-account" to="/kalkulatory">
-        Chcesz sprawdzić świadczenia bez logowania? <strong>Otwórz kalkulatory</strong>
-      </Link>
     </main>
   );
 }

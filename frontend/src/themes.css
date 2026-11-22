@@ -282,16 +282,34 @@ h2 { font-size: 1.02rem; font-weight: 600; margin: 0 0 8px; color: var(--color-n
 
 .login-calc-link { padding: 0 16px 32px; }
 .login-calc-link .btn-link { width: auto; }
-.login-without-account {
-  position: fixed; left: 0; right: 0; bottom: 0;
-  min-height: 64px; display: flex; flex-wrap: wrap;
-  align-items: center; justify-content: center; gap: 4px;
-  padding: 10px 16px; text-align: center;
-  background: var(--color-surface); color: var(--color-muted);
-  border-top: 1px solid var(--color-border);
+.login-public-calc {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 20px;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  min-height: 72px;
+  padding: 12px 14px;
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius);
+  background: var(--color-primary-soft);
+  color: var(--color-navy);
   text-decoration: none;
 }
-.login-without-account strong { color: var(--color-primary); }
+.login-public-calc:hover { background: var(--color-surface); }
+.login-public-calc-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: #fff;
+}
+.login-public-calc-icon svg { width: 22px; height: 22px; }
+.login-public-calc > span:nth-child(2) { display: grid; gap: 3px; }
+.login-public-calc small { color: var(--color-muted); }
+.login-public-calc-arrow { color: var(--color-primary); font-size: 1.15rem; text-align: right; }
 
 /* Kalendarz terminów */
 .calendar-toolbar {
