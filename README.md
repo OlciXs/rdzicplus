@@ -228,20 +228,3 @@ Endpointy (wymagają zalogowania): `GET /api/zus/dane`, `GET /api/zus/ezla`,
 `GET /api/zus/zaswiadczenie?naDzien=RRRR-MM-DD`, `GET /api/zus/wnioski`,
 `GET/POST /api/usc/odpisy` (wnioski o odpis trzymane w pamięci – po restarcie znikają).
 
-## Panel administratora (`/admin`)
-
-Stawki, wymiary urlopów, kwoty i terminy można zmienić bez wdrażania nowej wersji
-(wymóg zadania). Backend zapisuje tylko zmiany względem wartości domyślnych
-(`GET/PUT/DELETE /api/params`, plik `backend/data/db.json`), a frontend nakłada je przy
-starcie, więc wszyscy użytkownicy od razu liczą według nowych parametrów.
-
-Zapis chroni hasło ze zmiennej środowiskowej `ADMIN_PASSWORD`. W wersji demonstracyjnej
-(bez tej zmiennej) hasło to `zus-demo-2026`. **Na serwerze ustaw własne `ADMIN_PASSWORD`**
-(np. linia `ADMIN_PASSWORD=…` w pliku `.env` obok `docker-compose.yml`; Compose przekazuje ją
-do kontenera backendu).
-
-### Deploy
-
-`vite.config.js` ma `appType: "spa"`, więc serwer deweloperski (`npm run dev`)
-i `npm run preview` obsługują odświeżanie dowolnej podstrony. Na hostingu
-statycznym (Vercel/Netlify) włącz fallback „rewrite all → `/index.html`”.
