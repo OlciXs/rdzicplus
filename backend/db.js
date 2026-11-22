@@ -10,14 +10,143 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DB_FILE = path.join(__dirname, "data", "db.json");
 
 // Dane startowe: osoby "z mObywatela" do testów (dane FIKCYJNE).
+// Cztery przypadki demo:
+//   - Bożena: ciąża (etat, e-ZLA z kodem B, pracodawca wypłaca),
+//   - Marzena: po porodzie, działalność gospodarcza (zasiłki wypłaca ZUS),
+//   - Mariusz: ojciec po porodzie na etacie (urlop ojcowski + rodzicielski),
+//   - Alicja: pusty profil - dane trzeba od zera wypełnić po zalogowaniu.
 const SEED = {
   mobywatelProfiles: [
     { id: "mob-bozena", imie: "Bożena", nazwisko: "Nowak", pesel: "91041748260" },
     { id: "mob-marzena", imie: "Marzena", nazwisko: "Wiśniewska", pesel: "87090371522" },
     { id: "mob-mariusz", imie: "Mariusz", nazwisko: "Zieliński", pesel: "94122530836" },
+    { id: "mob-alicja", imie: "Alicja", nazwisko: "Sosnowska", pesel: "98031510242" },
   ],
-  // Użytkownicy aplikacji - tworzą się sami przy pierwszym logowaniu
-  users: [],
+  // Użytkownicy aplikacji - tworzą się sami przy pierwszym logowaniu.
+  // Trzy gotowe profile demonstracyjne (dane FIKCYJNE), żeby świeża instalacja
+  // od razu pokazywała trzy różne przypadki; profilu wypełnia getOrCreateProfile,
+  // więc poniżej są tylko wypełnione pola (płeć i data urodzenia wyliczy się z PESEL-u).
+  users: [
+    {
+      id: "demo-bozena",
+      pesel: "91041748260",
+      imie: "Bożena",
+      nazwisko: "Nowak",
+      createdAt: "2026-11-01T10:00:00.000Z",
+      lastLoginAt: "2026-11-22T00:00:00.000Z",
+      profile: {
+        ubezpieczony: {
+          adres: "ul. Lipowa 8/3, 00-001 Warszawa",
+          rachunek: "PL61109010140000071219812874",
+          statusUbezpieczenia: "pracownik",
+          podstawaWymiaru: "5200",
+          wymiarEtatu: "pelny",
+          zatrudnionyOd: "2022-03-01",
+        },
+        sytuacja: { etap: "ciaza", rola: "matka" },
+        platnik: {
+          nazwa: "Alfa Medical Sp. z o.o. (fikcyjna)",
+          adres: "ul. Przemysłowa 2, 00-002 Warszawa",
+          nip: "5261040147",
+          regon: "012345678",
+          liczbaUbezpieczonych: "powyzej_20",
+        },
+        dziecko: { liczbaDzieci: "1", przewidywanaDataPorodu: "2027-01-20", dzieci: [] },
+        zdrowie: { zwolnienie: "B", zlaNumer: "ZLA/B/2026/001", zlaOd: "2026-11-09", zlaDo: "2026-12-07" },
+        urlopy: { zamiarPelnyWymiar: "tak", planRodzicielski: "nie" },
+      },
+      profileUpdatedAt: "2026-11-22T00:00:00.000Z",
+    },
+    {
+      id: "demo-marzena",
+      pesel: "87090371522",
+      imie: "Marzena",
+      nazwisko: "Wiśniewska",
+      createdAt: "2026-11-01T11:00:00.000Z",
+      lastLoginAt: "2026-11-22T00:00:00.000Z",
+      profile: {
+        ubezpieczony: {
+          adres: "ul. Dworcowa 14, 85-001 Bydgoszcz",
+          rachunek: "PL12345678901234567890123456",
+          statusUbezpieczenia: "dg",
+          podstawaWymiaru: "4877.11",
+          ubezpieczenieOd: "2023-06-01",
+          zaleglosci: "nie",
+        },
+        sytuacja: { etap: "po_porodzie", rola: "matka" },
+        platnik: {
+          nazwa: "Marzena Wiśniewska Pracownia Grafiki (fikcyjna)",
+          adres: "ul. Dworcowa 14, 85-001 Bydgoszcz",
+          nip: "9541243678",
+          regon: "345612789",
+        },
+        drugiRodzic: {
+          imie: "Marek",
+          nazwisko: "Wiśniewski",
+          pesel: "86040251571",
+          rola: "ojciec",
+          statusUbezpieczenia: "pracownik",
+          platnikNazwa: "Beta Logistics (fikcyjna)",
+          brak: false,
+        },
+        dziecko: {
+          liczbaDzieci: "1",
+          dataUrodzenia: "2026-09-28",
+          miejsceUrodzenia: "Bydgoszcz",
+          pobytWSzpitalu: "nie",
+          zaZyciem: false,
+          dzieci: [
+            { imie: "Ola", nazwisko: "Wiśniewska", pesel: "", dataUrodzenia: "2026-09-28", miejsceUrodzenia: "Bydgoszcz" },
+          ],
+        },
+        urlopy: { planRodzicielski: "tak", rodzicielskiOd: "2026-12-15", rodzicielskiDo: "2027-08-15" },
+      },
+      profileUpdatedAt: "2026-11-22T00:00:00.000Z",
+    },
+    {
+      id: "demo-mariusz",
+      pesel: "94122530836",
+      imie: "Mariusz",
+      nazwisko: "Zieliński",
+      createdAt: "2026-11-01T12:00:00.000Z",
+      lastLoginAt: "2026-11-22T00:00:00.000Z",
+      profile: {
+        ubezpieczony: {
+          adres: "ul. Słoneczna 12/4, 00-001 Warszawa",
+          rachunek: "PL61109010140000071219812874",
+          statusUbezpieczenia: "pracownik",
+          podstawaWymiaru: "6200",
+          wymiarEtatu: "pelny",
+          zatrudnionyOd: "2021-09-01",
+        },
+        sytuacja: { etap: "po_porodzie", rola: "ojciec" },
+        platnik: {
+          nazwa: "Gamma Software Sp. z o.o. (fikcyjna)",
+          nip: "5272367890",
+          regon: "678912345",
+          liczbaUbezpieczonych: "powyzej_20",
+        },
+        drugiRodzic: {
+          imie: "Zofia",
+          nazwisko: "Zielińska",
+          pesel: "93010812345",
+          rola: "matka",
+          statusUbezpieczenia: "pracownik",
+          brak: false,
+        },
+        dziecko: {
+          liczbaDzieci: "1",
+          dataUrodzenia: "2026-10-05",
+          pobytWSzpitalu: "nie",
+          dzieci: [
+            { imie: "Antek", nazwisko: "Zieliński", pesel: "", dataUrodzenia: "2026-10-05", miejsceUrodzenia: "Warszawa" },
+          ],
+        },
+        urlopy: { planOjcowski: "tak", planRodzicielski: "tak", laczenieZPraca: "nie", matkaRezygnuje: "nie" },
+      },
+      profileUpdatedAt: "2026-11-22T00:00:00.000Z",
+    },
+  ],
 };
 
 function load() {
