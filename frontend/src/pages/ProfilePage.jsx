@@ -479,15 +479,17 @@ const normalize = (p) => {
 };
 
 const CSS = `
-.stepper{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;padding:0;margin:0 0 1.25rem}
-.stepper button{border:1px solid rgba(128,128,128,.5);background:transparent;color:inherit;border-radius:999px;padding:.35rem .8rem;font:inherit;font-size:.9rem;cursor:pointer}
-.stepper button[aria-current="step"]{background:var(--primary,#1d4ed8);border-color:var(--primary,#1d4ed8);color:#fff;font-weight:600}
-.stepper .done{opacity:.75}
-.step-bar{height:6px;border-radius:3px;background:rgba(128,128,128,.25);margin:0 0 1.25rem;overflow:hidden}
-.step-bar>span{display:block;height:100%;background:var(--primary,#1d4ed8);transition:width .2s}
+.stepper{display:flex;flex-wrap:wrap;gap:.4rem;list-style:none;padding:0;margin:0 0 1.25rem}
+.stepper button{border:1px solid var(--color-border,#dcd9cf);background:transparent;color:inherit;border-radius:3px;padding:.55rem 1rem;font:inherit;font-family:var(--font);font-size:.95rem;font-weight:600;cursor:pointer;transition:border-color .12s ease,background-color .12s ease}
+.stepper button:hover{border-color:var(--color-primary,#007934);color:var(--color-primary-hover,#005f29)}
+.stepper button[aria-current="step"]{background:var(--color-primary,#007934);border-color:var(--color-primary,#007934);color:#fff;font-weight:700}
+.stepper button[aria-current="step"]:hover{color:#fff}
+.stepper .done{opacity:.7}
+.step-bar{height:4px;border-radius:2px;background:var(--color-surface-2,#f0efe8);margin:0 0 1.25rem;overflow:hidden}
+.step-bar>span{display:block;height:100%;background:var(--color-primary,#007934);transition:width .2s}
 .step-nav{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-top:1.5rem}
 .summary-list{list-style:none;padding:0;margin:0 0 1rem}
-.summary-list li{display:flex;justify-content:space-between;gap:1rem;padding:.4rem 0;border-bottom:1px solid rgba(128,128,128,.25)}
+.summary-list li{display:flex;justify-content:space-between;gap:1rem;padding:.6rem 0;border-bottom:1px dotted var(--color-border,#dcd9cf)}
 `;
 
 /* ---------- pole formularza ---------- */

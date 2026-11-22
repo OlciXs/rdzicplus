@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import Logo from "./Logo.jsx";
+import Icon from "./Icons.jsx";
 import { useAuth } from "../auth.js";
 
 export default function AppHeader({ actions = null, children = null }) {
@@ -7,7 +9,7 @@ export default function AppHeader({ actions = null, children = null }) {
   return (
     <header className="topbar">
       <Link to="/" className="brand brand-link" aria-label="RodzicPlus - strona główna">
-        <span className="brand-mark" aria-hidden="true">RP</span>
+        <Logo size={34} variant="on-brand" />
         <span className="brand-name">RodzicPlus</span>
       </Link>
       {children}
@@ -21,20 +23,32 @@ export default function AppHeader({ actions = null, children = null }) {
             {user ? (
               <>
                 <span className="menu-user">Cześć, {user.imie}</span>
-                <Link to="/panel">Mój panel</Link>
-                <Link to="/profil">Moje dane</Link>
-                <Link to="/zus">Dane z ZUS</Link>
-                <Link to="/odpis-aktu">Odpis aktu urodzenia</Link>
-                <Link to="/wnioski">Wnioski</Link>
-                <Link to="/kalendarz">Kalendarz terminów</Link>
-                <Link to="/wsparcie">Wsparcie i sytuacje szczególne</Link>
-                <Link to="/informacje">Informacje urzędowe i linki</Link>
+
+                <span className="menu-section">Twoje sprawy</span>
+                <Link to="/panel"><Icon name="home" /> Mój panel</Link>
+                <Link to="/profil"><Icon name="pencil" /> Moje dane</Link>
+                <Link to="/wnioski"><Icon name="docs" /> Wnioski</Link>
+                <Link to="/kalendarz"><Icon name="calendar" /> Kalendarz terminów</Link>
+
+                <span className="menu-section">Symulacje urzędowe</span>
+                <Link to="/zus"><Icon name="bank" /> Dane z ZUS</Link>
+                <Link to="/odpis-aktu"><Icon name="doc" /> Odpis aktu urodzenia</Link>
+
+                <span className="menu-section">Pomoc i informacje</span>
+                <Link to="/wsparcie"><Icon name="heart" /> Wsparcie</Link>
+                <Link to="/informacje"><Icon name="info" /> Informacje urzędowe</Link>
+                <Link to="/kalkulatory"><Icon name="calc" /> Kalkulatory</Link>
+
+                <span className="menu-sep" aria-hidden="true"></span>
+                <button type="button" className="menu-logout" onClick={logout}>Wyloguj się</button>
               </>
             ) : (
-              <Link to="/logowanie">Zaloguj się</Link>
+              <>
+                <span className="menu-section">Start</span>
+                <Link to="/logowanie"><Icon name="person" /> Zaloguj się</Link>
+                <Link to="/kalkulatory"><Icon name="calc" /> Kalkulatory</Link>
+              </>
             )}
-            <Link to="/kalkulatory">Kalkulatory</Link>
-            {user && <button type="button" onClick={logout}>Wyloguj</button>}
           </div>
         </details>
       </div>

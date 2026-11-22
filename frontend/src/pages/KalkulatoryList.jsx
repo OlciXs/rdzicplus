@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import AppHeader from "../components/AppHeader.jsx";
+import Icon from "../components/Icons.jsx";
 import { CALCULATORS, calculatorPath } from "../calculators/registry.jsx";
 
 export default function KalkulatoryList() {
@@ -24,7 +25,7 @@ export default function KalkulatoryList() {
         <div className="calc-list">
           {CALCULATORS.map((c) => (
             <Link key={c.slug} className="calc-tile" to={calculatorPath(c.slug)}>
-              <span className="calc-tile-icon" aria-hidden="true">{c.icon}</span>
+              <span className="calc-tile-icon"><Icon name={c.icon} /></span>
               <span className="calc-tile-body">
                 <span className="calc-tile-letter">Kalkulator {c.letter}</span>
                 <span className="calc-tile-title">{c.title}</span>
