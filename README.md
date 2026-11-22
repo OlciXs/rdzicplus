@@ -3,6 +3,19 @@
 Aplikacja dla przyszłych rodziców: mówi, czy dostanie pieniądze z ZUS, ile, jak długo
 i co gdzie złożyć.
 
+## Zrzuty ekranu
+
+Wszystkie dane na zrzutach są fikcyjne (profile demo z symulowanego logowania mObywatelem).
+
+| | |
+| --- | --- |
+| **Moje dane** – dane wpisywane raz, pytania dopasowane do sytuacji<br>![Moje dane](docs/zrzuty/moje-dane.png) | **Złóż wniosek** – wnioski z licznikami wariantów<br>![Lista wniosków](docs/zrzuty/wnioski.png) |
+| **Wariant wniosku** – co, komu, do kiedy, ile i jakie dokumenty<br>![Wariant wniosku](docs/zrzuty/wariant-wniosku.png) | **Generator wniosku** – pola z profilu, kontrola terminów, PDF<br>![Generator wniosku](docs/zrzuty/generator-wniosku.png) |
+| **Kalendarz i powiadomienia** – przypomnienia 7 i 3 dni przed oraz w dniu terminu<br>![Kalendarz z powiadomieniem](docs/zrzuty/kalendarz-powiadomienie.png) | **Wszystkie terminy** – z podstawą prawną przy każdej dacie<br>![Lista terminów](docs/zrzuty/kalendarz-terminy.png) |
+| **Kalkulator zintegrowany** – kalkulatory a–g na jednej stronie<br>![Kalkulator zintegrowany](docs/zrzuty/kalkulator-zintegrowany.png) | **Dane z ZUS** (symulacja) – ubezpieczenie, podstawa, e-ZLA<br>![Dane z ZUS](docs/zrzuty/dane-z-zus.png) |
+| **Logowanie** – symulacja mObywatela<br>![Logowanie](docs/zrzuty/logowanie.png) | **Wsparcie** – fundacje i hospicja perinatalne<br>![Wsparcie](docs/zrzuty/wsparcie.png) |
+| **Telefon – panel**<br>![Panel na telefonie](docs/zrzuty/telefon-panel.png) | **Telefon – kalendarz**<br>![Kalendarz na telefonie](docs/zrzuty/telefon-kalendarz.png) |
+
 ## Rozwiązania zewnętrzne
 
 Zgodnie z § 4 ust. 1 regulaminu zadania: React, React Router, jsPDF (+ czcionka DejaVu Sans), Express, cors,

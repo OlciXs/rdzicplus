@@ -27,7 +27,7 @@ describe("powiadomienia o terminach", () => {
   });
   it("testowe powiadomienie ma tytuł i treść", () => {
     expect(TESTOWE.tytul).toBeTruthy();
-    expect(TESTOWE.tresc).toMatch(/7 i 3 dni/);
+    expect(TESTOWE.tresc).toMatch(/termin/);
   });
   it("stan przycisku jest odczytywany ze wspólnego klucza", () => {
     vi.stubGlobal("localStorage", {

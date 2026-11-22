@@ -215,7 +215,7 @@ export default function Kalendarz() {
             {notificationPermission === "unsupported" && (
               <span className="note">Ta przeglądarka nie obsługuje powiadomień systemowych.</span>
             )}
-            <span className="calendar-upcoming">{nadchodzace} nadchodzących terminów · przypomnienia 7 dni i 1 dzień wcześniej</span>
+            <span className="calendar-upcoming">{nadchodzace} {nadchodzace === 1 ? "nadchodzący termin" : nadchodzace % 10 >= 2 && nadchodzace % 10 <= 4 && (nadchodzace % 100 < 12 || nadchodzace % 100 > 14) ? "nadchodzące terminy" : "nadchodzących terminów"} · przypomnienia 7 i 3 dni wcześniej oraz w dniu terminu</span>
           </div>
         )}
 

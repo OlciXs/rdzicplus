@@ -47,8 +47,8 @@ export function powiadomieniaNaDzien(terminy, dzis, zlozone = {}) {
 
 export const TESTOWE = {
   klucz: "test",
-  tytul: "Za 3 dni: Upływa termin składania wniosku...",
-  tresc: "Już niedługo upływa termin składania wniosku. Sprawdź, czy masz wszystko gotowe. Postep odznacz w kalendarzu.",
+  tytul: "Za 3 dni: upływa termin składania wniosku",
+  tresc: "Już niedługo upływa termin składania wniosku. Sprawdź, czy masz wszystko gotowe. Postęp odznacz w kalendarzu.",
   link: "/kalendarz",
 };
 
