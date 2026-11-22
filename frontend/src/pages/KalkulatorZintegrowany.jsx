@@ -1,5 +1,6 @@
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import AppHeader from "../components/AppHeader.jsx";
+import Icon from "../components/Icons.jsx";
 import { useAuth } from "../auth.js";
 import { useProfile } from "../profile.js";
 import { getCalculator, calculatorPath } from "../calculators/registry.jsx";
@@ -42,7 +43,7 @@ export default function KalkulatorZintegrowany() {
         </nav>
 
         <div className="calc-head">
-          <span className="calc-head-icon" aria-hidden="true">🧮</span>
+          <span className="calc-head-icon" aria-hidden="true"><Icon name="calc" /></span>
           <div>
             <h1>Kalkulator zintegrowany</h1>
             <p className="lead">
@@ -71,7 +72,7 @@ export default function KalkulatorZintegrowany() {
               const on = wybrane.includes(o.id);
               return (
                 <button type="button" key={o.id} className={`pager-chip${on ? " is-active" : ""}`} aria-pressed={on} onClick={() => przelacz(o.id)}>
-                  <span aria-hidden="true">{on ? "✓ " : ""}{c.icon}</span> {o.pytanie}
+                  <span className="zint-opcja-ikona" aria-hidden="true">{on ? "✓ " : ""}<Icon name={c.icon} /></span> {o.pytanie}
                 </button>
               );
             })}
@@ -89,7 +90,7 @@ export default function KalkulatorZintegrowany() {
           return (
             <section className="zint-sekcja" key={id} aria-labelledby={`zint-${id}`}>
               <h2 id={`zint-${id}`} className="zint-tytul">
-                <span aria-hidden="true">{c.icon}</span> {c.title}
+                <span className="zint-tytul-ikona" aria-hidden="true"><Icon name={c.icon} /></span> {c.title}
                 <span className="note"> · kalkulator {c.letter} · <Link to={calculatorPath(c.slug)}>otwórz osobno</Link></span>
               </h2>
               <div className="calc-body">

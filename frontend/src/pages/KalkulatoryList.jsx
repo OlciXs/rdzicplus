@@ -23,7 +23,7 @@ export default function KalkulatoryList() {
         </div>
 
         <Link className="calc-cta" to="/kalkulatory/zintegrowany">
-          <span className="calc-cta-icon" aria-hidden="true">🧮</span>
+          <span className="calc-cta-icon" aria-hidden="true"><Icon name="calc" /></span>
           <span className="calc-cta-body">
             <span className="calc-cta-title">Kalkulator zintegrowany – wszystko na jednej stronie</span>
             <span className="calc-cta-desc">Zaznacz, co Cię dotyczy (ciąża, poród, podział urlopu, praca, adopcja…) – policzymy okresy, kwoty i terminy razem.</span>

@@ -867,6 +867,10 @@ a.pager-chip { text-decoration: none; }
 .support-filtry, .zint-opcje { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
 button.pager-chip { font: inherit; cursor: pointer; }
 .pager-chip.is-active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+.zint-opcja-ikona { display: inline-flex; align-items: center; margin-right: 5px; }
+.zint-opcja-ikona svg { width: 16px; height: 16px; vertical-align: middle; }
+.zint-tytul-ikona { display: inline-grid; place-items: center; width: 28px; height: 28px; color: var(--color-primary); }
+.zint-tytul-ikona svg { width: 22px; height: 22px; }
 .zint-sekcja { margin: 28px 0 0; padding-top: 18px; border-top: 2px solid var(--color-border); }
 .zint-tytul { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; margin: 0 0 12px; }
 .zint-tytul .note { margin: 0; font-weight: 400; }

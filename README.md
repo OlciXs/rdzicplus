@@ -77,6 +77,45 @@ Nieznane adresy kalkulatorów (`/kalkulatory/cokolwiek`) pokazują stronę 404.
 Trasa `/panel` przekierowuje na `/logowanie`, jeśli użytkownik nie jest zalogowany,
 i po zalogowaniu wraca do miejsca, do którego zmierzał.
 
+## Kalkulator zintegrowany
+
+Kalkulator zintegrowany pod adresem `/kalkulatory/zintegrowany` pokazuje wszystkie
+kalkulatory a–g na jednej stronie. Użytkownik zaznacza tylko sytuacje, które go dotyczą,
+a aplikacja włącza odpowiednie formularze i wyniki. Wybór jest zapisany w adresie
+`?opcje=a,b,f`, dzięki czemu można go odświeżyć lub skopiować.
+
+Bez profilu domyślnie wybierane są podstawa wymiaru i dokumenty/terminy. Po zalogowaniu
+i uzupełnieniu „Moich danych” domyślny zestaw dobiera się do etapu sprawy: ciąża, poród,
+przyjęcie dziecka albo łączenie pracy z urlopem. Użytkownik może ręcznie zmienić wybór.
+
+Ikony w zintegrowanym widoku i na liście kalkulatorów są spójnymi ikonami liniowymi SVG,
+bez emoji i bez tekstowych skrótów nazw ikon.
+
+## Porównanie W1–W4
+
+Dodaliśmy publiczną stronę porównania czterech sposobów wykorzystania zasiłku macierzyńskiego
+i rodzicielskiego pod adresem `/porownanie`. Strona porównuje warianty zmienne i uśredniony,
+z udziałem taty oraz bez jego udziału. Pokazuje osobno stawki i kwoty miesięczne na każdym
+etapie, sumę mamy, sumę taty, sumę rodziny, daty, przepadające tygodnie i termin złożenia
+wniosku o wariant 81,5%.
+
+Porównanie korzysta z tego samego silnika i parametrów co kalkulatory. Po zalogowaniu dane
+mogą być podstawione z „Moich danych”. Strona działa również bez logowania i zawiera przełączalne
+dane przykładowe:
+
+- Bożena + Mariusz — etat i kompletne dane,
+- Marzena — działalność gospodarcza z zaległością 312,40 zł,
+- Marzena po spłacie zaległości — wariant dostępny wraz z ostrzeżeniem o ponownym zgłoszeniu
+  dobrowolnego ubezpieczenia chorobowego.
+
+W1 i W2 nie są porównywane jako „zysk” lub „strata”. Suma jest pokazana obok rozkładu
+okresów, bo 20 tygodni po 100% + 32 tygodnie po 70% daje prawie taką samą pulę tygodni
+równoważnych jak 52 tygodnie po 81,5%. Urlop ojcowski jest pokazany osobno i nie wchodzi
+w sumę scenariuszy.
+
+Symulacja ma charakter orientacyjny i nie wylicza ostatecznej decyzji ZUS. Liczby pochodzą
+z parametrów w `frontend/src/engine/params.js` i mogą być zmienione w panelu `/admin`.
+
 ## Silnik obliczeń i testy
 
 Wszystkie wyliczenia (podstawa wymiaru, zasiłek chorobowy, macierzyński, łączenie z pracą,
