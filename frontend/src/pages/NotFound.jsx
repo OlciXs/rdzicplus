@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import AppHeader from "../components/AppHeader.jsx";
+import Icon from "../components/Icons.jsx";
 import { CALCULATORS, calculatorPath } from "../calculators/registry.jsx";
 
 export default function NotFound() {
@@ -21,7 +22,7 @@ export default function NotFound() {
         <nav className="calc-pager" aria-label="Kalkulatory">
           {CALCULATORS.map((c) => (
             <Link key={c.slug} className="pager-chip" to={calculatorPath(c.slug)}>
-              <span aria-hidden="true">{c.icon}</span> {c.title}
+              <Icon name={c.icon} /> {c.title}
             </Link>
           ))}
         </nav>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
+import Logo from "../components/Logo.jsx";
 import { api } from "../api.js";
 import { useAuth } from "../auth.js";
 
@@ -94,7 +95,7 @@ export default function Login() {
   return (
     <main className="login">
       <header className="brand brand-center">
-        <span className="brand-mark" aria-hidden="true">RP</span>
+        <Logo size={44} />
         <span className="brand-name">RodzicPlus</span>
       </header>
 

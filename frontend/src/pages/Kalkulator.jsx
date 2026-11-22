@@ -1,5 +1,6 @@
 import { Link, useLocation, useParams } from "react-router-dom";
 import AppHeader from "../components/AppHeader.jsx";
+import Icon from "../components/Icons.jsx";
 import { useAuth } from "../auth.js";
 import { CALCULATORS, calculatorPath, getCalculator } from "../calculators/registry.jsx";
 import NotFound from "./NotFound.jsx";
@@ -28,7 +29,7 @@ export default function Kalkulator() {
         </nav>
 
         <div className="calc-head">
-          <span className="calc-head-icon" aria-hidden="true">{active.icon}</span>
+          <span className="calc-head-icon"><Icon name={active.icon} /></span>
           <div>
             <h1>{active.title}</h1>
             <p className="lead">{active.short}</p>
@@ -53,7 +54,7 @@ export default function Kalkulator() {
         <nav className="calc-pager" aria-label="Inne kalkulatory">
           {CALCULATORS.filter((c) => c.slug !== active.slug).map((c) => (
             <Link key={c.slug} className="pager-chip" to={calculatorPath(c.slug)}>
-              <span aria-hidden="true">{c.icon}</span> {c.title}
+              <Icon name={c.icon} /> {c.title}
             </Link>
           ))}
         </nav>

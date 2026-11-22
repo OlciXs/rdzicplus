@@ -10,7 +10,7 @@ import CalcDokumenty from "./CalcDokumenty.jsx";
 export const CALCULATORS = [
   {
     slug: "zasilek-chorobowy-w-ciazy",
-    icon: "🩺",
+    icon: "pulse",
     letter: "a",
     title: "Zasiłek chorobowy w ciąży",
     short: "Prawo do zasiłku, wynagrodzenie chorobowe 33/14 dni, okres zasiłkowy 270 dni.",
@@ -18,7 +18,7 @@ export const CALCULATORS = [
   },
   {
     slug: "zasilek-macierzynski",
-    icon: "🍼",
+    icon: "baby",
     letter: "b",
     title: "Zasiłek macierzyński",
     short: "Wymiar urlopów, stawki 100% / 81,5% / 70%, urlop ojcowski, sytuacje szczególne.",
@@ -26,7 +26,7 @@ export const CALCULATORS = [
   },
   {
     slug: "laczenie-urlopu-z-praca",
-    icon: "🧩",
+    icon: "rings",
     letter: "c",
     title: "Łączenie urlopu rodzicielskiego z pracą",
     short: "Wydłużenie urlopu proporcjonalnie do etatu (max 1/2) i proporcjonalne pomniejszenie zasiłku.",
@@ -34,7 +34,7 @@ export const CALCULATORS = [
   },
   {
     slug: "oboje-rodzice",
-    icon: "👨‍👩‍👧",
+    icon: "family",
     letter: "d",
     title: "Symulacja obojga rodziców",
     short: "Wspólna pula urlopu, 9 tygodni wyłącznych na rodzica, max 5 części, do 6 roku życia.",
@@ -42,7 +42,7 @@ export const CALCULATORS = [
   },
   {
     slug: "adopcja-rodzina-zastepcza",
-    icon: "🏡",
+    icon: "home",
     letter: "e",
     title: "Adopcja i rodzina zastępcza",
     short: "Urlop na warunkach macierzyńskiego (limity 7/10/14 lat), urlop rodzicielski, terminy wniosków.",
@@ -50,7 +50,7 @@ export const CALCULATORS = [
   },
   {
     slug: "podstawa-wymiaru",
-    icon: "💵",
+    icon: "banknote",
     letter: "f",
     title: "Podstawa wymiaru zasiłku",
     short: "Średnia z 12 miesięcy, potrącenie 13,71%, premie 1/12, minimum i maksimum podstawy.",
@@ -58,7 +58,7 @@ export const CALCULATORS = [
   },
   {
     slug: "dokumenty-i-terminy",
-    icon: "📋",
+    icon: "clipboard",
     letter: "g",
     title: "Dokumenty, terminy i zagrożenia",
     short: "Które druki, gdzie złożyć (płatnik czy ZUS), w jakim terminie – oraz ostrzeżenia.",

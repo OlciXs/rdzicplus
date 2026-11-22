@@ -61,7 +61,7 @@ export default function Powiadomienia() {
         <div className="toast-stack" role="status" aria-live="polite">
           {lista.map((p) => (
             <div className="toast" key={p._id}>
-              <strong>🔔 {p.tytul}</strong>
+              <strong>{p.tytul}</strong>
               <span>{p.tresc}</span>
               {p.link && <Link to={p.link} onClick={() => setLista((l) => l.filter((x) => x._id !== p._id))}>Zobacz →</Link>}
               <button type="button" className="toast-close" aria-label="Zamknij powiadomienie"

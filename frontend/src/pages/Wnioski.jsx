@@ -102,15 +102,15 @@ function Wariant({ v, terminy }) {
           <dl className="data-list">
             {v.dokument && (
               <div>
-                <dt>{v.skladanie === "dolacz" ? "📎 Dołączasz do wniosku" : "📄 Co składasz"}</dt>
+                <dt>{v.skladanie === "dolacz" ? "Dołączasz do wniosku" : "Co składasz"}</dt>
                 <dd><b>{v.dokument}</b></dd>
               </div>
             )}
-            {v.adresat && <div><dt>🏢 Komu</dt><dd>{v.adresat}</dd></div>}
-            {v.termin && <div><dt>⏰ Do kiedy</dt><dd>{v.termin}</dd></div>}
+            {v.adresat && <div><dt>Komu</dt><dd>{v.adresat}</dd></div>}
+            {v.termin && <div><dt>Do kiedy</dt><dd>{v.termin}</dd></div>}
             {v.status === "dostepny" && deadline && (
               <div>
-                <dt>📅 Konkretny termin</dt>
+                <dt>Konkretny termin</dt>
                 <dd>
                   <b>{fmtDate(deadline)}</b>
                   {remaining !== null && (
@@ -261,7 +261,9 @@ export default function Wnioski() {
 
         {wniosek && (
           <>
-            <p><button type="button" className="btn btn-link" onClick={() => setParams({})}>← Wszystkie wnioski</button></p>
+            <p className="wnioski-back">
+            <button type="button" className="btn btn-primary wnioski-back-btn" onClick={() => setParams({})}>Zobacz wszystkie wnioski <span aria-hidden="true">→</span></button>
+          </p>
             <h2>{wniosek.nazwa}</h2>
             <p className="lead">{wniosek.opis}</p>
             <div className="result-stack">

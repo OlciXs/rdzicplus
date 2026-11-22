@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import AppHeader from "../components/AppHeader.jsx";
+import Icon from "../components/Icons.jsx";
 import { useAuth } from "../auth.js";
 import { useProfile } from "../profile.js";
 
@@ -47,7 +48,7 @@ export default function Dashboard() {
       <AppHeader />
 
       <main className="container">
-        <h1>Cześć, {user.imie}! 👋</h1>
+        <h1>Cześć, {user.imie}</h1>
         <p className="lead">Co chcesz teraz sprawdzić?</p>
 
         <section className="info-card" aria-label="Twoje dane">
@@ -97,7 +98,7 @@ export default function Dashboard() {
         )}
 
         <Link className="calc-cta" to="/wnioski">
-          <span className="calc-cta-icon" aria-hidden="true">🗂️</span>
+          <span className="calc-cta-icon"><Icon name="docs" /></span>
           <span className="calc-cta-body">
             <span className="calc-cta-title">Złóż wniosek – co mi przysługuje?</span>
             <span className="calc-cta-desc">
@@ -108,7 +109,7 @@ export default function Dashboard() {
         </Link>
 
         <Link className="calc-cta" to="/kalkulatory">
-          <span className="calc-cta-icon" aria-hidden="true">🧮</span>
+          <span className="calc-cta-icon"><Icon name="calc" /></span>
           <span className="calc-cta-body">
             <span className="calc-cta-title">Policz swoje świadczenia</span>
             <span className="calc-cta-desc">
@@ -120,7 +121,7 @@ export default function Dashboard() {
 
         {!profileComplete && (
           <Link className="calc-cta" to="/profil">
-            <span className="calc-cta-icon" aria-hidden="true">📝</span>
+            <span className="calc-cta-icon"><Icon name="pencil" /></span>
             <span className="calc-cta-body">
               <span className="calc-cta-title">Uzupełnij swoje dane</span>
               <span className="calc-cta-desc">
@@ -133,7 +134,7 @@ export default function Dashboard() {
         )}
 
         <Link className="calc-cta" to="/zus">
-          <span className="calc-cta-icon" aria-hidden="true">🏛️</span>
+          <span className="calc-cta-icon"><Icon name="bank" /></span>
           <span className="calc-cta-body">
             <span className="calc-cta-title">Moje dane z ZUS</span>
             <span className="calc-cta-desc">
@@ -144,7 +145,7 @@ export default function Dashboard() {
         </Link>
 
         <Link className="calc-cta" to="/odpis-aktu">
-          <span className="calc-cta-icon" aria-hidden="true">📄</span>
+          <span className="calc-cta-icon"><Icon name="doc" /></span>
           <span className="calc-cta-body">
             <span className="calc-cta-title">Odpis aktu urodzenia</span>
             <span className="calc-cta-desc">Wniosek z danymi dziecka z „Moje dane” (symulacja usługi gov.pl).</span>
@@ -153,7 +154,7 @@ export default function Dashboard() {
         </Link>
 
         <Link className="calc-cta" to="/kalendarz">
-          <span className="calc-cta-icon" aria-hidden="true">📅</span>
+          <span className="calc-cta-icon"><Icon name="calendar" /></span>
           <span className="calc-cta-body">
             <span className="calc-cta-title">Kalendarz terminów</span>
             <span className="calc-cta-desc">Ostateczne terminy wniosków i przypomnienia tydzień wcześniej.</span>
@@ -162,7 +163,7 @@ export default function Dashboard() {
         </Link>
 
         <Link className="calc-cta" to="/wsparcie">
-          <span className="calc-cta-icon" aria-hidden="true">🤝</span>
+          <span className="calc-cta-icon"><Icon name="heart" /></span>
           <span className="calc-cta-body">
             <span className="calc-cta-title">Wsparcie w sytuacjach szczególnych</span>
             <span className="calc-cta-desc">Hospicja i fundacje dla wcześniaków oraz rodzin po stracie dziecka.</span>
@@ -171,7 +172,7 @@ export default function Dashboard() {
         </Link>
 
         <Link className="calc-cta" to="/informacje">
-          <span className="calc-cta-icon" aria-hidden="true">ℹ️</span>
+          <span className="calc-cta-icon"><Icon name="info" /></span>
           <span className="calc-cta-body">
             <span className="calc-cta-title">Informacje urzędowe i przekierowania</span>
             <span className="calc-cta-desc">ZUS, gov.pl, Ministerstwo Rodziny i Państwowa Inspekcja Pracy.</span>
