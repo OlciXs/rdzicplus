@@ -5,7 +5,7 @@ import { useProfile } from "../profile.js";
 import { CFG } from "../calculators/config.js";
 import { terminyWnioskow, doIcs } from "../engine/index.js";
 import { etykietaTerminu, klasaBadga } from "./kalendarzEtykiety.js";
-import { TESTOWE, pokaz, poprosOZgode, zgoda } from "../powiadomienia.js";
+import { KLUCZ_POWIADOMIEN, TESTOWE, pokaz, poprosOZgode } from "../powiadomienia.js";
 
 /* =====================================================================
    Kalendarz terminów. Daty liczy silnik (src/engine/wnioskow/kalendarz.js) –
@@ -50,14 +50,13 @@ export default function Kalendarz() {
     return new Date(d.getFullYear(), d.getMonth(), 1);
   });
   const [selectedDay, setSelectedDay] = useState(null);
-  const [stanZgody, setStanZgody] = useState(() => zgoda());
   const detailRef = useRef(null);
   const [completed, setCompleted] = useState(() => {
     try { return JSON.parse(localStorage.getItem(KLUCZ) || "{}"); }
     catch { return {}; }
   });
   const [notificationsEnabled, setNotificationsEnabled] = useState(() => {
-    try { return localStorage.getItem("rodzicplus-calendar-notifications") === "1"; }
+    try { return localStorage.getItem(KLUCZ_POWIADOMIEN) === "1"; }
     catch { return false; }
   });
   const [notificationPermission, setNotificationPermission] = useState(() =>
@@ -149,31 +148,32 @@ export default function Kalendarz() {
   const przełączPowiadomienia = async () => {
     if (notificationsEnabled) {
       setNotificationsEnabled(false);
-      try { localStorage.setItem("rodzicplus-calendar-notifications", "0"); } catch { /* stan zostaje w bieżącej sesji */ }
+      try { localStorage.setItem(KLUCZ_POWIADOMIEN, "0"); } catch { /* stan zostaje w bieżącej sesji */ }
       return;
     }
-    if (typeof Notification === "undefined") {
-      setNotificationPermission("unsupported");
-      return;
-    }
-    const permission = Notification.permission === "default"
-      ? await Notification.requestPermission()
-      : Notification.permission;
+    const permission = await poprosOZgode();
     setNotificationPermission(permission);
-    if (permission !== "granted") return;
 
     setNotificationsEnabled(true);
-    try { localStorage.setItem("rodzicplus-calendar-notifications", "1"); } catch { /* stan zostaje w bieżącej sesji */ }
+    try { localStorage.setItem(KLUCZ_POWIADOMIEN, "1"); } catch { /* stan zostaje w bieżącej sesji */ }
 
     const najblizszy = events.find((e) => e.typ !== "info" && e.data >= dzis && !completed[e.id]);
     const dni = najblizszy ? dniDo(najblizszy.data, dzis) : null;
-    pokazPowiadomienie(
-      "Powiadomienia kalendarza włączone",
-      najblizszy
-        ? (dni === 0 ? `Dzisiaj masz koniec terminu na wniosek: ${najblizszy.tytul}`
-          : `Najbliższy termin to za ${dni} ${dni === 1 ? "dzień" : "dni"}: ${najblizszy.tytul}`)
-        : "Będziemy przypominać o nadchodzących terminach wniosków."
-    );
+    if (permission === "granted") {
+      pokazPowiadomienie(
+        "Powiadomienia kalendarza włączone",
+        najblizszy
+          ? (dni === 0 ? `Dzisiaj masz koniec terminu na wniosek: ${najblizszy.tytul}`
+            : `Najbliższy termin to za ${dni} ${dni === 1 ? "dzień" : "dni"}: ${najblizszy.tytul}`)
+          : "Będziemy przypominać o nadchodzących terminach wniosków."
+      );
+    } else {
+      pokaz({
+        ...TESTOWE,
+        tytul: "Powiadomienia na stronie włączone",
+        tresc: "Przeglądarka nie pozwoliła na powiadomienia systemowe – przypomnienia pokażemy tutaj.",
+      });
+    }
   };
 
   if (loading) return <div className="app"><AppHeader /><main className="container"><p className="center-msg">Wczytywanie…</p></main></div>;
@@ -197,14 +197,6 @@ export default function Kalendarz() {
     }
     return wpisy;
   };
-  const wlaczPowiadomienia = async () => {
-    const wynik = await poprosOZgode();
-    setStanZgody(wynik);
-    pokaz(wynik === "granted"
-      ? { ...TESTOWE, tytul: "Powiadomienia włączone", tresc: "Przypomnimy o terminach 7 i 3 dni wcześniej oraz w dniu terminu, gdy otworzysz RodzicPlus." }
-      : { ...TESTOWE, tytul: "Powiadomienia tylko na stronie", tresc: "Przeglądarka nie pozwoliła na powiadomienia systemowe – przypomnienia pokażemy tutaj, a do telefonu dodaj terminy przez plik .ics." });
-  };
-
   const przeskoczMiesiac = (kierunek) => {
     setCursor(new Date(rok, miesiac + kierunek, 1));
     setSelectedDay(null); // zmiana miesiąca czyści wybór dnia
@@ -229,7 +221,7 @@ export default function Kalendarz() {
               type="button"
               className={`btn ${notificationsEnabled ? "btn-primary" : "btn-outline"}`}
               onClick={przełączPowiadomienia}
-              disabled={notificationPermission === "unsupported"}
+              aria-pressed={notificationsEnabled}
             >
               {notificationsEnabled ? "🔔 Wyłącz powiadomienia" : "🔔 Włącz powiadomienia"}
             </button>

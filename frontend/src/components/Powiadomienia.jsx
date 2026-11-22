@@ -4,7 +4,7 @@ import { useAuth } from "../auth.js";
 import { useProfile } from "../profile.js";
 import { CFG } from "../calculators/config.js";
 import { terminyWnioskow } from "../engine/index.js";
-import { ZDARZENIE, TESTOWE, pokaz, wyslijDzisiejsze } from "../powiadomienia.js";
+import { ZDARZENIE, TESTOWE, pokaz, powiadomieniaWlaczone, wyslijDzisiejsze } from "../powiadomienia.js";
 
 /* =====================================================================
    Powiadomienia o terminach (globalnie, dla zalogowanych):
@@ -20,7 +20,7 @@ function Dzisiejsze() {
   const { profile } = useProfile();
   const terminy = useMemo(() => (profile ? terminyWnioskow(profile, { params: CFG }) : []), [profile]);
   useEffect(() => {
-    if (!terminy.length) return;
+    if (!terminy.length || !powiadomieniaWlaczone()) return;
     let zlozone = {};
     try { zlozone = JSON.parse(localStorage.getItem(KLUCZ_ZLOZONE) || "{}"); } catch { /* brak pamięci */ }
     wyslijDzisiejsze(terminy, zlozone);
