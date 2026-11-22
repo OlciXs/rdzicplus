@@ -63,12 +63,6 @@ function Wariant({ v, terminy }) {
   const now = new Date();
   now.setHours(0, 0, 0, 0);
   const remaining = deadline ? Math.ceil((deadline.getTime() - now.getTime()) / 86400000) : null;
-  const drukujPodsumowanie = (event) => {
-    const karta = event.currentTarget.closest(".result-card");
-    if (karta) karta.classList.add("drukuj-wynik");
-    window.print();
-    if (karta) karta.classList.remove("drukuj-wynik");
-  };
   return (
     <section className="result-card" style={{ borderLeftColor: st.kolor }} aria-labelledby={`w-${v.id}`}>
       <h3 className="result-title" id={`w-${v.id}`}>
@@ -158,16 +152,8 @@ function Wariant({ v, terminy }) {
       {(v.status === "dostepny" || v.status === "brak_danych") && maDruk(v.id) && (
         <p className="result-action">
           <Link className="btn btn-outline" to={`/wnioski/druk?v=${v.id}`}>
-            🖨️ Przygotuj wniosek do druku
+            Przygotuj wniosek (PDF)
           </Link>
-        </p>
-      )}
-
-      {(v.status === "dostepny" || v.status === "brak_danych") && !maDruk(v.id) && (
-        <p className="result-action no-print">
-          <button type="button" className="btn btn-outline" onClick={drukujPodsumowanie}>
-            🖨️ Drukuj podsumowanie wniosku
-          </button>
         </p>
       )}
 

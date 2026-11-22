@@ -416,6 +416,104 @@ const SZABLONY = {
       return o;
     },
   },
+
+  /* W41 – zasiłek macierzyński 81,5% za cały okres (art. 30a ustawy zasiłkowej) */
+  W41: {
+    tytul: "Wniosek o wypłatę zasiłku macierzyńskiego w wysokości 81,5% za cały okres",
+    zam: "zasiłek macierzyński w wysokości 81,5% za cały okres",
+    podstawa: "art. 30a ust. 1–2; art. 31 ust. 3 ustawy zasiłkowej",
+    pola: (k) => {
+      const przyjecie = k.etap === "przyjecie";
+      const zdarzenie = iso(przyjecie ? k.dataPrzyjecia : k.dataUrodzenia);
+      return [
+        pole("porod", przyjecie ? "Data przyjęcia dziecka" : "Data porodu", "date", zdarzenie),
+        pole("liczbaDzieci", "Liczba dzieci przy jednym porodzie / przyjęciu", "number", k.liczbaDzieci ?? 1),
+        pole("od", "Zasiłek od", "date", zdarzenie, { pomoc: "Dzień porodu albo przyjęcia dziecka" }),
+        pole("do", "Zasiłek do", "date", "", { wymagane: false, pomoc: "Ostatni dzień planowanego urlopu rodzicielskiego" }),
+        ...polaDziecka(k).map((p) => ({ ...p, wymagane: false })),
+      ];
+    },
+    oswiadczenia: (k) => [
+      {
+        id: "pelnyWymiar",
+        tekst: "Oświadczam, że zamierzam korzystać z pełnego wymiaru urlopu macierzyńskiego i urlopu rodzicielskiego, a co najmniej 1 dzień urlopu rodzicielskiego przypadnie w pierwszym roku życia dziecka (z wyłączeniem 9 tygodni drugiego rodzica).",
+        domyslnie: k.zamiarPelnyWymiar === true,
+      },
+    ],
+    tresc: (v, k) => {
+      const przyjecie = k.etap === "przyjecie";
+      return [
+        `Na podstawie art. 30a ustawy zasiłkowej wnoszę o wypłacenie mi zasiłku macierzyńskiego w wysokości 81,5% podstawy wymiaru za cały okres urlopu macierzyńskiego${przyjecie ? " na warunkach urlopu macierzyńskiego" : ""} oraz za cały okres urlopu rodzicielskiego w pełnym wymiarze, z wyłączeniem 9 tygodni drugiego rodzica (art. 182¹a § 4 Kodeksu pracy), w okresie od ${D(v.od)}${v.do ? ` do ${D(v.do)}` : ""}.`,
+        `${przyjecie ? `Dziecko przyjęto ${D(v.porod)}.` : `Poród nastąpił ${D(v.porod)}.`}${v.dzieckoImie ? ` Dziecko: ${dziecko(v)}.` : ""}${Number(v.liczbaDzieci) > 1 ? ` Liczba dzieci: ${Number(v.liczbaDzieci)}.` : ""}`,
+        ...(v.pelnyWymiar
+          ? ["Jednocześnie oświadczam, że zamierzam korzystać z pełnego wymiaru urlopu macierzyńskiego i urlopu rodzicielskiego, a co najmniej 1 dzień urlopu rodzicielskiego przypadnie w pierwszym roku życia dziecka."]
+          : []),
+        "Wniosek składam w terminie 21 dni od dnia porodu albo przyjęcia dziecka (art. 30a ust. 1–2 ustawy zasiłkowej).",
+      ];
+    },
+    zalaczniki: (v, k) => (k.profil.dziecko?.zaZyciem === true ? ["Zaświadczenie o ciężkim upośledzeniu dziecka (art. 4 ust. 3 ustawy „Za życiem”)"] : []),
+    kontrola: (v, k) => {
+      const o = okresOk(v, "od", "do", "Okres zasiłku");
+      const dni = roznica(v.porod, v.dataZlozenia);
+      if (dni !== null && dni > k.P.deadlineSredniowany) {
+        o.push({ poziom: "blad", tekst: `Wniosek o 81,5% trzeba złożyć najpóźniej ${k.P.deadlineSredniowany} dni po porodzie / przyjęciu dziecka – minęło ${dni} dni.` });
+      }
+      if (!v.pelnyWymiar) {
+        o.push({ poziom: "ostrzezenie", tekst: "Bez oświadczenia o pełnym wymiarze urlopów zasiłek wyniesie 100% za urlop macierzyński i 70% za urlop rodzicielski – zaznacz oświadczenie, jeśli chcesz wariant 81,5%." });
+      }
+      return o;
+    },
+  },
+
+  /* W44 – podwyższenie zasiłku do kwoty świadczenia rodzicielskiego (art. 31 ust. 3a–3c) */
+  W44: {
+    tytul: "Wniosek o podwyższenie zasiłku macierzyńskiego do kwoty świadczenia rodzicielskiego",
+    zam: "podwyższenie zasiłku macierzyńskiego do kwoty świadczenia rodzicielskiego",
+    podstawa: "art. 31 ust. 3a–3c ustawy zasiłkowej",
+    pola: () => [
+      pole("od", "Podwyższenie od", "date", "", { wymagane: false, pomoc: "Pierwszy miesiąc, za który zasiłek jest niższy niż świadczenie rodzicielskie." }),
+      pole("do", "Podwyższenie do", "date", "", { wymagane: false, pomoc: "Ostatni miesiąc pobierania niskiego zasiłku." }),
+    ],
+    oswiadczenia: () => [
+      { id: "j30", tekst: "Oświadczam, że mam prawo do podwyższenia zasiłku macierzyńskiego do kwoty świadczenia rodzicielskiego i nie pobieram tego podwyższenia z innego tytułu (§ 28 pkt 1).", domyslnie: false },
+    ],
+    tresc: (v, k) => [
+      `Na podstawie art. 31 ust. 3a ustawy zasiłkowej wnoszę o podwyższenie zasiłku macierzyńskiego${v.od || v.do ? ` za okres${v.od ? ` od ${D(v.od)}` : ""}${v.do ? ` do ${D(v.do)}` : ""}` : ""} do kwoty świadczenia rodzicielskiego (${k.P.swiadczenieRodzicielskie} zł miesięcznie) – miesięczna kwota wypłacanego zasiłku po zaliczeniu zaliczki na podatek dochodowy jest niższa od tej kwoty.`,
+      ...(v.j30 ? ["Oświadczam, że podwyższenie nie jest pobierane przeze mnie z innego tytułu (§ 28 pkt 1)."] : []),
+      "Podwyższenie za część miesiąca ustala się proporcjonalnie (art. 31 ust. 3c ustawy zasiłkowej).",
+    ],
+    zalaczniki: () => [],
+    kontrola: (v) => {
+      const o = okresOk(v, "od", "do", "Okres podwyższenia");
+      if (!String(v.od ?? "").trim() && !String(v.do ?? "").trim()) {
+        o.push({ poziom: "ostrzezenie", tekst: "Podaj co najmniej pierwszy miesiąc, za który wnosisz o podwyższenie – inaczej płatnik nie ustali okresu." });
+      }
+      return o;
+    },
+  },
+
+  /* W16 – kilka tytułów ubezpieczenia: oświadczenie § 28 i wskazanie płatnika podwyższenia */
+  W16: {
+    tytul: "Oświadczenie o innych tytułach ubezpieczenia i wskazanie płatnika podwyższenia",
+    zam: "oświadczenie o kilku tytułach ubezpieczenia (do wniosku ZAM w eZUS)",
+    podstawa: "art. 62 ust. 4–6 ustawy zasiłkowej; § 28 rozporządzenia zasiłkowego",
+    pola: (k) => [
+      pole("tytuly", "Inne tytuły do ubezpieczenia chorobowego (oprócz głównego)", "text", "", { wymagane: false, pomoc: "Np. umowa zlecenia z …, działalność gospodarcza, powołanie – wpisz pozostałych płatników." }),
+      pole("platnikPodwyzszenia", "Płatnik wskazany do wypłaty podwyższenia do świadczenia rodzicielskiego", "text", k.profil.platnik?.nazwa ?? "", { wymagane: false, pomoc: "Gdy jednym z płatników jest ZUS, podwyższenie wypłaca ZUS (art. 62 ust. 6)." }),
+    ],
+    oswiadczenia: () => [
+      { id: "j15", tekst: "Oświadczam, że zasiłek macierzyński przysługuje mi z więcej niż jednego tytułu do ubezpieczenia społecznego w razie choroby i macierzyństwa, i wskazuję płatnika wypłacającego podwyższenie do świadczenia rodzicielskiego (§ 28 pkt 1).", domyslnie: true },
+    ],
+    tresc: (v) => [
+      `Na podstawie art. 62 ust. 4–5 ustawy zasiłkowej oświadczam, że zasiłek macierzyński przysługuje mi z więcej niż jednego tytułu do ubezpieczenia społecznego w razie choroby i macierzyństwa${v.tytuly ? ` (pozostałe tytuły: ${v.tytuly})` : ""}, a kwotę podwyższenia do kwoty świadczenia rodzicielskiego ma wypłacić płatnik: ${T(v.platnikPodwyzszenia)}.`,
+      ...(v.j15 ? ["Podwyższenie nie jest pobierane przeze mnie z innego tytułu (§ 28 pkt 1)."] : []),
+    ],
+    zalaczniki: () => ["Zaświadczenia pozostałych płatników zasiłku"],
+    kontrola: (v) =>
+      String(v.platnikPodwyzszenia ?? "").trim()
+        ? []
+        : [{ poziom: "ostrzezenie", tekst: "Wskaż płatnika do wypłaty podwyższenia – bez wskazania żaden płatnik nie wypłaci kwoty podwyższenia (art. 62 ust. 5)." }],
+  },
 };
 /** Warianty, dla których jest druk. */
 export const DRUKI = Object.keys(SZABLONY);

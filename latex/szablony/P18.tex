@@ -1,0 +1,118 @@
+% =====================================================================
+%  Wspólna preambuła szablonów pism ZUS (świadczenia rodzicielskie 2026)
+%  Silnik: XeLaTeX albo Tectonic (pdflatex NIE obsłuży polskich znaków w fontspec).
+%  Kompilacja:  tectonic -X compile plik.tex
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{polish}
+\setotherlanguage{english}
+% font domyślny (Latin Modern) — Tectonic go dostarcza
+
+\usepackage[margin=2.5cm,a4paper]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+\definecolor{zus}{HTML}{007A33}      % zieleń ZUS
+\definecolor{szary}{HTML}{6B7280}
+\definecolor{ramka}{HTML}{9CA3AF}
+
+\hypersetup{colorlinks=true, linkcolor=zus, urlcolor=zus, pdftitle={Szablony pism ZUS}}
+
+% --- pole do wypełnienia odręcznego -----------------------------------
+% \Pole{nazwa} rysuje kropkowaną linię z podpisem pola pod spodem.
+% Pole do wypełnienia: kropkowana linia, pod nią drobny podpis pola.
+\newcommand{\Pole}[1]{%
+  \textcolor{szary}{\dotfill}\,%
+  {\scriptsize\textcolor{szary}{\textsc{#1}}}%
+}
+
+% --- blok warunkowy: treść pokazywana tylko, gdy pole prawdziwe --------
+\newenvironment{warunek}[1]{%
+  \par\smallskip\noindent\begin{minipage}{\linewidth}%
+  \color{black}%
+}{%
+  \end{minipage}\par\smallskip%
+}
+
+% --- nagłówek pisma ---------------------------------------------------
+\newcommand{\NaglowekPisma}[1]{%
+  \par\vspace{0.8em}%
+  \begin{center}%
+    {\large\bfseries\MakeUppercase{#1}}%
+  \end{center}%
+  \vspace{0.4em}%
+}
+
+% --- blok nadawcy (pierwsze linie pisma) -------------------------------
+\newenvironment{nadawca}{%
+  \begin{flushleft}\small
+}{%
+  \end{flushleft}\normalsize
+}
+
+% --- stopka z numerem strony -----------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\textcolor{szary}{\small\thepage}}
+
+% --- metadane szablonu na początku pisma ------------------------------
+\newcommand{\Metadane}[3]{%
+  \begin{flushright}\footnotesize\textcolor{szary}%
+    \textbf{#1}\\[2pt] {\itshape #2}\\[2pt] #3%
+  \end{flushright}\vspace{0.5em}%
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+
+\begin{document}
+
+\begin{flushright}
+{\footnotesize\color{szary}
+\textbf{Szablon P18}\\
+{\itshape Wniosek o podwyższenie zasiłku macierzyńskiego do kwoty świadczenia rodzicielskiego}\\
+art. 31 ust. 3a--3c ustawy zasiłkowej; \S{} 28 rozporządzenia zasiłkowego -- Formularz: ZAM}\
+\end{flushright}
+
+\vspace{0.5em}
+{\color{ramka}\hrule height 0.4pt}
+\vspace{0.8em}
+
+\Pole{imie}\\[-2pt]
+\Pole{adres}\\[-2pt]
+PESEL: \Pole{pesel}
+
+\Pole{platnik nazwa}
+
+\Pole{data pisma}
+
+\NaglowekPisma{WNIOSEK O PODWYŻSZENIE ZASIŁKU MACIERZYŃSKIEGO DO KWOTY ŚWIADCZENIA RODZICIELSKIEGO}
+
+Na podstawie art. 31 ust. 3a ustawy zasiłkowej wnoszę o podwyższenie
+zasiłku macierzyńskiego wypłacanego za okres od \Pole{urlop od} do \Pole{urlop do}
+do kwoty świadczenia rodzicielskiego, ponieważ miesięczna kwota zasiłku
+po zaliczeniu zaliczki na podatek dochodowy jest niższa od kwoty
+świadczenia rodzicielskiego.
+
+Oświadczam, że mam prawo do podwyższenia zasiłku i że podwyższenie
+nie jest pobierane przeze mnie z innego tytułu (\S{} 28 pkt 1).
+
+Podwyższenie za część miesiąca ustala się proporcjonalnie
+(art. 31 ust. 3c ustawy zasiłkowej).
+
+\Pole{data pisma}
+.....................................
+(podpis)
+
+\vfill
+{\footnotesize\textcolor{szary}\itshape Podwyższenie przysługuje, gdy miesięczny zasiłek po podatku jest niższy niż świadczenie rodzicielskie. Płatnika podwyższenia wskazuje ubezpieczony; gdy jednym z płatników jest ZUS, podwyższenie wypłaca ZUS (art. 62 ust. 6). }
+
+\end{document}

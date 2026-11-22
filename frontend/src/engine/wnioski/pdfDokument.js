@@ -190,11 +190,15 @@ function utworzPisarz(doc) {
   };
 
   const akapit = (tekst, { align = "left", style = "normal", size = 10.5, kolor = KOLOR.czarny, gap = 3 } = {}) => {
-    const linie = doc.splitTextToSize(String(tekst ?? ""), SZER);
-    if (!linie.length) return;
+    // Najpierw ustawiamy czcionkę i rozmiar, dopiero potem dzielimy tekst na wiersze –
+    // splitTextToSize() mierzy tekstem ustawionym W TEJ CHWILI. Gdybyśmy dzielili
+    // przed ustawieniem czcionki, długi nagłówek (13 pt bold) byłby mierzony
+    // czcionką poprzedniego bloku i wychodził poza marginesy.
     doc.setFont("DejaVu", style);
     doc.setFontSize(size);
     doc.setTextColor(...kolor);
+    const linie = doc.splitTextToSize(String(tekst ?? ""), SZER);
+    if (!linie.length) return;
     const lh = wysLinii(size);
     const x = align === "right" ? A4.szer - A4.margines : align === "center" ? A4.szer / 2 : A4.margines;
     for (const linia of linie) {
@@ -226,7 +230,10 @@ function renderujBloki(doc, bloki) {
     }
 
     if (blok.typ === "naglowek") {
-      p.akapit(blok.tekst, { align: "center", style: "bold", size: 13, gap: 5 });
+      // Długi tytuł (np. „Wniosek ZAM – zasiłek macierzyński za okres urlopu
+      // rodzicielskiego”) lekko zmniejszamy, żeby się równo złamał w wiersze.
+      const rozmiar = blok.tekst.length > 75 ? 11 : blok.tekst.length > 45 ? 12 : 13;
+      p.akapit(blok.tekst, { align: "center", style: "bold", size: rozmiar, gap: 5 });
       continue;
     }
 

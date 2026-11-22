@@ -663,6 +663,104 @@ szablony:
       albo gdy dziecko wymagało hospitalizacji po porodzie (art. 183¹ § 1 pkt 1–2 k.p.).
 
 # ---------------------------------------------------------------------
+#  WYSOKOŚĆ ZASIŁKU: 81,5% ORAZ PODWYŻSZENIE DO ŚWIADCZENIA RODZICIELSKIEGO
+# ---------------------------------------------------------------------
+  - id: P17
+    nazwa: Wniosek o wypłatę zasiłku macierzyńskiego w wysokości 81,5% za cały okres
+    kanal: pismo_pracodawca
+    wariant: VAR21
+    formularz_zus: ZAM
+    podstawa_prawna: "art. 30a ust. 1–2; art. 31 ust. 3 ustawy zasiłkowej"
+    zrodlo: "Odtworzony z pól I8/G2/C6 (docs/02-dane-do-wnioskow-2026.md § 2.18 W41), nie ze skanu sprawy"
+    tresc: |
+      {{imie}}
+      {{adres}}
+      PESEL: {{pesel}}
+
+      {{platnik_nazwa}}
+
+      {{data_pisma}}
+
+      WNIOSEK O WYPŁATĘ ZASIŁKU MACIERZYŃSKIEGO W WYSOKOŚCI 81,5% ZA CAŁY OKRES
+
+      Na podstawie art. 30a ust. 1 ustawy zasiłkowej wnoszę o wypłacenie mi
+      zasiłku macierzyńskiego w wysokości 81,5% podstawy wymiaru zasiłku
+      za cały okres urlopu macierzyńskiego (urlopu na warunkach urlopu
+      macierzyńskiego) oraz za cały okres urlopu rodzicielskiego
+      w pełnym wymiarze, z wyłączeniem 9 tygodni drugiego rodzica
+      (art. 182¹a § 4 Kodeksu pracy), w okresie od {{urlop_od}} do {{urlop_do}}.
+
+      Oświadczam, że zamierzam korzystać z pełnego wymiaru urlopu
+      macierzyńskiego i urlopu rodzicielskiego przez cały okres, a co najmniej
+      1 dzień urlopu rodzicielskiego przypadnie w pierwszym roku życia dziecka.
+
+      Poród / przyjęcie dziecka nastąpiło {{data_porodu}}.
+      Dziecko: {{dziecko_imie}}. Liczba dzieci: {{liczba_dzieci}}.
+
+      Wniosek składam w terminie 21 dni od dnia porodu albo przyjęcia
+      dziecka na wychowanie (art. 30a ust. 1–2 ustawy zasiłkowej).
+
+      {{data_pisma}}
+      .....................................
+      (podpis)
+
+    pola:
+      - { placeholder: urlop_od, zrodlo: "dziecko.dataUrodzenia (dzień porodu / przyjęcia dziecka)" }
+      - { placeholder: urlop_do, zrodlo: "koniec planowanego urlopu rodzicielskiego" }
+    zalaczniki_typowe:
+      - "Odpis skrócony aktu urodzenia dziecka (albo zgoda, by płatnik/ZUS pobrał dane z rejestru)"
+    uwagi: |
+      Wniosek o 81,5% można złożyć najpóźniej 21 dni po porodzie albo przyjęciu
+      dziecka (art. 30a ust. 1–2 ustawy zasiłkowej). Zamiast wniosku wystarczy
+      deklaracja, że ubezpieczona zamierza korzystać z pełnego wymiaru.
+      Za 9 tygodni drugiego rodzica zasiłek wynosi zawsze 70%
+      (art. 31 ust. 3f ustawy zasiłkowej).
+
+  - id: P18
+    nazwa: Wniosek o podwyższenie zasiłku macierzyńskiego do kwoty świadczenia rodzicielskiego
+    kanal: pismo_pracodawca
+    wariant: VAR23
+    formularz_zus: ZAM
+    podstawa_prawna: "art. 31 ust. 3a–3c ustawy zasiłkowej; § 28 rozporządzenia zasiłkowego"
+    zrodlo: "Odtworzony z pól J30/J15 (docs/02-dane-do-wnioskow-2026.md § 2.18 W44), nie ze skanu sprawy"
+    tresc: |
+      {{imie}}
+      {{adres}}
+      PESEL: {{pesel}}
+
+      {{platnik_nazwa}}
+
+      {{data_pisma}}
+
+      WNIOSEK O PODWYŻSZENIE ZASIŁKU MACIERZYŃSKIEGO DO KWOTY ŚWIADCZENIA RODZICIELSKIEGO
+
+      Na podstawie art. 31 ust. 3a ustawy zasiłkowej wnoszę o podwyższenie
+      zasiłku macierzyńskiego wypłacanego za okres od {{urlop_od}} do {{urlop_do}}
+      do kwoty świadczenia rodzicielskiego, ponieważ miesięczna kwota zasiłku
+      po zaliczeniu zaliczki na podatek dochodowy jest niższa od kwoty
+      świadczenia rodzicielskiego.
+
+      Oświadczam, że mam prawo do podwyższenia zasiłku i że podwyższenie
+      nie jest pobierane przeze mnie z innego tytułu (§ 28 pkt 1).
+
+      Podwyższenie za część miesiąca ustala się proporcjonalnie
+      (art. 31 ust. 3c ustawy zasiłkowej).
+
+      {{data_pisma}}
+      .....................................
+      (podpis)
+
+    pola:
+      - { placeholder: urlop_od, zrodlo: "pierwszy miesiąc, za który zasiłek jest niższy niż świadczenie rodzicielskie" }
+      - { placeholder: urlop_do, zrodlo: "ostatni miesiąc pobierania niskiego zasiłku" }
+    zalaczniki_typowe:
+      - "Zaświadczenia pozostałych płatników zasiłku (przy kilku tytułach ubezpieczenia)"
+    uwagi: |
+      Podwyższenie przysługuje, gdy miesięczny zasiłek po podatku jest niższy
+      niż świadczenie rodzicielskie. Płatnika podwyższenia wskazuje ubezpieczony;
+      gdy jednym z płatników jest ZUS, podwyższenie wypłaca ZUS (art. 62 ust. 6).
+
+# ---------------------------------------------------------------------
 #  DECYZJE ZUS — SZKIELET ODPOWIEDZI (do celów dowodowych)
 # ---------------------------------------------------------------------
 decyzje_zus:
@@ -719,6 +817,8 @@ mapowanie_wariantow:
   VAR18: [P14, P15]
   VAR19: [P05]
   VAR20: [P12]
+  VAR21: [P17]
+  VAR23: [P18]
   VAR24: [P13]
 
 # ---------------------------------------------------------------------

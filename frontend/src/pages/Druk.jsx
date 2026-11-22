@@ -10,10 +10,12 @@ import { szablonyDlaWariantu } from "../engine/wnioski/latexDokument.js";
 import { zapiszDokumentPdf } from "../engine/wnioski/pdfDokument.js";
 
 /* =====================================================================
-   Wniosek do druku: /wnioski/druk?v=W21
+   Wniosek do złożenia: /wnioski/druk?v=W21
    Dane z „Moje dane” są podstawione w pola; rodzic może je poprawić
    (zmiany zostają tylko na tym ekranie – nie zapisujemy ich w profilu).
-   „Zapisz PDF” = plik PDF z wypełnionego szablonu LaTeX (mockup zamiast drukowania).
+   „Zapisz PDF” = plik PDF z wypełnionego szablonu LaTeX – to jedyna
+   forma dokumentu. Nie ma podglądu na ekranie ani drukowania strony:
+   dokument wnioskodawca pobiera jako PDF i składa.
    Treść i kontrole terminów: src/engine/wnioski/druki.js
    Szablony LaTeX-a: latex/szablony/P01.tex … P16.tex
    ===================================================================== */
@@ -71,7 +73,7 @@ export default function Druk() {
     [wariantId, druk?.tryb],
   );
   const wybranySzablon = szablony.some((s) => s.id === szablonId) ? szablonId : szablony[0]?.id ?? null;
-  // Status wariantu – żeby nie drukować czegoś, co nie przysługuje, bez ostrzeżenia.
+  // Status wariantu – żeby nie składać czegoś, co nie przysługuje, bez ostrzeżenia.
   const ocena = useMemo(() => {
     const wariant = wariantById(wariantId);
     if (!profile || !wariant) return null;
@@ -86,7 +88,7 @@ export default function Druk() {
       <div className="app">
         <AppHeader />
         <main className="container">
-          <h1>Wniosek do druku</h1>
+          <h1>Wniosek</h1>
           <p>Dla tego wariantu nie ma jeszcze gotowego wzoru wniosku.</p>
           <p><Link to="/wnioski">← Wróć do wniosków</Link></p>
         </main>
@@ -96,7 +98,8 @@ export default function Druk() {
 
   const bledy = druk.ostrzezenia.filter((o) => o.poziom === "blad");
   const pole = (id) => druk.pola.find((p) => p.id === id)?.wartosc || null;
-  // Wysłać można tylko kompletny wniosek bez błędów – wydrukować zawsze (puste pola zostają do wpisania ręcznie).
+  // Składać można tylko kompletny wniosek bez błędów – PDF można zapisać zawsze
+  // (puste pola zostaną w dokumencie jako miejsce do wpisania ręcznie).
   const blokada = bledy.length > 0 ? "Popraw błędy we wniosku (wyżej)."
     : druk.brakujace.length > 0 ? `Uzupełnij: ${druk.brakujace.join(", ")}.`
     : ocena?.status === "niedostepny" ? "Według „Moje dane” ten wariant Ci nie przysługuje."
@@ -147,94 +150,107 @@ export default function Druk() {
     <div className="app">
       <AppHeader />
       <main className="container druk-page">
-        <div className="no-print">
-          <p><Link to={ocena ? `/wnioski?w=${ocena.wniosek}` : "/wnioski"}>← Wróć do wariantów</Link></p>
-          <h1>{druk.tytul}</h1>
-          <p className="lead">
-            Pola wypełniliśmy na podstawie „Moje dane”. Sprawdź je, popraw, jeśli trzeba, a potem zapisz
-            dokument PDF z gotowymi danymi. Zmiany wprowadzone tutaj nie trafiają do profilu.
+        <p><Link to={ocena ? `/wnioski?w=${ocena.wniosek}` : "/wnioski"}>← Wróć do wariantów</Link></p>
+        <h1>{druk.tytul}</h1>
+        <p className="lead">
+          Pola wypełniliśmy na podstawie „Moje dane”. Sprawdź je i popraw, jeśli trzeba, a potem zapisz
+          dokument PDF – gotowy do złożenia u pracodawcy albo w ZUS. Zmiany wprowadzone tutaj
+          nie trafiają do profilu.
+        </p>
+
+        {ocena && ocena.status !== "dostepny" && (
+          <p className="alert-inline">
+            <span className={`badge ${ocena.status === "niedostepny" ? "b-err" : "b-warn"}`}>
+              {ocena.status === "niedostepny" ? "Nie przysługuje" : "Brakuje danych"}
+            </span>{" "}
+            {ocena.status === "niedostepny"
+              ? `Według „Moje dane” ten wariant Ci nie przysługuje: ${ocena.powody.join("; ")}.`
+              : "Nie wszystko da się sprawdzić – uzupełnij „Moje dane”, zanim złożysz wniosek."}
           </p>
+        )}
+        {druk.tryb === "zam" && (
+          <p className="alert-inline">
+            <span className="badge b-warn">ZAM</span> Nie jesteś pracownikiem, więc nie składasz wniosku o urlop do pracodawcy.
+            Zasiłek za ten okres składasz w ZUS na formularzu <b>ZAM</b> (eZUS) – w dokumencie PDF masz dane do przepisania.
+          </p>
+        )}
 
-          {ocena && ocena.status !== "dostepny" && (
-            <p className="alert-inline">
-              <span className={`badge ${ocena.status === "niedostepny" ? "b-err" : "b-warn"}`}>
-                {ocena.status === "niedostepny" ? "Nie przysługuje" : "Brakuje danych"}
-              </span>{" "}
-              {ocena.status === "niedostepny"
-                ? `Według „Moje dane” ten wariant Ci nie przysługuje: ${ocena.powody.join("; ")}.`
-                : "Nie wszystko da się sprawdzić – uzupełnij „Moje dane”, zanim złożysz wniosek."}
-            </p>
+        <section className="calc-group" aria-labelledby="druk-pola">
+          <h2 className="calc-group-title" id="druk-pola">Dane we wniosku</h2>
+          <div className="calc-grid">
+            {druk.pola.map((p) => <Pole key={p.id} p={p} opcje={druk.opcje[p.id]} onChange={ustaw} />)}
+          </div>
+          {druk.oswiadczenia.length > 0 && (
+            <>
+              <h3 className="calc-group-title" style={{ marginTop: 18 }}>Oświadczenia</h3>
+              {druk.oswiadczenia.map((o) => (
+                <label key={o.id} className="check-row">
+                  <input type="checkbox" checked={o.zaznaczone} onChange={(e) => ustaw(o.id, e.target.checked)} />{" "}
+                  {o.tekst}
+                </label>
+              ))}
+            </>
           )}
-          {druk.tryb === "zam" && (
-            <p className="alert-inline">
-              <span className="badge b-warn">ZAM</span> Nie jesteś pracownikiem, więc nie składasz wniosku o urlop do pracodawcy.
-              Zasiłek za ten okres składasz w ZUS na formularzu <b>ZAM</b> (eZUS) – poniżej masz dane do przepisania.
-            </p>
-          )}
+        </section>
 
-          <section className="calc-group" aria-labelledby="druk-pola">
-            <h2 className="calc-group-title" id="druk-pola">Dane we wniosku</h2>
-            <div className="calc-grid">
-              {druk.pola.map((p) => <Pole key={p.id} p={p} opcje={druk.opcje[p.id]} onChange={ustaw} />)}
-            </div>
-            {druk.oswiadczenia.length > 0 && (
-              <>
-                <h3 className="calc-group-title" style={{ marginTop: 18 }}>Oświadczenia</h3>
-                {druk.oswiadczenia.map((o) => (
-                  <label key={o.id} className="check-row">
-                    <input type="checkbox" checked={o.zaznaczone} onChange={(e) => ustaw(o.id, e.target.checked)} />{" "}
-                    {o.tekst}
-                  </label>
-                ))}
-              </>
+        {(druk.ostrzezenia.length > 0 || druk.brakujace.length > 0) && (
+          <section aria-label="Sprawdzenie wniosku">
+            {["blad", "ostrzezenie", "info"].map((poziom) => {
+              const lista = druk.ostrzezenia.filter((o) => o.poziom === poziom);
+              return lista.length ? (
+                <ul key={poziom} className={`alert-list ${POZIOM[poziom]}`}>{lista.map((o) => <li key={o.tekst}>{o.tekst}</li>)}</ul>
+              ) : null;
+            })}
+            {druk.brakujace.length > 0 && (
+              <p className="note">Puste pola ({druk.brakujace.join(", ")}) zostaną w dokumencie PDF jako miejsce do wpisania ręcznie.</p>
             )}
           </section>
+        )}
 
-          {(druk.ostrzezenia.length > 0 || druk.brakujace.length > 0) && (
-            <section aria-label="Sprawdzenie wniosku">
-              {["blad", "ostrzezenie", "info"].map((poziom) => {
-                const lista = druk.ostrzezenia.filter((o) => o.poziom === poziom);
-                return lista.length ? (
-                  <ul key={poziom} className={`alert-list ${POZIOM[poziom]}`}>{lista.map((o) => <li key={o.tekst}>{o.tekst}</li>)}</ul>
-                ) : null;
-              })}
-              {druk.brakujace.length > 0 && (
-                <p className="note">Puste pola ({druk.brakujace.join(", ")}) zostaną na wydruku jako miejsce do wpisania ręcznie.</p>
-              )}
-            </section>
-          )}
+        <section className="druk-zapis" aria-labelledby="druk-zapis-tytul">
+          <h2 className="calc-group-title" id="druk-zapis-tytul">Dokument wniosku (PDF)</h2>
 
-          <section className="druk-zapis" aria-labelledby="druk-zapis-tytul">
-            <h2 className="calc-group-title" id="druk-zapis-tytul">Dokument do druku (PDF)</h2>
-            {szablony.length > 0 ? (
-              <div className="druk-zapis-opcje">
-                {szablony.length > 1 && (
-                  <label className="field">
-                    <span className="field-label">Szablon pisma</span>
-                    <select className="input" value={wybranySzablon ?? ""} onChange={(e) => { setSzablonId(e.target.value); setZapisany(null); setBladZapisu(""); }}>
-                      {szablony.map((s) => <option key={s.id} value={s.id}>{s.id} – {s.nazwa}</option>)}
-                    </select>
-                  </label>
-                )}
-                <button type="button" className="btn btn-primary" onClick={zapiszDokument} disabled={zapisywanie}>
-                  {zapisywanie ? "Przygotowuję PDF…" : "Zapisz PDF"}
-                </button>
-                <p className="note">
-                  PDF powstanie z szablonu {wybranySzablon} z danymi z formularza.
-                </p>
-              </div>
-            ) : (
-              <div className="druk-zapis-opcje">
-                <button type="button" className="btn btn-primary" onClick={zapiszDokument} disabled={zapisywanie}>
-                  {zapisywanie ? "Przygotowuję PDF…" : "Zapisz PDF"}
-                </button>
-                <p className="note">
-                  {druk.tryb === "zam"
-                    ? "PDF to zestawienie danych do przepisania do wniosku ZAM w eZUS (nie pismo do pracodawcy)."
-                    : "Dla tego wariantu nie ma jeszcze osobnego szablonu LaTeX – PDF powstanie z dokumentu ogólnego z tymi samymi danymi."}
-                </p>
+          <dl className="druk-meta">
+            <div>
+              <dt>Forma dokumentu</dt>
+              <dd>{druk.tryb === "zam" ? "Zestawienie danych do wniosku ZAM (eZUS)" : szablony.length > 0 ? `Pismo ${wybranySzablon} do pracodawcy` : "Dokument ogólny z danymi z formularza"}</dd>
+            </div>
+            <div>
+              <dt>Adresat</dt>
+              <dd>{druk.tryb === "zam" ? "Zakład Ubezpieczeń Społecznych (eZUS)" : druk.naglowek.adresat.join(", ")}</dd>
+            </div>
+            <div>
+              <dt>Podstawa prawna</dt>
+              <dd>{druk.podstawa}</dd>
+            </div>
+            {druk.zalaczniki.length > 0 && (
+              <div>
+                <dt>Załączniki w PDF</dt>
+                <dd>{druk.zalaczniki.join("; ")}</dd>
               </div>
             )}
+          </dl>
+
+          {szablony.length > 1 && (
+            <label className="field">
+              <span className="field-label">Szablon pisma</span>
+              <select className="input" value={wybranySzablon ?? ""} onChange={(e) => { setSzablonId(e.target.value); setZapisany(null); setBladZapisu(""); }}>
+                {szablony.map((s) => <option key={s.id} value={s.id}>{s.id} – {s.nazwa}</option>)}
+              </select>
+            </label>
+          )}
+
+          <div className="druk-zapis-opcje">
+            <button type="button" className="btn btn-primary" onClick={zapiszDokument} disabled={zapisywanie}>
+              {zapisywanie ? "Przygotowuję PDF…" : "Zapisz dokument PDF"}
+            </button>
+            <p className="note">
+              {druk.tryb === "zam"
+                ? "PDF to zestawienie danych do przepisania do wniosku ZAM w eZUS (nie pismo do pracodawcy)."
+                : szablony.length > 0
+                  ? "PDF powstanie z szablonu pisma z podstawionymi danymi z formularza."
+                  : "Dla tego wariantu nie ma jeszcze osobnego szablonu – PDF powstanie z dokumentu ogólnego z tymi samymi danymi."}
+            </p>
             {bladZapisu && <p className="field-error" role="alert">{bladZapisu}</p>}
             {zapisany && (
               <p className="alert-inline" role="status">
@@ -243,78 +259,46 @@ export default function Druk() {
                 {zapisany.szablonId ? ` – szablon ${zapisany.szablonId}.` : " – dokument ogólny."}
               </p>
             )}
-            {bledy.length > 0 && <span className="note"> – we wniosku są błędy (wyżej), popraw je przed złożeniem.</span>}
-          </section>
+            {bledy.length > 0 && <p className="note">We wniosku są błędy (wyżej) – popraw je przed złożeniem.</p>}
+          </div>
+        </section>
 
-          <section className="result-card" aria-labelledby="druk-wyslij">
-            <h2 className="result-title" id="druk-wyslij">
-              <span className="badge b-warn">SYMULACJA</span>{" "}
-              {druk.tryb === "zam" ? "Wyślij do ZUS przez PUE/eZUS" : "Wyślij do pracodawcy elektronicznie"}
-            </h2>
-            {wyslany ? (
-              <div role="status">
-                <p><b>Wysłano.</b> Numer wniosku: <b>{wyslany.numer}</b>{wyslany.upo && <> · UPO: <b>{wyslany.upo}</b></>}</p>
-                <p>Status: {wyslany.status}. Kolejne etapy zobaczysz w <Link to="/zus">„Dane z ZUS” → „Twoje wnioski”</Link>.</p>
-                <p className="note">W symulacji status zmienia się sam po ok. 20 s i 1 min. Nic nie trafia do prawdziwego pracodawcy ani do ZUS.</p>
-              </div>
-            ) : (
-              <>
-                <p className="note">
-                  {druk.tryb === "zam"
-                    ? "W docelowej wersji wniosek trafi do PUE/eZUS podpisany profilem zaufanym, a ZUS odeśle Urzędowe Poświadczenie Odbioru (UPO)."
-                    : "W docelowej wersji pismo trafi do pracodawcy przez jego system kadrowy albo e-mail, z potwierdzeniem doręczenia."}
-                </p>
-                <label className="check-row">
-                  <input type="checkbox" checked={potwierdzenie} onChange={(e) => setPotwierdzenie(e.target.checked)} />{" "}
-                  Potwierdzam, że dane we wniosku są zgodne z prawdą.
-                </label>
-                {blokada && <p className="field-error">{blokada}</p>}
-                {bladWysylki && <p className="field-error" role="alert">{bladWysylki}</p>}
-                <button type="button" className="btn btn-outline" disabled={!!blokada || !potwierdzenie || wysylanie} onClick={wyslij}>
-                  {wysylanie ? "Wysyłanie…" : druk.tryb === "zam" ? "Wyślij do ZUS (symulacja)" : "Wyślij do pracodawcy (symulacja)"}
-                </button>
-              </>
-            )}
-          </section>
-          <h2>Podgląd</h2>
-        </div>
-
-        <article className="druk-kartka" aria-label="Podgląd wniosku">
-          <p className="druk-prawo">{druk.naglowek.miejscowoscData}</p>
-          <div className="druk-nadawca">{druk.naglowek.nadawca.map((l) => <div key={l}>{l}</div>)}</div>
-          <div className="druk-adresat">{druk.naglowek.adresat.map((l) => <div key={l}>{l}</div>)}</div>
-          <h2 className="druk-tytul">{druk.tytul}</h2>
-          {druk.tryb === "zam" ? (
-            <dl className="druk-zam">
-              {druk.pola.filter((p) => !["miejscowosc", "dataZlozenia"].includes(p.id)).map((p) => (
-                <div key={p.id}>
-                  <dt>{p.etykieta}</dt>
-                  <dd>{p.typ === "date" ? D(p.wartosc) : p.typ === "select" ? (druk.opcje[p.id]?.find(([v]) => v === p.wartosc)?.[1] ?? p.wartosc) : String(p.wartosc).trim() || "……………"}</dd>
-                </div>
-              ))}
-              {druk.oswiadczenia.filter((o) => o.zaznaczone).map((o) => (
-                <div key={o.id}><dt>Oświadczenie</dt><dd>{o.tekst}</dd></div>
-              ))}
-            </dl>
+        <section className="result-card" aria-labelledby="druk-wyslij">
+          <h2 className="result-title" id="druk-wyslij">
+            <span className="badge b-warn">SYMULACJA</span>{" "}
+            {druk.tryb === "zam" ? "Wyślij do ZUS przez PUE/eZUS" : "Wyślij do pracodawcy elektronicznie"}
+          </h2>
+          {wyslany ? (
+            <div role="status">
+              <p><b>Wysłano.</b> Numer wniosku: <b>{wyslany.numer}</b>{wyslany.upo && <> · UPO: <b>{wyslany.upo}</b></>}</p>
+              <p>Status: {wyslany.status}. Kolejne etapy zobaczysz w <Link to="/zus">„Dane z ZUS” → „Twoje wnioski”</Link>.</p>
+              <p className="note">W symulacji status zmienia się sam po ok. 20 s i 1 min. Nic nie trafia do prawdziwego pracodawcy ani do ZUS.</p>
+            </div>
           ) : (
-            druk.tresc.map((t) => <p key={t}>{t}</p>)
-          )}
-          {druk.zalaczniki.length > 0 && (
             <>
-              <p><b>Załączniki:</b></p>
-              <ol>{druk.zalaczniki.map((z) => <li key={z}>{z}</li>)}</ol>
+              <p className="note">
+                {druk.tryb === "zam"
+                  ? "W docelowej wersji wniosek trafi do PUE/eZUS podpisany profilem zaufanym, a ZUS odeśle Urzędowe Poświadczenie Odbioru (UPO)."
+                  : "W docelowej wersji pismo trafi do pracodawcy przez jego system kadrowy albo e-mail, z potwierdzeniem doręczenia."}
+              </p>
+              <label className="check-row">
+                <input type="checkbox" checked={potwierdzenie} onChange={(e) => setPotwierdzenie(e.target.checked)} />{" "}
+                Potwierdzam, że dane we wniosku są zgodne z prawdą.
+              </label>
+              {blokada && <p className="field-error">{blokada}</p>}
+              {bladWysylki && <p className="field-error" role="alert">{bladWysylki}</p>}
+              <button type="button" className="btn btn-outline" disabled={!!blokada || !potwierdzenie || wysylanie} onClick={wyslij}>
+                {wysylanie ? "Wysyłanie…" : druk.tryb === "zam" ? "Wyślij do ZUS (symulacja)" : "Wyślij do pracodawcy (symulacja)"}
+              </button>
             </>
           )}
-          {druk.tryb === "pracodawca" && <p className="druk-podpis">……………………………………<br />podpis pracownika</p>}
-          <p className="druk-stopka">Podstawa: {druk.podstawa.replace(/\.$/, "")}. Przygotowano w RodzicPlus na podstawie danych podanych przez wnioskodawcę.</p>
-        </article>
+        </section>
 
-        <p className="note no-print">
+        <p className="note">
           {druk.tryb === "pracodawca"
             ? "Wzór pisma opiera się na rozporządzeniu w sprawie wniosków dotyczących uprawnień pracowników związanych z rodzicielstwem – wymaga potwierdzenia przez ZUS / dział kadr. Pracodawca może mieć własny formularz."
             : "To nie jest formularz ZUS – to zestawienie danych, które przepiszesz do wniosku ZAM w eZUS. Zakres danych wymaga potwierdzenia przez ZUS."}
-          {" "}Zapisany plik PDF zawiera dane widoczne w formularzu – to mockup, więc zamiast drukowania
-          pobieramy dokument do dalszej obróbki.
+          {" "}Dokument zapisujesz jako PDF i składasz w wersji papierowej albo elektronicznej.
         </p>
       </main>
     </div>
