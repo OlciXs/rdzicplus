@@ -290,13 +290,13 @@ def main():
     dane = yaml.safe_load(open(SRC, encoding="utf-8"))
     os.makedirs(os.path.join(TU, "szablony"), exist_ok=True)
 
-    with open(os.path.join(TU, "preamble.tex"), "w", encoding="utf-8") as f:
+    with open(os.path.join(TU, "preamble.tex"), "w", encoding="utf-8", newline="\n") as f:
         f.write(PREAMBULA)
 
     utworzone = []
     for s in dane["szablony"]:
         sciezka = os.path.join(TU, "szablony", f"{s['id']}.tex")
-        with open(sciezka, "w", encoding="utf-8") as f:
+        with open(sciezka, "w", encoding="utf-8", newline="\n") as f:
             f.write(zrob_dokument(s))
         utworzone.append(s["id"])
 
@@ -321,7 +321,7 @@ def main():
         czesci.append("\\clearpage")
     czesci.append("\\end{document}\n")
 
-    with open(os.path.join(TU, "szablony_pism.tex"), "w", encoding="utf-8") as f:
+    with open(os.path.join(TU, "szablony_pism.tex"), "w", encoding="utf-8", newline="\n") as f:
         f.write("\n\n".join(czesci))
 
     # --- kopia dla frontendu (obraz Dockera buduje się tylko z katalogu frontend) ---
@@ -347,7 +347,7 @@ def main():
             for s in dane["szablony"]
         ],
     }
-    with open(os.path.join(front_dir, "latex_szablony.json"), "w", encoding="utf-8") as f:
+    with open(os.path.join(front_dir, "latex_szablony.json"), "w", encoding="utf-8", newline="\n") as f:
         json.dump(frontend_dane, f, ensure_ascii=False, indent=2)
         f.write("\n")
 
@@ -368,7 +368,7 @@ def main():
             decz.append(renderuj_tresc(d["tresc_odwolania"], d["id"]))
         if d.get("uwagi"):
             decz.append("{\\footnotesize\\color{szary}\\itshape %s}" % typografia(d["uwagi"]))
-    with open(os.path.join(TU, "decyzje_zus.tex"), "w", encoding="utf-8") as f:
+    with open(os.path.join(TU, "decyzje_zus.tex"), "w", encoding="utf-8", newline="\n") as f:
         f.write(PREAMBULA + "\n\\begin{document}\n" + "\n\n".join(decz) + "\n\\end{document}\n")
     print("Zapisano: decyzje_zus.tex")
 
