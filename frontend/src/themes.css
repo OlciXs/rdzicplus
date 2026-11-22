@@ -262,6 +262,51 @@ a.calendar-dot { text-decoration: none; }
 .calendar-event h3 { margin: 8px 0 10px; color: var(--color-navy); }
 .calendar-event .hint { margin-bottom: 0; }
 
+/* legenda kolorów nad siatką kalendarza */
+.calendar-legend {
+  display: flex; flex-wrap: wrap; gap: 6px 18px;
+  margin: 0 0 12px; padding: 0; list-style: none;
+  font-size: 0.85rem; color: var(--color-muted);
+}
+.calendar-legend li { display: flex; align-items: center; gap: 7px; }
+.calendar-legend-swatch {
+  width: 14px; height: 14px; border-radius: 4px; flex: none;
+  border: 1px solid rgba(28, 43, 51, 0.15);
+}
+.calendar-legend-swatch.s-deadline { background: var(--color-danger-soft); border-color: var(--color-danger); }
+.calendar-legend-swatch.s-reminder { background: #fff4d6; border-color: #d99a00; }
+.calendar-legend-swatch.s-neutral { background: #e8eef5; border-color: var(--color-navy); }
+
+/* klikalne dni siatki i dzień wybrany (reset stylów natywnego <button>) */
+button.calendar-day {
+  font: inherit; text-align: left; cursor: pointer;
+  border-top: none; border-left: none; background: var(--color-surface);
+}
+button.calendar-day.is-clickable:hover { background: #f3faf6; }
+.calendar-day.calendar-day-selected {
+  background: var(--color-primary-soft);
+  outline: 2px solid var(--color-primary); outline-offset: -2px;
+}
+/* fokus klawiatury widać także na dniu wybranym (musi być po .calendar-day-selected) */
+button.calendar-day:focus-visible { outline: 3px solid var(--color-navy); outline-offset: -3px; }
+/* wpis odhaczony jako złożony – wyszarzony, ale nadal widoczny */
+.calendar-dot.is-completed { opacity: 0.45; filter: grayscale(0.8); }
+
+/* panel szczegółów wybranego dnia (pod siatką) */
+.calendar-detail { border-left: 5px solid var(--color-primary); }
+.calendar-detail-heading {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 12px;
+}
+.calendar-detail-heading h2 { margin: 0; }
+.calendar-detail-empty { color: var(--color-muted); margin: 0; }
+/* kolorowa lewa krawędź wpisu zgodna z kolorem w siatce */
+.calendar-event.ce-termin { border-left-color: var(--color-danger); }
+.calendar-event.ce-przypomnienie { border-left-color: #d99a00; }
+.calendar-event.ce-neutral { border-left-color: var(--color-border); }
+/* neutralna odznaka (początek/informacja) */
+.b-neutral { background: #e8eef5; color: var(--color-navy); }
+
 /* Stałe odstępy wszystkich kart i kafelków - bez zlewania się bloków. */
 .container > .info-card,
 .container > .calc-cta,
