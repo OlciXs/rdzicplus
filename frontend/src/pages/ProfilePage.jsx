@@ -361,7 +361,8 @@ const KINDS = {
 };
 
 const toStr = (v) => (v === null || v === undefined ? "" : String(v));
-const todayISO = () => new Date().toISOString().slice(0, 10);
+// Lokalna data (toISOString() to UTC – w Polsce między 0:00 a 1:00/2:00 dawało jeszcze „wczoraj”).
+const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
 
 const ctxOf = (form) => ({ ...derive(form), f: form });
 const visibleSections = (step, c) => step.sections.filter((s) => !s.show || s.show(c));

@@ -17,6 +17,12 @@
       "imie": "Mariusz",
       "nazwisko": "Zieliński",
       "pesel": "94122530836"
+    },
+    {
+      "id": "mob-alicja",
+      "imie": "Alicja",
+      "nazwisko": "Sosnowska",
+      "pesel": "98031510242"
     }
   ],
   "users": [
@@ -167,118 +173,41 @@
       "lastLoginAt": "2026-11-21T18:53:30.106Z",
       "profile": {
         "ubezpieczony": {
-          "imie": "Bożena",
-          "nazwisko": "Nowak",
-          "peselMasked": "*******8260",
-          "plec": "K",
-          "dataUrodzenia": "1991-04-17",
-          "adres": "",
-          "rachunek": "",
-          "statusUbezpieczenia": "",
-          "podstawaWymiaru": "",
-          "ubezpieczenieOd": "",
-          "ulgaWyczekiwania": "",
-          "wymiarEtatu": "",
-          "zmianaWymiaru12m": "",
-          "zatrudnionyOd": "",
-          "pracaZaGranica": "",
-          "pracaTymczasowa": "",
-          "zaleglosci": "",
-          "wiecejNizJedenTytul": "",
-          "emeryturaRenta": "",
-          "zasilekBezrobotnych": "",
-          "rolnik": "",
-          "ubezpieczenieUstalo": "",
-          "dataUstania": "",
-          "przyczynaUstania": "",
-          "zapewnionoInnaPrace": ""
+          "adres": "ul. Lipowa 8/3, 00-001 Warszawa",
+          "rachunek": "PL61109010140000071219812874",
+          "statusUbezpieczenia": "pracownik",
+          "podstawaWymiaru": "5200",
+          "wymiarEtatu": "pelny",
+          "zatrudnionyOd": "2022-03-01"
         },
         "sytuacja": {
-          "etap": "",
-          "rola": "",
-          "typPrzyjecia": ""
+          "etap": "ciaza",
+          "rola": "matka"
         },
         "platnik": {
-          "nazwa": "",
-          "adres": "",
-          "nip": "",
-          "regon": "",
-          "liczbaUbezpieczonych": ""
-        },
-        "drugiRodzic": {
-          "imie": "",
-          "nazwisko": "",
-          "pesel": "",
-          "rola": "",
-          "adres": "",
-          "statusUbezpieczenia": "",
-          "podstawaWymiaru": "",
-          "platnikNazwa": "",
-          "platnikNip": "",
-          "okolicznosc": "",
-          "dataOkolicznosci": "",
-          "brak": false
+          "nazwa": "Alfa Medical Sp. z o.o. (fikcyjna)",
+          "adres": "ul. Przemysłowa 2, 00-002 Warszawa",
+          "nip": "5261040147",
+          "regon": "012345678",
+          "liczbaUbezpieczonych": "powyzej_20"
         },
         "dziecko": {
-          "imie": "",
-          "nazwisko": "",
-          "pesel": "",
-          "dataUrodzenia": "",
-          "miejsceUrodzenia": "",
-          "liczbaDzieci": "",
-          "przewidywanaDataPorodu": "",
-          "martwe": "",
-          "zmarlo": "",
-          "dataZgonu": "",
-          "liczbaZyjacych": "",
-          "zaGranica": "",
-          "kraj": "",
-          "pobytWSzpitalu": "",
-          "tydzienCiazy": "",
-          "masaUrodzenia": "",
-          "szpitalOd": "",
-          "szpitalDo": "",
-          "dataPrzyjecia": "",
-          "odroczonySzkolny": "",
-          "niepelnosprawne": "",
-          "zaZyciem": false
+          "liczbaDzieci": "1",
+          "przewidywanaDataPorodu": "2027-01-20",
+          "dzieci": []
         },
         "zdrowie": {
-          "zwolnienie": "",
-          "zlaNumer": "",
-          "zlaOd": "",
-          "zlaDo": "",
-          "wczesniejszeZwolnienia": "",
-          "okresZasilkowyWyczerpany": "",
-          "rokowaniaPoprawy": "",
-          "wypadekWDrodze": ""
+          "zwolnienie": "B",
+          "zlaNumer": "ZLA/B/2026/001",
+          "zlaOd": "2026-11-09",
+          "zlaDo": "2026-12-07"
         },
         "urlopy": {
-          "urlopPrzedPorodemOd": "",
-          "zamiarPelnyWymiar": "",
-          "macierzynskiWykorzystanoTyg": "",
-          "matkaRezygnuje": "",
-          "planUzupelniajacy": "",
-          "terminKoncaMacierzynskiego": "",
-          "drugiRodzicUzupelniajacy": "",
-          "planOjcowski": "",
-          "ojcowskiZInnegoTytulu": "",
-          "planRodzicielski": "",
-          "rodzicielskieCzesci": "",
-          "rodzicielskiWykorzystanoTyg": "",
-          "rodzicielskiOd": "",
-          "rodzicielskiDo": "",
-          "drugiRodzicRodzicielski": "",
-          "laczenieZPraca": "",
-          "wymiarPracyPrzyLaczeniu": "",
-          "planWychowawczy": "",
-          "wychowawczyWykorzystanoMies": "",
-          "potrzebaOpieki": "",
-          "domownikMozeOpiekowac": "",
-          "opiekunczyDniWRoku": ""
+          "zamiarPelnyWymiar": "tak",
+          "planRodzicielski": "nie"
         }
       },
-      "profileUpdatedAt": null
+      "profileUpdatedAt": "2026-11-22T00:00:00.000Z"
     },
     {
       "id": "cbc2c19c-52ca-4376-8474-fd7b26d9a545",

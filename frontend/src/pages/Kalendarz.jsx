@@ -5,6 +5,7 @@ import { useProfile } from "../profile.js";
 import { CFG } from "../calculators/config.js";
 import { terminyWnioskow, doIcs } from "../engine/index.js";
 import { etykietaTerminu, klasaBadga } from "./kalendarzEtykiety.js";
+import { TESTOWE, pokaz, poprosOZgode, zgoda } from "../powiadomienia.js";
 
 /* =====================================================================
    Kalendarz terminów. Daty liczy silnik (src/engine/wnioskow/kalendarz.js) –
@@ -13,7 +14,8 @@ import { etykietaTerminu, klasaBadga } from "./kalendarzEtykiety.js";
 
    W siatce wpis to NAZWA WNIOSKU (e.tytul); różnicę widać tylko w kolorze:
    czerwony = ostateczny termin (typ „termin”/„koniec”), żółty = przypomnienie
-   (tydzień przed terminem), neutralny = początek/informacja.
+   (7 i 3 dni przed terminem; w dniu terminu przypomina sam termin), neutralny = początek/informacja.
+   Przypomnienie NIGDY nie ma etykiety „Pilne” – pilny jest tylko termin (zgłoszenie Oli z 18.11).
    Klik na dzień z wpisami otwiera panel szczegółów pod siatką.
    ===================================================================== */
 
@@ -48,6 +50,7 @@ export default function Kalendarz() {
     return new Date(d.getFullYear(), d.getMonth(), 1);
   });
   const [selectedDay, setSelectedDay] = useState(null);
+  const [stanZgody, setStanZgody] = useState(() => zgoda());
   const detailRef = useRef(null);
   const [completed, setCompleted] = useState(() => {
     try { return JSON.parse(localStorage.getItem(KLUCZ) || "{}"); }
@@ -184,14 +187,22 @@ export default function Kalendarz() {
   const dnia = (day) => `${prefiks}${String(day).padStart(2, "0")}`;
   const nadchodzace = events.filter((e) => e.typ !== "info" && e.data >= dzis && !completed[e.id]).length;
 
-  // Wpisy widoczne w danym dniu siatki: właściwa data oraz (dla terminów) przypomnienie z 7 dni wcześniej.
+  // Wpisy widoczne w danym dniu siatki: właściwa data oraz przypomnienia 7 i 3 dni przed terminem
+  // (przypomnienie „w dniu terminu” to sam termin – nie dublujemy go w siatce).
   const wpisyNaDzien = (dzien) => {
     const wpisy = [];
     for (const e of events) {
-      if (e.data === dzien) wpisy.push({ e, przypomnienie: false });
-      if ((e.typ === "termin" || e.typ === "koniec") && e.przypomnienie === dzien) wpisy.push({ e, przypomnienie: true });
+      if (e.data === dzien) wpisy.push({ e, przypomnienie: null });
+      for (const p of e.przypomnienia ?? []) if (p.dni > 0 && p.data === dzien) wpisy.push({ e, przypomnienie: p });
     }
     return wpisy;
+  };
+  const wlaczPowiadomienia = async () => {
+    const wynik = await poprosOZgode();
+    setStanZgody(wynik);
+    pokaz(wynik === "granted"
+      ? { ...TESTOWE, tytul: "Powiadomienia włączone", tresc: "Przypomnimy o terminach 7 i 3 dni wcześniej oraz w dniu terminu, gdy otworzysz RodzicPlus." }
+      : { ...TESTOWE, tytul: "Powiadomienia tylko na stronie", tresc: "Przeglądarka nie pozwoliła na powiadomienia systemowe – przypomnienia pokażemy tutaj, a do telefonu dodaj terminy przez plik .ics." });
   };
 
   const przeskoczMiesiac = (kierunek) => {
@@ -212,6 +223,7 @@ export default function Kalendarz() {
         </p>
 
         {events.length > 0 && (
+<<<<<<< HEAD
           <div className="calendar-actions">
             <button type="button" className="btn btn-outline" onClick={pobierzIcs}>📅 Dodaj do kalendarza w telefonie (.ics)</button>
             <button
@@ -230,6 +242,18 @@ export default function Kalendarz() {
             )}
             <span className="calendar-upcoming">{nadchodzace} nadchodzących terminów · przypomnienia 7 dni i 1 dzień wcześniej</span>
           </div>
+=======
+          <p>
+            <button type="button" className="btn btn-outline" onClick={pobierzIcs}>📅 Dodaj do kalendarza w telefonie (.ics)</button>{" "}
+            {stanZgody !== "granted" && stanZgody !== "unsupported" && (
+              <button type="button" className="btn btn-outline" onClick={wlaczPowiadomienia}>🔔 Włącz powiadomienia</button>
+            )}{" "}
+            <span className="note">
+              {nadchodzace} nadchodzących terminów · przypomnienia 7 i 3 dni wcześniej oraz w dniu terminu
+              {stanZgody === "granted" ? " · powiadomienia włączone" : ""} · klawisz <kbd>N</kbd> – testowe powiadomienie
+            </span>
+          </p>
+>>>>>>> 213c671904f690eec90d42a24a14a01cd2f9391c
         )}
 
         {events.length === 0 ? (
@@ -268,8 +292,10 @@ export default function Kalendarz() {
                       {wpisy.filter((w) => !w.przypomnienie).map(({ e }) => (
                         <span className={`calendar-dot ${TYP[e.typ].klasa}`} title={`${e.tytul}`} key={e.id}>{etykietaTerminu(e, dzis)}</span>
                       ))}
-                      {wpisy.filter((w) => w.przypomnienie).map(({ e }) => (
-                        <span className="calendar-dot reminder" title={`Przypomnienie: ${e.tytul}`} key={`r-${e.id}`}>Przypomnienie</span>
+                      {wpisy.filter((w) => w.przypomnienie).map(({ e, przypomnienie }) => (
+                        <span className="calendar-dot reminder" title={`Przypomnienie (${przypomnienie.dni} dni przed terminem): ${e.tytul}`} key={`r${przypomnienie.dni}-${e.id}`}>
+                          Przypomnienie · {przypomnienie.dni} dni przed
+                        </span>
                       ))}
                     </button>
                   );
@@ -289,29 +315,32 @@ export default function Kalendarz() {
                   const pilny = e.typ === "termin" || e.typ === "koniec";
                   const wykonany = Boolean(completed[e.id]);
                   const ile = dniDo(e.data, dzis);
+                  // Przypomnienie: tylko jego własna etykieta (np. „Przypomnienie – 4 dni temu”), bez „Pilne”.
+                  // Pilność ma wyłącznie sam termin – wcześniej przypomnienie z 18.11 pokazywało
+                  // „Pilne – za 3 dni”, licząc od terminu, choć to było tylko przypomnienie.
                   const rodzaj = przypomnienie
-                    ? { t: "Przypomnienie (tydzień przed)", c: "b-warn", krawedz: "ce-przypomnienie" }
+                    ? { t: `Przypomnienie · ${przypomnienie.dni} dni przed terminem`, c: "b-neutral", krawedz: "ce-przypomnienie" }
                     : pilny
                       ? { t: TYP[e.typ].etykieta, c: "b-err", krawedz: "ce-termin" }
                       : { t: TYP[e.typ].etykieta, c: "b-neutral", krawedz: "ce-neutral" };
-                  const pilnosc = !pilny ? null
+                  const pilnosc = przypomnienie
+                    ? { t: etykietaTerminu(e, dzis, "przypomnienie", przypomnienie.data), c: klasaBadga(e, dzis, "przypomnienie", przypomnienie.data) }
+                    : !pilny ? null
                     : wykonany ? { t: "Złożono ✓", c: "b-ok" }
-                    : ile < 0 ? { t: "Termin minął", c: "b-err" }
-                    : ile === 0 ? { t: "Dziś ostatni dzień", c: "b-warn" }
-                    : ile <= 7 ? { t: `Pilne – za ${ile} dni`, c: "b-warn" }
-                    : { t: `Za ${ile} dni`, c: "b-ok" };
+                    : { t: etykietaTerminu(e, dzis), c: klasaBadga(e, dzis) };
                   return (
-                    <article className={`calendar-event ${rodzaj.krawedz}${wykonany ? " is-completed" : ""}`} key={przypomnienie ? `r-${e.id}` : `d-${e.id}`}>
+                    <article className={`calendar-event ${rodzaj.krawedz}${wykonany ? " is-completed" : ""}`} key={przypomnienie ? `r${przypomnienie.dni}-${e.id}` : `d-${e.id}`}>
                       <div className="calendar-event-main">
                         <span className={`badge ${rodzaj.c}`}>{rodzaj.t}</span>{" "}
                         {pilnosc && <span className={`badge ${pilnosc.c}`}>{pilnosc.t}</span>}{" "}
                         {e.pewnosc !== "pewne" && <span className="badge b-warn">{e.pewnosc === "szacunek" ? "data szacunkowa" : "do potwierdzenia"}</span>}
+                        {e.warunkowy && <span className="badge b-warn">jeśli przysługuje – uzupełnij dane</span>}
                         <h3>{e.tytul}</h3>
                         <dl className="data-list">
                           {przypomnienie ? (
                             <>
-                              <div><dt>Przypomnienie</dt><dd>{fmt(e.przypomnienie)}</dd></div>
-                              <div><dt>Ostateczny termin</dt><dd>{fmt(e.data)}</dd></div>
+                              <div><dt>Przypomnienie</dt><dd>{fmt(przypomnienie.data)}</dd></div>
+                              <div><dt>Ostateczny termin</dt><dd>{fmt(e.data)} ({ile < 0 ? "minął" : ile === 0 ? "dziś" : `za ${ile} dni`})</dd></div>
                             </>
                           ) : (
                             <div><dt>{pilny ? "Ostateczny termin" : "Data"}</dt><dd>{fmt(e.data)}</dd></div>
@@ -346,10 +375,11 @@ export default function Kalendarz() {
                     <div className="calendar-event-main">
                       <span className={`badge ${badgeClass}`}>{badgeText}</span>{" "}
                       {e.pewnosc !== "pewne" && <span className="badge b-warn">{e.pewnosc === "szacunek" ? "data szacunkowa" : "do potwierdzenia"}</span>}
+                      {e.warunkowy && <span className="badge b-warn">jeśli przysługuje – uzupełnij dane</span>}
                       <h3>{e.tytul}</h3>
                       <dl className="data-list">
                         <div><dt>{pilny ? "Ostateczny termin" : "Data"}</dt><dd>{fmt(e.data)}</dd></div>
-                        {pilny && <div><dt>Przypomnienie</dt><dd>{fmt(e.przypomnienie)}</dd></div>}
+                        {pilny && <div><dt>Przypomnienia</dt><dd>{(e.przypomnienia ?? []).map((p) => (p.dni ? `${fmt(p.data)} (${p.dni} dni przed)` : "w dniu terminu")).join(" · ")}</dd></div>}
                         {e.dokument && <div><dt>Co składasz</dt><dd>{e.dokument}</dd></div>}
                         <div><dt>Dla</dt><dd>{e.kto}</dd></div>
                         <div><dt>Podstawa</dt><dd>{e.podstawa}</dd></div>

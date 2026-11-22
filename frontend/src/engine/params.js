@@ -64,9 +64,11 @@ export const DEFAULT_PARAMS = Object.freeze({
   uzupełniajacyLimitPozny: 8, // pozostałe przypadki
   martweUrodzenieTygodnie: 8, // po porodzie; nie krócej niż 7 dni od zgonu
   zgonPo8TygDni: 7,
-  // B-02: minimalny pobyt dziecka w szpitalu, by przysługiwał uzupełniający urlop macierzyński
-  // (art. 180² k.p.; Poradnik ZUS 2026 — „co najmniej 5 dni po narodzinach”).
-  minHospitalizacjaDni: 5,
+  // Uzupełniający urlop macierzyński – dziecko urodzone PO 37. tygodniu: pobyt w szpitalu co najmniej
+  // 2 KOLEJNE dni, pierwszy między 5. a 28. dniem po porodzie (art. 180² § 1 pkt 3 k.p.; załącznik do zadania).
+  // Przed 37. tygodniem minimum nie ma – liczy się każdy tydzień pobytu. Poradnik ZUS (s. 31) podaje
+  // „co najmniej 5 dni” – ustawa tego nie zawiera, więc trzymamy się ustawy (do potwierdzenia z ZUS).
+  minHospitalizacjaDni: 2,
 
   // adopcja / rodzina zastępcza – limity wieku dziecka w chwili przyjęcia (UZ art. 29, KP art. 183)
   limitWiekuPrzysposobienie: 14,
@@ -139,7 +141,7 @@ export const PARAM_GROUPS = [
       tygodnieOjcowski: "Ojcowski",
       uzupełniajacyLimitWczesny: "Uzupełniający – wcześniak (< 28 tyg. / ≤ 1000 g)",
       uzupełniajacyLimitPozny: "Uzupełniający – pozostałe",
-      minHospitalizacjaDni: "Uzupełniający – min. dni pobytu w szpitalu",
+      minHospitalizacjaDni: "Uzupełniający po 37. tyg. – min. kolejnych dni w szpitalu",
       martweUrodzenieTygodnie: "Po martwym urodzeniu",
       limitLaczenie: "Rodzicielski łączony z pracą – limit",
       limitLaczenieZaZyciem: "Łączony z pracą „Za życiem” – limit",

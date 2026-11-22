@@ -69,9 +69,14 @@ export function zasilekMacierzynski(input, P = DEFAULT_PARAMS) {
   let tygUzup = 0;
   let limitUzup = 0;
   const wczesniak = tydzienCiazy > 0 && (tydzienCiazy < 28 || (masa > 0 && masa <= 1000));
-  // B-02: art. 180² k.p. — urlop przysługuje, gdy dziecko przebywa w szpitalu CO NAJMNIEJ 5 dni.
-  // Wcześniej warunek to `> 0`, więc 1–4 dni dawały nienależny tydzień urlopu.
-  if (sytuacja === "brak" && dniHospitalizacji >= P.minHospitalizacjaDni) {
+  // Art. 180² § 1 k.p. (wyciąg KP i załącznik do zadania): przed 37. tygodniem liczy się KAŻDY tydzień
+  // pobytu w szpitalu (niepełny tydzień w górę, § 3) – bez minimum dni. Po 37. tygodniu: co najmniej
+  // `minHospitalizacjaDni` (2) KOLEJNE dni, pierwszy między 5. a 28. dniem po porodzie (pkt 3).
+  // Wcześniejsza „poprawka B-02” (min. 5 dni dla wszystkich) szła za uproszczeniem z poradnika ZUS (s. 31),
+  // którego ustawa nie zawiera. Nieznany tydzień ciąży → ostrzejsza reguła (po 37. tygodniu).
+  const po37 = !(tydzienCiazy > 0 && tydzienCiazy < 37) && !(masa > 0 && masa <= 1000);
+  const minDni = po37 ? P.minHospitalizacjaDni : 1;
+  if (sytuacja === "brak" && dniHospitalizacji >= minDni) {
     limitUzup = wczesniak ? P.uzupełniajacyLimitWczesny : P.uzupełniajacyLimitPozny;
     tygUzup = Math.min(limitUzup, Math.ceil(dniHospitalizacji / 7));
   }

@@ -19,6 +19,25 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 > **Do potwierdzenia w generatorze:** treść pism oparta na `docs/02` (szkic z Mistrala) – sprawdzić z rozporządzeniem o wnioskach; W1 po porodzie (urlop przysługuje z mocy prawa, pismo to raczej „informacja + wniosek o 81,5%”); zakres danych ZAM
 > **Do weryfikacji (oznaczone w kodzie `do_potwierdzenia`):** W4 uzupełniający dla nie-pracowników, W12 łączenie z pracą (wydłużona część, pole I14), W44 podwyższenie (szacunek podatku), W47 chorobowy po ustaniu (14 dni), W11 staż 6 mies., W19 świadczenie rodzicielskie (poza ZUS). W dokumentach Mistrala jest też nieaktualny **Z-3b** (zlikwidowany 24.10.2026) – w rejestrze go nie używamy.
 
+### Przegląd po PR #11–#14 + kalendarz (Claude, 22.11 nad ranem, bez commita)
+Sprawdzone: 334 testy (17 plików), build, API 44/44 w Dockerze, kalendarz w przeglądarce (komputer + telefon).
+
+**Naprawione:**
+- [x] **Test LaTeX nie przechodził na Windowsie** (`core.autocrlf`: .tex z CRLF, kopia w JSON z LF) – porównanie ignoruje końce linii. W CI (Linux) przechodził
+- [x] **Uzupełniający urlop – „min. 5 dni w szpitalu” było niezgodne z ustawą** (art. 180² § 1 KP + załącznik do zadania): przed 37. tyg. liczy się każdy tydzień pobytu, po 37. tyg. min. 2 kolejne dni (pierwszy między 5. a 28. dniem). Kalkulator, W4, parametr `minHospitalizacjaDni` = 2, testy, docs. Poradnik ZUS (s. 31) pisze „5 dni” – **do potwierdzenia z mentorami ZUS**
+- [x] `SKLADANIE`: usunięty martwy W3; W34 (chorobowy) dla działalności/zlecenia mówił „ZAM” (to formularz macierzyński) – teraz e-ZLA / Z-3a od zleceniodawcy (rozporządzenie z 27.09.2026, § 2–3); test pilnuje spójności z rejestrem
+- [x] **Nowe osoby i profile demo z `db.js` (Alicja, gotowa Bożena) nigdy się nie pojawiały** – `db.json` jest w repo, więc SEED był pomijany. Backend przy starcie dokłada brakujące osoby i profil demo tylko kontom bez zapisanego profilu
+- [x] Marzena (demo): urlop rodzicielski od 15.12.2026 nachodził na macierzyński (do 14.02.2027) – teraz 15.02–26.09.2027
+- [x] Karty w „Złóż wniosek”: konkretna data tylko dla wariantu, który przysługuje (spójnie z `ocena.js`); w kalendarzu daty wariantów z brakiem danych mają znaczek „jeśli przysługuje – uzupełnij dane”
+- [x] „Dziś” liczone w UTC (`toISOString`) w kartach wniosków, profilu i „Dane z ZUS” – po północy w Polsce dawało „wczoraj”
+- [x] „Do 21 dni po porodu” → „po porodzie”
+
+**Kalendarz (prośby Oli):**
+- [x] Przypomnienie z 18.11 pokazywało „Pilne – za 3 dni” (liczone od terminu) – teraz przypomnienie ma tylko swoją etykietę („Przypomnienie – 4 dni temu”), „Pilne” dostaje wyłącznie termin
+- [x] Przypomnienia **7 i 3 dni przed** terminem oraz **w dniu terminu**: w siatce, w liście, w powiadomieniach i w .ics (alarmy −7 d, −3 d, 9:00 w dniu terminu)
+- [x] Powiadomienia: po wejściu do aplikacji przypomnienia na dziś (każde raz), systemowe po kliknięciu „🔔 Włącz powiadomienia”, zawsze też komunikat na stronie; **klawisz N** – testowe powiadomienie (poza polami formularza)
+- [ ] Powiadomienia działają, gdy aplikacja jest otwarta. „Prawdziwe” push na telefon bez otwierania strony = service worker + web push z backendu (po hackathonie); do tego czasu – plik .ics
+
 ### Przegląd po PR #9 i #10 (Claude, 21.11 ~23:00, bez commita)
 Sprawdzone: 230 testów (7 plików), build, API 44/44 przez Dockera, wszystkie strony 200, 7 kalkulatorów z profilem w przeglądarce (komputer + telefon), druk, panel, „Dane z ZUS”.
 

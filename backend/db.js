@@ -99,7 +99,8 @@ const SEED = {
             { imie: "Ola", nazwisko: "Wiśniewska", pesel: "", dataUrodzenia: "2026-09-28", miejsceUrodzenia: "Bydgoszcz" },
           ],
         },
-        urlopy: { planRodzicielski: "tak", rodzicielskiOd: "2026-12-15", rodzicielskiDo: "2027-08-15" },
+        // Poród 28.09.2026 → macierzyński do 14.02.2027; rodzicielski zaraz po nim, 32 tyg. (41 − 9 dla ojca).
+        urlopy: { planRodzicielski: "tak", rodzicielskiOd: "2027-02-15", rodzicielskiDo: "2027-09-26" },
       },
       profileUpdatedAt: "2026-11-22T00:00:00.000Z",
     },
@@ -154,7 +155,36 @@ function load() {
     fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
     fs.writeFileSync(DB_FILE, JSON.stringify(SEED, null, 2));
   }
-  return JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
+  const d = JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
+  // db.json jest w repo, więc SEED był używany tylko przy braku pliku – nowe osoby demo (np. Alicja)
+  // i gotowe profile demo nigdy nie trafiały ani lokalnie, ani na serwer. Dokładamy brakujące osoby,
+  // a profil demo dostaje tylko konto, które nigdy nie zapisało własnego profilu (niczego nie nadpisujemy).
+  if (uzupelnijSeed(d)) fs.writeFileSync(DB_FILE, JSON.stringify(d, null, 2));
+  return d;
+}
+
+export function uzupelnijSeed(d) {
+  let zmiana = false;
+  d.mobywatelProfiles ??= [];
+  d.users ??= [];
+  for (const p of SEED.mobywatelProfiles) {
+    if (!d.mobywatelProfiles.some((x) => x.id === p.id || x.pesel === p.pesel)) {
+      d.mobywatelProfiles.push({ ...p });
+      zmiana = true;
+    }
+  }
+  for (const u of SEED.users) {
+    const istniejacy = d.users.find((x) => x.pesel === u.pesel);
+    if (!istniejacy) {
+      d.users.push(structuredClone(u));
+      zmiana = true;
+    } else if (!istniejacy.profileUpdatedAt && u.profile) {
+      istniejacy.profile = structuredClone(u.profile);
+      istniejacy.profileUpdatedAt = u.profileUpdatedAt;
+      zmiana = true;
+    }
+  }
+  return zmiana;
 }
 
 const data = load();

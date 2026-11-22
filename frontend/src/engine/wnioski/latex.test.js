@@ -88,12 +88,14 @@ saPliki("LaTeX — zgodność z szablonami pism", () => {
   it("kopia dla frontendu jest aktualna (preamble + wszystkie .tex)", () => {
     expect(existsSync(FRONTEND_JSON), "brak latex_szablony.json — uruchom latex/gen_latex.py").toBe(true);
     const kopia = JSON.parse(readFileSync(FRONTEND_JSON, "utf-8"));
-    expect(kopia.preamble).toBe(readFileSync(resolve(LATEX, "preamble.tex"), "utf-8"));
+    // Na Windowsie git (core.autocrlf) wypakowuje .tex z CRLF, a JSON ma LF – porównujemy treść, nie końce linii.
+    const lf = (s) => s.replace(/\r\n/g, "\n");
+    expect(lf(kopia.preamble)).toBe(lf(readFileSync(resolve(LATEX, "preamble.tex"), "utf-8")));
     expect(kopia.szablony.map((s) => s.id).sort()).toEqual([...ids].sort());
     for (const s of kopia.szablony) {
       const tex = readFileSync(resolve(katalog, `${s.id}.tex`), "utf-8");
       expect(s.nazwa, `${s.id}: nazwa`).toBe(dane.szablony.find((x) => x.id === s.id).nazwa);
-      expect(s.tex, `${s.id}: nieaktualna kopia w latex_szablony.json`).toBe(tex);
+      expect(lf(s.tex), `${s.id}: nieaktualna kopia w latex_szablony.json`).toBe(lf(tex));
     }
   });
 
