@@ -60,13 +60,17 @@ export default function Druk() {
   const [zapisywanie, setZapisywanie] = useState(false);
   const [bladZapisu, setBladZapisu] = useState("");
 
-  const szablony = useMemo(() => szablonyDlaWariantu(wariantId), [wariantId]);
-  const wybranySzablon = szablony.some((s) => s.id === szablonId) ? szablonId : szablony[0]?.id ?? null;
-
   const druk = useMemo(
     () => (profile ? przygotujDruk(profile, wariantId, { params: CFG, wartosci }) : null),
     [profile, wariantId, wartosci],
   );
+  // Tryb „zam” (osoba niebędąca pracownikiem) nie korzysta z szablonu pisma do pracodawcy,
+  // więc nie pokazujemy wyboru szablonu – powstanie zestawienie danych do eZUS.
+  const szablony = useMemo(
+    () => (druk?.tryb === "zam" ? [] : szablonyDlaWariantu(wariantId)),
+    [wariantId, druk?.tryb],
+  );
+  const wybranySzablon = szablony.some((s) => s.id === szablonId) ? szablonId : szablony[0]?.id ?? null;
   // Status wariantu – żeby nie drukować czegoś, co nie przysługuje, bez ostrzeżenia.
   const ocena = useMemo(() => {
     const wariant = wariantById(wariantId);
@@ -225,8 +229,9 @@ export default function Druk() {
                   {zapisywanie ? "Przygotowuję PDF…" : "Zapisz PDF"}
                 </button>
                 <p className="note">
-                  Dla tego wariantu nie ma jeszcze osobnego szablonu LaTeX – PDF powstanie z dokumentu ogólnego
-                  z tymi samymi danymi.
+                  {druk.tryb === "zam"
+                    ? "PDF to zestawienie danych do przepisania do wniosku ZAM w eZUS (nie pismo do pracodawcy)."
+                    : "Dla tego wariantu nie ma jeszcze osobnego szablonu LaTeX – PDF powstanie z dokumentu ogólnego z tymi samymi danymi."}
                 </p>
               </div>
             )}

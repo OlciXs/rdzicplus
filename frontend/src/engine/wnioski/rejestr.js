@@ -416,17 +416,27 @@ export const WARIANTY = [
   {
     id: "W41", wniosek: "wysokosc", nazwa: "Wariant 81,5% za cały okres",
     kto: ["matka"], etapy: ["ciaza", "po_porodzie", "przyjecie"],
-    warunki: (k) => [
-      ubezpieczonyWDniuPorodu(k),
-      w("Zamierzasz wykorzystać pełny urlop macierzyński i rodzicielski", k.zamiarPelnyWymiar, ["urlopy.zamiarPelnyWymiar"]),
-      w(`Nie minęło ${k.P.deadlineSredniowany} dni od porodu / przyjęcia dziecka`,
-        k.etap === "ciaza" ? true : k.dniOdPorodu === null ? null : k.dniOdPorodu <= k.P.deadlineSredniowany, ["dziecko.dataUrodzenia"]),
-    ],
+    warunki: (k) => {
+      // Termin liczy się od porodu albo od przyjęcia dziecka (adopcja / rodzina zastępcza).
+      const data = k.etap === "przyjecie" ? k.dataPrzyjecia : k.dataUrodzenia;
+      const dni = data ? Math.round((k.dzis - data) / 86400000) : null;
+      return [
+        ubezpieczonyWDniuPorodu(k),
+        w("Zamierzasz wykorzystać pełny urlop macierzyński i rodzicielski", k.zamiarPelnyWymiar, ["urlopy.zamiarPelnyWymiar"]),
+        w(`Nie minęło ${k.P.deadlineSredniowany} dni od porodu / przyjęcia dziecka`,
+          k.etap === "ciaza" ? true : dni === null ? null : dni <= k.P.deadlineSredniowany, ["dziecko.dataUrodzenia", "dziecko.dataPrzyjecia"]),
+      ];
+    },
     wymiar: () => "Cały urlop macierzyński i rodzicielski (bez 9 tygodni drugiego rodzica)",
     wysokosc: () => "81,5% przez cały okres",
     adresat: ADRES_ZASILKU,
     formularz: "Pisemny wniosek (art. 30a ustawy zasiłkowej)",
-    termin: (k, konkretny = true) => (konkretny && k.dataUrodzenia ? `Do ${fmtD(plusDni(k.dataUrodzenia, k.P.deadlineSredniowany))} (21 dni po porodzie)` : "Do 21 dni po porodzie"),
+    termin: (k, konkretny = true) => {
+      const data = k.etap === "przyjecie" ? k.dataPrzyjecia : k.dataUrodzenia;
+      return konkretny && data
+        ? `Do ${fmtD(plusDni(data, k.P.deadlineSredniowany))} (21 dni po porodzie / przyjęciu dziecka)`
+        : "Do 21 dni po porodzie / przyjęciu dziecka";
+    },
     dokumenty: [],
     potrzebnePola: [...BAZA, "dziecko.dataUrodzenia", "dziecko.liczbaDzieci"],
     podstawa: "art. 30a, art. 31 ust. 3 ustawy zasiłkowej",

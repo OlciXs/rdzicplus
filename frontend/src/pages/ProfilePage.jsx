@@ -617,7 +617,7 @@ export default function ProfilePage() {
   const idx = Math.max(0, steps.findIndex((s) => s.id === stepId));
   const step = steps[idx];
   const last = idx === steps.length - 1;
-  const allSections = STEPS.flatMap((s) => s.sections);
+  const allSections = steps.flatMap((s) => s.sections);
 
   const persist = async () => {
     setStatus("saving");

@@ -287,6 +287,18 @@ describe("wariant 81,5% i termin 21 dni", () => {
     expect(status(p("2026-10-22"), "wysokosc", "W41").status).toBe("niedostepny");
     expect(przegladWnioskow(p("2026-10-22"), { dzis: DZIS }).ostrzezenia.find((o) => o.kod === "V4").poziom).toBe("info");
   });
+
+  it("przy adopcji termin liczy się od przyjęcia dziecka, nie od jego urodzenia", () => {
+    const adopcja = profil({
+      sytuacja: { etap: "przyjecie", rola: "matka" },
+      ubezpieczony: { statusUbezpieczenia: "pracownik", ubezpieczenieUstalo: "nie" },
+      dziecko: { dataUrodzenia: "2020-01-01", dataPrzyjecia: "2026-11-10" },
+      urlopy: { zamiarPelnyWymiar: "tak" },
+    });
+    const w41 = status(adopcja, "wysokosc", "W41");
+    expect(w41.status).toBe("dostepny");
+    expect(w41.termin).toMatch(/1\.12\.2026/);
+  });
 });
 
 describe("urlop rodzicielski i łączenie z pracą", () => {

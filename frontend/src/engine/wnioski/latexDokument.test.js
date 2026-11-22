@@ -78,6 +78,14 @@ describe("LaTeX — wypełnianie danych", () => {
     expect(dok.tex).toContain("WNIOSEK O UDZIELENIE URLOPU RODZICIELSKIEGO");
   });
 
+  it("P06: tygodnie matki nie biorą się z tygodni rodzicielskich", () => {
+    const p = profil({ urlopy: { macierzynskiWykorzystanoTyg: "8", rodzicielskiWykorzystanoTyg: "5" } });
+    const d = przygotujDruk(p, "W25", { dzis: DZIS, wartosci: { od: "2027-02-18", do: "2027-03-03", wykorzystanoTyg: "5" } });
+    const tex = zbudujDokumentLatex(d, p, { szablonId: "P06" }).tex;
+    expect(tex).toContain("wykorzystała 8 tygodni");
+    expect(tex).not.toContain("wykorzystała 5 tygodni");
+  });
+
   it("znaki specjalne LaTeX-a są escapowane", () => {
     expect(latexEsc("A & B 100% #1_x")).toBe("A \\& B 100\\% \\#1\\_x");
     const p = profil({ platnik: { nazwa: "Firma A & B" } });

@@ -130,10 +130,12 @@ export function terminyWnioskow(profil, { dzis, params = DEFAULT_PARAMS } = {}) 
   }
 
   /* ---------- W41: 81,5% za cały okres ---------- */
-  if (aktywny("W41") && porod) {
-    dodaj("W41", { id: "wniosek", typ: "termin", data: plus(porod, P.deadlineSredniowany), kto: "Mama", pewnosc: zPdp ? "szacunek" : "pewne",
+  const dataW41 = k.etap === "przyjecie" ? przyj : porod;
+  if (aktywny("W41") && dataW41) {
+    const odPorodu = k.etap === "przyjecie" ? "przyjęcia dziecka" : "porodu";
+    dodaj("W41", { id: "wniosek", typ: "termin", data: plus(dataW41, P.deadlineSredniowany), kto: "Mama", pewnosc: zPdp ? "szacunek" : "pewne",
       tytul: "Wniosek o zasiłek w pełnym wymiarze (81,5% za cały okres)",
-      opis: `Do ${P.deadlineSredniowany} dni po porodzie${zPdp ? " (liczone od przewidywanej daty porodu)" : ""}. Później zostaje wariant 100% za macierzyński i 70% za rodzicielski.`,
+      opis: `Do ${P.deadlineSredniowany} dni po ${odPorodu}${zPdp ? " (liczone od przewidywanej daty porodu)" : ""}. Później zostaje wariant 100% za macierzyński i 70% za rodzicielski.`,
       podstawa: "art. 179¹ KP; art. 31 ustawy zasiłkowej", zrodlo: `${PORADNIK}, s. 34` });
   }
 
@@ -303,7 +305,10 @@ export function terminyWnioskow(profil, { dzis, params = DEFAULT_PARAMS } = {}) 
    ===================================================================== */
 const escIcs = (s) => String(s ?? "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
 // Linie dłuższe niż 75 znaków zawijamy (RFC 5545 § 3.1) – liczymy znaki, nie bajty; wystarcza kalendarzom w telefonach.
-const zawin = (linia) => linia.match(/.{1,74}/g).join("\r\n ");
+const zawin = (linia) => {
+  const s = String(linia ?? "");
+  return s ? (s.match(/.{1,74}/g) ?? [s]).join("\r\n ") : "";
+};
 
 export function doIcs(terminy, { teraz = new Date() } = {}) {
   const stamp = teraz.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");

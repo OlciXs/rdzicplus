@@ -69,7 +69,8 @@ export default function App() {
 
   const auth = useMemo(
     () => ({ user, loading, error, login, logout }),
-    [user, loading, error]
+    // `location` jest potrzebne w `login` (powrót na ścieżkę, z której przyszło przekierowanie).
+    [user, loading, error, location]
   );
 
   return (

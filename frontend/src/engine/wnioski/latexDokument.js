@@ -169,7 +169,7 @@ export function daneDoLatex(druk, profil = {}) {
     urlop_od: dataPL(urlopOd),
     urlop_do: dataPL(urlopDo),
     tygodnie,
-    tygodnie_matka: p("tygodnieMatka") || p("wykorzystanoTyg") || zProfilu.tygodnie_matka,
+    tygodnie_matka: p("tygodnieMatka") || zProfilu.tygodnie_matka,
     tygodnie_ojciec: p("tygodnieOjciec"),
     drugi_rodzic: p("drugiRodzic") || zProfilu.drugi_rodzic,
     data_zdarzenia: dataPL(p("dataZdarzenia") || p("przyjecie")) || zProfilu.data_zdarzenia,
@@ -308,7 +308,10 @@ export function zbudujDokumentLatex(druk, profil, { szablonId } = {}) {
 
   const dostepne = szablonyDlaWariantu(druk.id);
   const wybrany = szablonId && dostepne.some((s) => s.id === szablonId) ? szablonId : dostepne[0]?.id ?? null;
-  const szablon = wybrany ? SZABLONY[wybrany] : null;
+  // Tryb „zam” = osoba niebędąca pracownikiem: nie piszemy pisma do pracodawcy,
+  // tylko zestawienie danych do przepisania do formularza ZAM w eZUS.
+  // Szablon (P01, P05…) to pismo pracownicze – w tym trybie go nie używamy.
+  const szablon = wybrany && druk.tryb !== "zam" ? SZABLONY[wybrany] : null;
   const dane = daneDoLatex(druk, profil);
 
   if (szablon) {

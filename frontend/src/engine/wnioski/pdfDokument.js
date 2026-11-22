@@ -32,6 +32,8 @@ export function latexDoTekstu(tekst) {
     .replace(/\\ldots\{\}/g, "…")
     .replace(/\\quotedblbase\{\}/g, "„")
     .replace(/\\textquotedblright\{\}/g, "”")
+    .replace(/\\textbullet\{\}/g, "•")
+    .replace(/\\textbullet\b/g, "•")
     .replace(/\\textbackslash\{\}/g, "\\")
     .replace(/\\textasciitilde\{\}/g, "~")
     .replace(/\\textasciicircum\{\}/g, "^")
@@ -48,7 +50,14 @@ export function latexDoTekstu(tekst) {
     .replace(/\\(?:textcolor|color|vspace|hspace|fontsize)\*?(?:\[[^\]]*\])?\{[^{}]*\}/g, "")
     .replace(/\\hrule\s*height\s*[\d.]+\s*pt/g, "")
     .replace(/\\hrule\b/g, "")
-    .replace(/\\(?:footnotesize|scriptsize|small|normalsize|large|Large|LARGE|bfseries|itshape|ttfamily|sffamily|rmfamily|centering|noindent|par|medskip|smallskip|bigskip|vfill|hfill|newline|linebreak)\b/g, "");
+    // `(?![A-Za-z])` zamiast `\b`: w dokumencie ogólnym polecenie skleja się z tekstem
+    // (`\footnotesizeRodzicPlus`) i wtedy `\b` nie łapie granicy słowa.
+    .replace(/\\(?:footnotesize|scriptsize|small|normalsize|large|Large|LARGE|bfseries|itshape|ttfamily|sffamily|rmfamily|centering|noindent|par|medskip|smallskip|bigskip|vfill|hfill|newline|linebreak)(?![A-Za-z])/g, "");
+
+  // Pozycje list (`\item`, `\item[etykieta]`) – każda w osobnym wierszu, bez surowego LaTeX-a.
+  t = t
+    .replace(/\\item\s*\[([^\]]*)\]/g, `${ZNACZNIK_LINII}$1: `)
+    .replace(/\\item\b/g, `${ZNACZNIK_LINII}• `);
 
   // Zostawiamy treść pogrubień, bez samego polecenia.
   t = t.replace(/\\textbf\{([^{}]*)\}/g, "$1").replace(/\\textit\{([^{}]*)\}/g, "$1");
@@ -93,7 +102,8 @@ function czyWarunek(nazwa, druk, profil = {}) {
     case "jesli_pelny_wymiar":
       return oswiadczenie("pelnyWymiar") || TAK(urlopy.zamiarPelnyWymiar);
     case "jesli_matka_nieubezpieczona":
-      return ["brak", "dzielo", "nierejestrowa", "student_zlecenie"].includes(drugiRodzic.statusUbezpieczenia);
+      return drugiRodzic.brak !== true &&
+        ["brak", "dzielo", "nierejestrowa", "student_zlecenie"].includes(drugiRodzic.statusUbezpieczenia);
     case "jesli_po_14_tyg":
       return Number(urlopy.macierzynskiWykorzystanoTyg) >= 14;
     case "jesli_po_8_tyg":
