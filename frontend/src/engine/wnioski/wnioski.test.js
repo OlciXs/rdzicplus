@@ -123,6 +123,17 @@ describe("Marzena – działalność z zaległością", () => {
     expect(status(splacona, "chorobowy", "W34").status).toBe("dostepny");
   });
 
+  it("przy zaległości nie pokazuje komunikatu o pozostałych dniach na wariant 81,5%", () => {
+    const poPorodzie = profil({
+      sytuacja: { etap: "po_porodzie", rola: "matka" },
+      ubezpieczony: { statusUbezpieczenia: "dg", ubezpieczenieUstalo: "nie", zaleglosci: "tak" },
+      dziecko: { dataUrodzenia: "2026-11-10", martwe: "nie" },
+      urlopy: { zamiarPelnyWymiar: "tak" },
+    });
+    const kody = przegladWnioskow(poPorodzie, { dzis: "2026-11-15" }).ostrzezenia.map((o) => o.kod);
+    expect(kody).not.toContain("V4");
+  });
+
   it("zaległość blokuje też przygotowanie innych zasiłków i wniosków o świadczenia ZUS", () => {
     expect(status(marzena, "macierzynski", "W1").status).toBe("niedostepny");
     expect(status(marzena, "rodzicielski", "W25").status).toBe("niedostepny");
@@ -292,6 +303,13 @@ describe("wariant 81,5% i termin 21 dni", () => {
   it("30 dni po porodzie – za późno", () => {
     expect(status(p("2026-10-22"), "wysokosc", "W41").status).toBe("niedostepny");
     expect(przegladWnioskow(p("2026-10-22"), { dzis: DZIS }).ostrzezenia.find((o) => o.kod === "V4").poziom).toBe("info");
+  });
+
+  it("komunikat o 81,5% nie przedstawia go jako obowiązkowego", () => {
+    const wynik = przegladWnioskow(p("2026-11-11"), { dzis: "2026-11-15" });
+    const v4 = wynik.ostrzezenia.find((o) => o.kod === "V4");
+    expect(v4.tekst).toMatch(/Nie musisz go składać/);
+    expect(v4.tekst).toMatch(/100% \/ 70%/);
   });
 
   it("przy adopcji termin liczy się od przyjęcia dziecka, nie od jego urodzenia", () => {

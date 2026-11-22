@@ -142,10 +142,15 @@ export function ostrzezenia(k) {
       `Zasiłek chorobowy przysługuje po ${k.okresWyczekiwania} dniach ubezpieczenia (masz ${k.dniUbezpieczenia}). Zasiłku macierzyńskiego to nie dotyczy.${k.grupa === "dobrowolne" ? " Zgłoszenie do dobrowolnego chorobowego nie działa wstecz." : ""}`);
   if (k.zmianaWymiaru12m)
     dodaj("V23", "ostrzezenie", "Zmiana wymiaru etatu w ostatnich 12 miesiącach – podstawa zasiłku liczona jest od nowego wymiaru, zasiłek może być niższy.");
-  if (k.rola === "matka" && k.dniOdPorodu !== null) {
+  if (!k.blokadaZadluzenia && k.rola === "matka" && k.dniOdPorodu !== null) {
     const zostalo = k.P.deadlineSredniowany - k.dniOdPorodu;
-    if (zostalo < 0) dodaj("V4", "info", "Minęło 21 dni od porodu – wariant 81,5% nie jest już możliwy (zostaje 100% + 70%).");
-    else if (k.zamiarPelnyWymiar !== false) dodaj("V4", "ostrzezenie", `Na wniosek o zasiłek 81,5% zostało ${zostalo} dni.`);
+    if (zostalo < 0) dodaj("V4", "info", "Termin na wniosek o wariant 81,5% minął. Nie musisz składać tego wariantu – możesz złożyć zwykły wniosek o zasiłek macierzyński i rodzicielski w wariancie 100% / 70%, bez ponoszenia konsekwencji z opóźnienia.");
+    else if (k.zamiarPelnyWymiar !== false) {
+      const ostrzezenie = zostalo === 0
+        ? "Dziś upływa termin na wniosek o wariant 81,5% (dzień 21 po porodzie). To nie jest obowiązkowy wniosek – możesz zamiast niego złożyć zwykły wniosek o zasiłek macierzyński i rodzicielski w wariancie 100% / 70%."
+        : `Jeśli chcesz złożyć wniosek o wariant 81,5%, zostało Ci ${zostalo} ${zostalo === 1 ? "dzień" : zostalo < 5 ? "dni" : "dni"}. Nie musisz go składać – możesz zamiast tego złożyć zwykły wniosek o zasiłek macierzyński i rodzicielski w wariancie 100% / 70%.`;
+      dodaj("V4", "ostrzezenie", ostrzezenie);
+    }
   }
   if (k.rola === "ojciec" && k.wiekDzieckaMies !== null && k.etap === "po_porodzie") {
     if (k.wiekDzieckaMies >= k.P.deadlineOjcowskiMies) dodaj("V5", "info", "Dziecko skończyło 12 miesięcy – prawo do urlopu ojcowskiego wygasło.");
