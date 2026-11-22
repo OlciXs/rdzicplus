@@ -116,4 +116,82 @@ describe("LaTeX — wypełnianie danych", () => {
     expect(dok.tex).toContain("RodzicPlus");
     expect(dok.tex).toContain("Jan Nowak");
   });
+
+  it("W21: dane dziecka z tablicy trafiają do LaTeX (regresja ZADANIE-3)", () => {
+    const profilZTablica = profil({
+      dziecko: {
+        imie: "",
+        nazwisko: "",
+        dataUrodzenia: "",
+        miejsceUrodzenia: "",
+        dzieci: [
+          { imie: "Zosia", nazwisko: "Nowak", dataUrodzenia: "2026-11-10", miejsceUrodzenia: "Warszawa" }
+        ]
+      }
+    });
+    const d = druk("W21", {}, {});
+    const dok = zbudujDokumentLatex(d, profilZTablica);
+    expect(dok.tex).toContain("Zosia Nowak");
+    expect(dok.tex).toContain("10.11.2026");
+  });
+
+  it("daneDoLatex: dziecko z tablicy - imie i nazwisko", () => {
+    const profilZTablica = profil({
+      dziecko: {
+        imie: "",
+        nazwisko: "",
+        dzieci: [
+          { imie: "Zosia", nazwisko: "Nowak" }
+        ]
+      }
+    });
+    const d = druk("W21", {}, {});
+    const dane = daneDoLatex(d, profilZTablica);
+    expect(dane.dziecko_imie).toBe("Zosia Nowak");
+  });
+
+  it("daneDoLatex: dziecko z tablicy - data urodzenia", () => {
+    const profilZTablica = profil({
+      dziecko: {
+        dataUrodzenia: "",
+        dzieci: [
+          { dataUrodzenia: "2026-11-10" }
+        ]
+      }
+    });
+    const d = druk("W21", {}, {});
+    const dane = daneDoLatex(d, profilZTablica);
+    expect(dane.data_porodu).toBe("10.11.2026");
+  });
+
+  it("daneDoLatex: top-level ma priorytet nad tablicą", () => {
+    const profilZTopLevel = {
+      ubezpieczony: {
+        imie: "Jan",
+        nazwisko: "Nowak",
+        plec: "M",
+        adres: "ul. Kwiatowa 5/12, 00-001 Warszawa",
+        statusUbezpieczenia: "pracownik",
+        peselMasked: "*******8260",
+      },
+      sytuacja: { etap: "po_porodzie", rola: "ojciec" },
+      platnik: { nazwa: "Przedszkole Słoneczko sp. z o.o.", adres: "ul. Tęczowa 7, 00-950 Warszawa", nip: "1234567890" },
+      drugiRodzic: { brak: false, imie: "Anna", nazwisko: "Nowak" },
+      dziecko: {
+        imie: "TopLevel",
+        nazwisko: "Test",
+        dataUrodzenia: "2026-01-01",
+        zaZyciem: false,
+        dzieci: [
+          { imie: "Tablica", nazwisko: "Test", dataUrodzenia: "2026-11-10" }
+        ]
+      },
+      zdrowie: {},
+      urlopy: {},
+    };
+    const d = druk("W21", profilZTopLevel, {});
+    const dane = daneDoLatex(d, profilZTopLevel);
+    expect(dane.dziecko_imie).toBe("TopLevel Test");
+    expect(dane.data_porodu).toBe("01.01.2026");
+  });
 });

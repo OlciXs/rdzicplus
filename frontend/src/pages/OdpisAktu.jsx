@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import AppHeader from "../components/AppHeader.jsx";
 import { api } from "../api.js";
 import { useProfile } from "../profile.js";
+import { zapiszDaneDziecka } from "../engine/wnioski/dzieckoHelper.js";
 
 /* =====================================================================
    Wniosek o odpis aktu urodzenia – SYMULACJA usługi z gov.pl
@@ -23,13 +24,15 @@ const nazwa = (lista, v) => lista.find(([k]) => k === v)?.[1].split(" – ")[0] 
 const PUSTY = { dzieckoIndex: "0", imie: "", nazwisko: "", dataUrodzenia: "", miejsceUrodzenia: "", rodzaj: "skrocony", odbior: "elektronicznie" };
 
 export default function OdpisAktu() {
-  const { profile } = useProfile();
+  const { profile, save } = useProfile();
   const [form, setForm] = useState(PUSTY);
   const [prefilled, setPrefilled] = useState(false);
   const [errors, setErrors] = useState({});
   const [busy, setBusy] = useState(false);
   const [wynik, setWynik] = useState(null);
   const [odpisy, setOdpisy] = useState([]);
+  const [savingToProfile, setSavingToProfile] = useState(false);
+  const [profileMsg, setProfileMsg] = useState("");
 
   useEffect(() => {
     api("/api/usc/odpisy").then((d) => setOdpisy(d.odpisy)).catch(() => {});
@@ -53,6 +56,27 @@ export default function OdpisAktu() {
   const set = (k) => (e) => {
     setForm((f) => ({ ...f, [k]: e.target.value }));
     setErrors((er) => ({ ...er, [k]: undefined }));
+    setProfileMsg("");
+  };
+
+  const zapiszDoProfilu = async () => {
+    if (!profile) {
+      setErrors({ _: "Nie masz załadowanego profilu. Zaloguj się i spróbuj ponownie." });
+      return;
+    }
+    setSavingToProfile(true);
+    setErrors({});
+    setProfileMsg("");
+    try {
+      const newProfile = zapiszDaneDziecka(profile, form, form.dzieckoIndex);
+      const result = await save(newProfile);
+      if (result.ok) setProfileMsg("Zapisano dane dziecka w „Moje dane”.");
+      else setErrors({ _: result.errors?._ || "Nie udało się zapisać danych do profilu." });
+    } catch (err) {
+      setErrors({ _: err.message || "Błąd podczas zapisywania do profilu." });
+    } finally {
+      setSavingToProfile(false);
+    }
   };
 
   const onSubmit = async (e) => {
@@ -108,6 +132,7 @@ export default function OdpisAktu() {
   const wybierzDziecko = (e) => {
     const index = Number(e.target.value) || 0;
     const d = dzieciProfilu[index];
+    setProfileMsg("");
     setForm((f) => ({
       ...f,
       dzieckoIndex: String(index),
@@ -171,7 +196,11 @@ export default function OdpisAktu() {
             <button className="btn btn-primary" type="submit" disabled={busy}>
               {busy ? "Wysyłam…" : "Złóż wniosek"}
             </button>
+            <button className="btn btn-outline" type="button" onClick={zapiszDoProfilu} disabled={savingToProfile}>
+              {savingToProfile ? "Zapisuję…" : "Zapisz w Moje dane"}
+            </button>
             {errors._ && <span className="field-error" role="alert">{errors._}</span>}
+            {profileMsg && <span className="form-ok" role="status">{profileMsg}</span>}
           </div>
         </form>
 

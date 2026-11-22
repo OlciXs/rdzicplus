@@ -28,12 +28,11 @@ const dni = (od, doDnia) => Math.round((new Date(doDnia) - new Date(od)) / 86400
 const dzis = () => new Date().toISOString().slice(0, 10);
 
 export default function Zus() {
-  const { profile, save } = useProfile();
+  const { profile } = useProfile();
   const [dane, setDane] = useState(null);
   const [ezla, setEzla] = useState([]);
   const [wnioski, setWnioski] = useState([]);
   const [error, setError] = useState("");
-  const [importMsg, setImportMsg] = useState(null);
   const [naDzien, setNaDzien] = useState("");
   const [zasw, setZasw] = useState(null);
   const [zaswBusy, setZaswBusy] = useState(false);
@@ -73,25 +72,6 @@ export default function Zus() {
           CFG
         )
       : null;
-
-  const importuj = async () => {
-    if (!profile || !dane) return;
-    const p = dane.platnik ?? {};
-    const res = await save({
-      ...profile,
-      ubezpieczony: {
-        ...profile.ubezpieczony,
-        statusUbezpieczenia: dane.statusUbezpieczenia,
-        ...(podstawa?.ok ? { podstawaWymiaru: Math.round(podstawa.podstawa * 100) / 100 } : {}),
-      },
-      platnik: { ...profile.platnik, nazwa: p.nazwa ?? "", adres: p.adres ?? "", nip: p.nip ?? "", regon: p.regon ?? "" },
-    });
-    setImportMsg(
-      res.ok
-        ? { tone: "ok", text: "Zapisano w „Moje dane”. Kalkulatory podstawią teraz Twoją podstawę, tytuł ubezpieczenia i płatnika." }
-        : { tone: "err", text: "Nie udało się zapisać danych." }
-    );
-  };
 
   const wystawZaswiadczenie = async () => {
     setZaswBusy(true);
@@ -174,14 +154,6 @@ export default function Zus() {
                   Z {podstawa.licznik} miesięcy ({dane.wynagrodzenia[0].miesiac} – {dane.wynagrodzenia.at(-1).miesiac}).
                   Liczone tym samym silnikiem co <Link to="/kalkulatory/podstawa-wymiaru">kalkulator podstawy</Link>.
                 </p>
-                <div className="form-actions">
-                  <button type="button" className="btn btn-primary" onClick={importuj} disabled={!profile}>
-                    Przenieś do „Moje dane”
-                  </button>
-                  {importMsg && (
-                    <span className={importMsg.tone === "ok" ? "form-ok" : "field-error"} role="status">{importMsg.text}</span>
-                  )}
-                </div>
               </section>
             )}
 

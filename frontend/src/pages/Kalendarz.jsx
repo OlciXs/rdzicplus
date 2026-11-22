@@ -4,6 +4,7 @@ import AppHeader from "../components/AppHeader.jsx";
 import { useProfile } from "../profile.js";
 import { CFG } from "../calculators/config.js";
 import { terminyWnioskow, doIcs } from "../engine/index.js";
+import { etykietaTerminu, klasaBadga } from "./kalendarzEtykiety.js";
 
 /* =====================================================================
    Kalendarz terminów. Daty liczy silnik (src/engine/wnioskow/kalendarz.js) –
@@ -19,10 +20,12 @@ import { terminyWnioskow, doIcs } from "../engine/index.js";
 // Daty z silnika to „RRRR-MM-DD” – w kalendarzu porównujemy je jako tekst (bez stref czasowych).
 const isoDnia = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const fmt = (iso) => (iso ? new Date(`${iso}T12:00:00`).toLocaleDateString("pl-PL", { day: "numeric", month: "long", year: "numeric" }) : "—");
+
 const dniDo = (iso, dzis) => Math.round((Date.parse(`${iso}T00:00:00Z`) - Date.parse(`${dzis}T00:00:00Z`)) / 86400000);
 // W panelu szczegółów skracamy bardzo długi opis – pełny tekst jest w „Złóż wniosek”.
 const krotkiOpis = (tekst, max = 160) => (!tekst || tekst.length <= max ? tekst : `${tekst.slice(0, max - 1).trimEnd()}…`);
 const ileWydarzen = (n) => (n === 1 ? "wydarzenie" : n >= 2 && n <= 4 ? "wydarzenia" : "wydarzeń");
+
 
 const TYP = {
   termin: { etykieta: "Termin wniosku", klasa: "deadline" },
@@ -129,65 +132,56 @@ export default function Kalendarz() {
             <p>Uzupełnij etap, rolę i daty dziecka (albo przewidywaną datę porodu), aby kalendarz dobrał Twoje wnioski i policzył terminy.</p>
             <Link className="btn btn-primary" to="/profil?krok=dziecko">Uzupełnij dane dziecka</Link>
           </div>
-        ) : (
-          <>
-            <section className="info-card">
-              <div className="calendar-toolbar">
-                <button className="btn btn-outline" type="button" aria-label="Poprzedni miesiąc" onClick={() => przeskoczMiesiac(-1)}>‹</button>
-                <h2>{cursor.toLocaleDateString("pl-PL", { month: "long", year: "numeric" })}</h2>
-                <button className="btn btn-outline" type="button" aria-label="Następny miesiąc" onClick={() => przeskoczMiesiac(1)}>›</button>
-              </div>
+          <div className="calendar-grid" aria-label="Kalendarz miesięczny">
+            {["Pon", "Wt", "Śr", "Czw", "Pt", "Sob", "Ndz"].map((d) => <div className="calendar-weekday" key={d}>{d}</div>)}
+            {komorki.map((day, i) => {
+              const dzien = day ? dnia(day) : null;
+              const dayEvents = dzien ? events.filter((e) => e.data === dzien) : [];
+              const reminders = dzien ? events.filter((e) => e.przypomnienie === dzien && !completed[e.id]) : [];
+              return (
+                <div className={`calendar-day ${day ? "" : "calendar-empty"} ${dzien === dzis ? "calendar-today" : ""}`} key={i}>
+                  {day && <span className="calendar-day-number">{day}</span>}
+                  {dayEvents.map((e) => {
+                    const etykieta = etykietaTerminu(e, dzis);
+                    return <a className={`calendar-dot ${TYP[e.typ].klasa}`} href={`#t-${e.id}`} title={`${etykieta}: ${e.tytul}`} key={e.id}>{etykieta}</a>;
+                  })}
+                  {reminders.map((e) => {
+                    const etykieta = etykietaTerminu(e, dzis, "przypomnienie");
+                    return <a className="calendar-dot reminder" href={`#t-${e.id}`} title={`${etykieta}: ${e.tytul}`} key={`r-${e.id}`}>{etykieta}</a>;
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </section>
 
-              <ul className="calendar-legend" aria-label="Legenda kolorów wpisów">
-                <li><span className="calendar-legend-swatch s-deadline" aria-hidden="true"></span>czerwone – termin</li>
-                <li><span className="calendar-legend-swatch s-reminder" aria-hidden="true"></span>żółte – przypomnienie (tydzień przed)</li>
-                <li><span className="calendar-legend-swatch s-neutral" aria-hidden="true"></span>szare – początek / informacja</li>
-              </ul>
-
-              <div className="calendar-grid" aria-label="Kalendarz miesięczny">
-                {["Pon", "Wt", "Śr", "Czw", "Pt", "Sob", "Ndz"].map((d) => <div className="calendar-weekday" key={d}>{d}</div>)}
-                {komorki.map((day, i) => {
-                  if (!day) return <div className="calendar-day calendar-empty" key={`puste-${i}`} />;
-                  const dzien = dnia(day);
-                  const wpisy = wpisyNaDzien(dzien);
-                  const wybrany = dzien === selectedDay;
-                  const klasy = [
-                    "calendar-day",
-                    dzien === dzis ? "calendar-today" : "",
-                    wybrany ? "calendar-day-selected" : "",
-                    wpisy.length > 0 ? "is-clickable" : "",
-                  ].filter(Boolean).join(" ");
-                  return (
-                    <button
-                      type="button"
-                      className={klasy}
-                      key={dzien}
-                      aria-label={`${fmt(dzien)}${wpisy.length > 0 ? ` – ${wpisy.length} ${ileWydarzen(wpisy.length)}` : " – brak wpisów"}`}
-                      aria-pressed={wybrany}
-                      onClick={() => setSelectedDay(wybrany ? null : dzien)}
-                    >
-                      <span className="calendar-day-number">{day}</span>
-                      {wpisy.map(({ e, przypomnienie }) => (
-                        <span
-                          className={`calendar-dot ${przypomnienie ? "reminder" : TYP[e.typ].klasa}${completed[e.id] ? " is-completed" : ""}`}
-                          key={przypomnienie ? `r-${e.id}` : `d-${e.id}`}
-                          title={przypomnienie ? `Za tydzień: ${e.tytul}` : e.tytul}
-                        >
-                          {e.tytul}
-                        </span>
-                      ))}
-                    </button>
-                  );
-                })}
-              </div>
-            </section>
-
-            {/* Panel szczegółów wybranego dnia – pokazuje się pod siatką. */}
-            {selectedDay && (
-              <section className="info-card calendar-detail" ref={detailRef} aria-live="polite">
-                <div className="calendar-detail-heading">
-                  <h2>{fmt(selectedDay)}</h2>
-                  <button type="button" className="btn btn-outline" onClick={() => setSelectedDay(null)}>✕ Zamknij</button>
+        <section aria-labelledby="najblizsze">
+          <h2 id="najblizsze">Wszystkie terminy</h2>
+          {events.length === 0 ? (
+            <div className="info-card">
+              <p>Uzupełnij etap, rolę i daty dziecka (albo przewidywaną datę porodu), aby kalendarz dobrał Twoje wnioski i policzył terminy.</p>
+              <Link className="btn btn-primary" to="/profil?krok=dziecko">Uzupełnij dane dziecka</Link>
+            </div>
+          ) : events.map((e) => {
+            const pilny = e.typ === "termin" || e.typ === "koniec";
+            const badgeText = etykietaTerminu(e, dzis);
+            const badgeClass = klasaBadga(e, dzis);
+            return (
+              <article id={`t-${e.id}`} className={`calendar-event ${completed[e.id] ? "is-completed" : ""}`} key={e.id}>
+                <div className="calendar-event-main">
+                  <span className={`badge ${badgeClass}`}>{badgeText}</span>{" "}
+                  {e.pewnosc !== "pewne" && <span className="badge b-warn">{e.pewnosc === "szacunek" ? "data szacunkowa" : "do potwierdzenia"}</span>}
+                  <h3>{e.tytul}</h3>
+                  <dl className="data-list">
+                    <div><dt>{pilny ? "Ostateczny termin" : "Data"}</dt><dd>{fmt(e.data)}</dd></div>
+                    {pilny && <div><dt>Przypomnienie</dt><dd>{fmt(e.przypomnienie)}</dd></div>}
+                    {e.dokument && <div><dt>Co składasz</dt><dd>{e.dokument}</dd></div>}
+                    <div><dt>Dla</dt><dd>{e.kto}</dd></div>
+                    <div><dt>Podstawa</dt><dd>{e.podstawa}</dd></div>
+                    <div><dt>Źródło</dt><dd>{e.zrodlo}</dd></div>
+                  </dl>
+                  {e.opis && <p className="hint">{e.opis}</p>}
+                  {e.wniosek && <p className="note"><Link to={`/wnioski?w=${e.wniosek}`}>Zobacz wniosek i warunki →</Link></p>}
                 </div>
 
                 {wpisyWybrane.length === 0 ? (

@@ -10,6 +10,7 @@
    ===================================================================== */
 import { DEFAULT_PARAMS } from "../params.js";
 import { toDate, ageYears } from "../helpers.js";
+import { pobierzDaneDziecka } from "./dzieckoHelper.js";
 
 // Tytuł ubezpieczenia → grupa (ta sama mapa co w ProfilePage.jsx).
 export const GRUPA_TYTULU = {
@@ -65,9 +66,9 @@ export function kontekstSprawy(profil = {}, { dzis, params = DEFAULT_PARAMS } = 
   const s = profil.sytuacja ?? {};
   const pl = profil.platnik ?? {};
   const o = profil.drugiRodzic ?? {};
-  const d = profil.dziecko ?? {};
-  const pierwszeDziecko = Array.isArray(d.dzieci) && d.dzieci.length ? d.dzieci[0] : d;
-  const daneDziecka = { ...d, ...pierwszeDziecko };
+  // Top-level ma priorytet, tablica dzieci uzupełnia brakujące pola (starsze profile).
+  const daneDziecka = pobierzDaneDziecka(profil);
+  const liczbaDzieciProfilu = daneDziecka.liczbaDzieci;
   const z = profil.zdrowie ?? {};
   const ur = profil.urlopy ?? {};
   const today = toDate(dzis) ?? new Date();
@@ -134,22 +135,22 @@ export function kontekstSprawy(profil = {}, { dzis, params = DEFAULT_PARAMS } = 
     pdp,
     dataPrzyjecia,
     dzienZdarzenia,
-    liczbaDzieci: dzieciPorodu(d.liczbaDzieci),
-    liczbaZyjacych: dzieciPorodu(d.liczbaZyjacych),
+    liczbaDzieci: dzieciPorodu(liczbaDzieciProfilu),
+    liczbaZyjacych: dzieciPorodu(daneDziecka.liczbaZyjacych),
     wiekDzieckaMies: dataUrodzenia ? miesiace(dataUrodzenia, today) : null,
     dniOdPorodu: etap === "po_porodzie" && dataUrodzenia ? dni(dataUrodzenia, today) : null,
     wiekPrzyPrzyjeciuLat: dataUrodzenia && dataPrzyjecia ? ageYears(dataUrodzenia, dataPrzyjecia) : null,
-    martwe: yn(d.martwe),
-    zmarlo: yn(d.zmarlo),
-    zaGranica: yn(d.zaGranica),
-    pobytWSzpitalu: yn(d.pobytWSzpitalu),
-    tydzienCiazy: d.tydzienCiazy || null, // "ponizej_28" | "28_37" | "po_37"
-    masa: liczba(d.masaUrodzenia),
-    szpitalOd: toDate(d.szpitalOd),
-    szpitalDo: toDate(d.szpitalDo),
-    odroczonySzkolny: yn(d.odroczonySzkolny),
-    niepelnosprawne: yn(d.niepelnosprawne),
-    zaZyciem: d.zaZyciem === true,
+    martwe: yn(daneDziecka.martwe),
+    zmarlo: yn(daneDziecka.zmarlo),
+    zaGranica: yn(daneDziecka.zaGranica),
+    pobytWSzpitalu: yn(daneDziecka.pobytWSzpitalu),
+    tydzienCiazy: daneDziecka.tydzienCiazy || null, // "ponizej_28" | "28_37" | "po_37"
+    masa: liczba(daneDziecka.masaUrodzenia),
+    szpitalOd: toDate(daneDziecka.szpitalOd),
+    szpitalDo: toDate(daneDziecka.szpitalDo),
+    odroczonySzkolny: yn(daneDziecka.odroczonySzkolny),
+    niepelnosprawne: yn(daneDziecka.niepelnosprawne),
+    zaZyciem: daneDziecka.zaZyciem === true,
     // drugi rodzic
     drugi,
     grupaDrugiego,
