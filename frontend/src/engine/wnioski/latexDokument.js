@@ -1,7 +1,7 @@
 /* =====================================================================
    DOKUMENT DO DRUKU – ŹRÓDŁO LATEX (PDF składa pdfDokument.js).
 
-   Szablony pism leżą w `latex/szablony/P01.tex … P16.tex` i są generowane
+   Szablony pism leżą w `latex/szablony/P01.tex … P18.tex` i są generowane
    z `szablony_pism_2026.yaml` przez `latex/gen_latex.py`. Tutaj:
    - bierzemy gotowy szablon LaTeX-a z wygenerowanego `latex_szablony.json`,
    - podmieniamy `\Pole{nazwa pola}` na dane z profilu / ekranu wniosku,
@@ -37,6 +37,8 @@ export const SZABLONY_LATEX = {
   W28: ["P12"],
   W34: ["P08"],
   W38: ["P11"],
+  W41: ["P17"],
+  W44: ["P18"],
 };
 
 /** Szablony LaTeX-a dostępne dla danego wariantu (mogą być 2–4 do wyboru). */

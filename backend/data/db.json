@@ -17,12 +17,6 @@
       "imie": "Mariusz",
       "nazwisko": "Zieliński",
       "pesel": "94122530836"
-    },
-    {
-      "id": "mob-alicja",
-      "imie": "Alicja",
-      "nazwisko": "Sosnowska",
-      "pesel": "98031510242"
     }
   ],
   "users": [
@@ -32,7 +26,7 @@
       "imie": "Marzena",
       "nazwisko": "Wiśniewska",
       "createdAt": "2026-11-21T13:58:06.311Z",
-      "lastLoginAt": "2026-11-21T23:02:10.334Z",
+      "lastLoginAt": "2026-11-22T01:11:09.345Z",
       "profile": {
         "ubezpieczony": {
           "imie": "Marzena",
@@ -40,23 +34,23 @@
           "peselMasked": "*******1522",
           "plec": "K",
           "dataUrodzenia": "1987-09-03",
-          "adres": "ul. Dworcowa 14, 85-001 Bydgoszcz",
+          "adres": "bydgoszcz",
           "rachunek": "PL12345678901234567890123456",
           "statusUbezpieczenia": "dg",
-          "podstawaWymiaru": "4877.11",
-          "ubezpieczenieOd": "2023-06-01",
-          "ulgaWyczekiwania": "",
+          "podstawaWymiaru": 4877.11,
+          "ubezpieczenieOd": "2026-11-19",
+          "ulgaWyczekiwania": "absolwent",
           "wymiarEtatu": "",
           "zmianaWymiaru12m": "",
           "zatrudnionyOd": "",
           "pracaZaGranica": "",
           "pracaTymczasowa": "",
           "zaleglosci": "nie",
-          "wiecejNizJedenTytul": "",
-          "emeryturaRenta": "",
-          "zasilekBezrobotnych": "",
-          "rolnik": "",
-          "ubezpieczenieUstalo": "",
+          "wiecejNizJedenTytul": "nie",
+          "emeryturaRenta": "nie",
+          "zasilekBezrobotnych": "nie",
+          "rolnik": "nie",
+          "ubezpieczenieUstalo": "nie",
           "dataUstania": "",
           "przyczynaUstania": "",
           "zapewnionoInnaPrace": ""
@@ -67,39 +61,39 @@
           "typPrzyjecia": ""
         },
         "platnik": {
-          "nazwa": "Marzena Wiśniewska Pracownia Grafiki (fikcyjna)",
-          "adres": "ul. Dworcowa 14, 85-001 Bydgoszcz",
-          "nip": "9541243678",
-          "regon": "345612789",
+          "nazwa": "Marzena Wiśniewska Pracownia Grafiki (dane fikcyjne)",
+          "adres": "ul. Malarska 12/3, 30-001 Kraków",
+          "nip": "5213456782",
+          "regon": "987654324",
           "liczbaUbezpieczonych": ""
         },
         "drugiRodzic": {
-          "imie": "Marek",
-          "nazwisko": "Wiśniewski",
-          "pesel": "86040251571",
-          "rola": "ojciec",
-          "adres": "",
-          "statusUbezpieczenia": "pracownik",
-          "podstawaWymiaru": "",
-          "platnikNazwa": "Beta Logistics (fikcyjna)",
-          "platnikNip": "",
-          "okolicznosc": "",
-          "dataOkolicznosci": "",
-          "brak": false
-        },
-        "dziecko": {
           "imie": "",
           "nazwisko": "",
           "pesel": "",
-          "dataUrodzenia": "2026-09-28",
-          "miejsceUrodzenia": "Bydgoszcz",
-          "liczbaDzieci": "1",
-          "przewidywanaDataPorodu": "",
-          "martwe": "",
-          "zmarlo": "",
+          "rola": "",
+          "adres": "",
+          "statusUbezpieczenia": "",
+          "podstawaWymiaru": "",
+          "platnikNazwa": "",
+          "platnikNip": "",
+          "okolicznosc": "",
+          "dataOkolicznosci": "",
+          "brak": true
+        },
+        "dziecko": {
+          "imie": "Julia",
+          "nazwisko": "Wiśniewska",
+          "pesel": "",
+          "dataUrodzenia": "2026-11-20",
+          "miejsceUrodzenia": "Szpital Uniwersytecki nr 2 im. Jana Pawła II w Krakowie",
+          "liczbaDzieci": "2",
+          "przewidywanaDataPorodu": "2026-11-20",
+          "martwe": "nie",
+          "zmarlo": "nie",
           "dataZgonu": "",
-          "liczbaZyjacych": "",
-          "zaGranica": "",
+          "liczbaZyjacych": "2",
+          "zaGranica": "nie",
           "kraj": "",
           "pobytWSzpitalu": "nie",
           "tydzienCiazy": "",
@@ -108,54 +102,61 @@
           "szpitalDo": "",
           "dataPrzyjecia": "",
           "odroczonySzkolny": "",
-          "niepelnosprawne": "",
+          "niepelnosprawne": "nie",
           "zaZyciem": false,
           "dzieci": [
             {
-              "imie": "Ola",
+              "imie": "Julia",
               "nazwisko": "Wiśniewska",
-              "pesel": "",
-              "dataUrodzenia": "2026-09-28",
-              "miejsceUrodzenia": "Bydgoszcz"
+              "pesel": "26212000012",
+              "dataUrodzenia": "2026-11-20",
+              "miejsceUrodzenia": "Szpital Uniwersytecki nr 2 im. Jana Pawła II w Krakowie"
+            },
+            {
+              "imie": "Lena",
+              "nazwisko": "Wiśniewska",
+              "pesel": "26212000029",
+              "dataUrodzenia": "2026-11-20",
+              "miejsceUrodzenia": "Szpital Uniwersytecki nr 2 im. Jana Pawła II w Krakowie"
             }
           ]
         },
         "zdrowie": {
-          "zwolnienie": "",
+          "zwolnienie": "brak",
           "zlaNumer": "",
           "zlaOd": "",
           "zlaDo": "",
-          "wczesniejszeZwolnienia": "",
-          "okresZasilkowyWyczerpany": "",
+          "wczesniejszeZwolnienia": "nie",
+          "okresZasilkowyWyczerpany": "nie",
           "rokowaniaPoprawy": "",
-          "wypadekWDrodze": ""
+          "wypadekWDrodze": "nie"
         },
         "urlopy": {
-          "urlopPrzedPorodemOd": "",
-          "zamiarPelnyWymiar": "",
-          "macierzynskiWykorzystanoTyg": "",
+          "urlopPrzedPorodemOd": "2026-11-10",
+          "zamiarPelnyWymiar": "tak",
+          "macierzynskiWykorzystanoTyg": "0",
           "matkaRezygnuje": "",
           "planUzupelniajacy": "",
           "terminKoncaMacierzynskiego": "",
           "drugiRodzicUzupelniajacy": "",
           "planOjcowski": "",
           "ojcowskiZInnegoTytulu": "",
-          "planRodzicielski": "tak",
+          "planRodzicielski": "nie",
           "rodzicielskieCzesci": "",
           "rodzicielskiWykorzystanoTyg": "",
-          "rodzicielskiOd": "2026-12-15",
-          "rodzicielskiDo": "2027-08-15",
+          "rodzicielskiOd": "",
+          "rodzicielskiDo": "",
           "drugiRodzicRodzicielski": "",
           "laczenieZPraca": "",
           "wymiarPracyPrzyLaczeniu": "",
           "planWychowawczy": "",
           "wychowawczyWykorzystanoMies": "",
-          "potrzebaOpieki": "",
+          "potrzebaOpieki": "brak",
           "domownikMozeOpiekowac": "",
           "opiekunczyDniWRoku": ""
         }
       },
-      "profileUpdatedAt": "2026-11-22T00:00:00.000Z"
+      "profileUpdatedAt": "2026-11-21T22:57:31.213Z"
     },
     {
       "id": "b0cb48cf-1ef8-4a18-8a0a-3e3723b134dd",
@@ -163,7 +164,7 @@
       "imie": "Bożena",
       "nazwisko": "Nowak",
       "createdAt": "2026-11-21T15:23:43.653Z",
-      "lastLoginAt": "2026-11-22T00:46:59.712Z",
+      "lastLoginAt": "2026-11-21T18:53:30.106Z",
       "profile": {
         "ubezpieczony": {
           "imie": "Bożena",
@@ -171,15 +172,15 @@
           "peselMasked": "*******8260",
           "plec": "K",
           "dataUrodzenia": "1991-04-17",
-          "adres": "ul. Lipowa 8/3, 00-001 Warszawa",
-          "rachunek": "PL61109010140000071219812874",
-          "statusUbezpieczenia": "pracownik",
-          "podstawaWymiaru": "5200",
+          "adres": "",
+          "rachunek": "",
+          "statusUbezpieczenia": "",
+          "podstawaWymiaru": "",
           "ubezpieczenieOd": "",
           "ulgaWyczekiwania": "",
-          "wymiarEtatu": "pelny",
+          "wymiarEtatu": "",
           "zmianaWymiaru12m": "",
-          "zatrudnionyOd": "2022-03-01",
+          "zatrudnionyOd": "",
           "pracaZaGranica": "",
           "pracaTymczasowa": "",
           "zaleglosci": "",
@@ -193,16 +194,16 @@
           "zapewnionoInnaPrace": ""
         },
         "sytuacja": {
-          "etap": "ciaza",
-          "rola": "matka",
+          "etap": "",
+          "rola": "",
           "typPrzyjecia": ""
         },
         "platnik": {
-          "nazwa": "Alfa Medical Sp. z o.o. (fikcyjna)",
-          "adres": "ul. Przemysłowa 2, 00-002 Warszawa",
-          "nip": "5261040147",
-          "regon": "012345678",
-          "liczbaUbezpieczonych": "powyzej_20"
+          "nazwa": "",
+          "adres": "",
+          "nip": "",
+          "regon": "",
+          "liczbaUbezpieczonych": ""
         },
         "drugiRodzic": {
           "imie": "",
@@ -224,8 +225,8 @@
           "pesel": "",
           "dataUrodzenia": "",
           "miejsceUrodzenia": "",
-          "liczbaDzieci": "1",
-          "przewidywanaDataPorodu": "2027-01-20",
+          "liczbaDzieci": "",
+          "przewidywanaDataPorodu": "",
           "martwe": "",
           "zmarlo": "",
           "dataZgonu": "",
@@ -240,14 +241,13 @@
           "dataPrzyjecia": "",
           "odroczonySzkolny": "",
           "niepelnosprawne": "",
-          "zaZyciem": false,
-          "dzieci": []
+          "zaZyciem": false
         },
         "zdrowie": {
-          "zwolnienie": "B",
-          "zlaNumer": "ZLA/B/2026/001",
-          "zlaOd": "2026-11-09",
-          "zlaDo": "2026-12-07",
+          "zwolnienie": "",
+          "zlaNumer": "",
+          "zlaOd": "",
+          "zlaDo": "",
           "wczesniejszeZwolnienia": "",
           "okresZasilkowyWyczerpany": "",
           "rokowaniaPoprawy": "",
@@ -255,7 +255,7 @@
         },
         "urlopy": {
           "urlopPrzedPorodemOd": "",
-          "zamiarPelnyWymiar": "tak",
+          "zamiarPelnyWymiar": "",
           "macierzynskiWykorzystanoTyg": "",
           "matkaRezygnuje": "",
           "planUzupelniajacy": "",
@@ -263,7 +263,7 @@
           "drugiRodzicUzupelniajacy": "",
           "planOjcowski": "",
           "ojcowskiZInnegoTytulu": "",
-          "planRodzicielski": "nie",
+          "planRodzicielski": "",
           "rodzicielskieCzesci": "",
           "rodzicielskiWykorzystanoTyg": "",
           "rodzicielskiOd": "",
@@ -278,7 +278,7 @@
           "opiekunczyDniWRoku": ""
         }
       },
-      "profileUpdatedAt": "2026-11-22T00:00:00.000Z"
+      "profileUpdatedAt": null
     },
     {
       "id": "cbc2c19c-52ca-4376-8474-fd7b26d9a545",
@@ -297,12 +297,12 @@
           "adres": "ul. Słoneczna 12/4, 00-001 Warszawa",
           "rachunek": "PL61109010140000071219812874",
           "statusUbezpieczenia": "pracownik",
-          "podstawaWymiaru": "6200",
-          "ubezpieczenieOd": "",
+          "podstawaWymiaru": "4000",
+          "ubezpieczenieOd": "2026-11-16",
           "ulgaWyczekiwania": "",
-          "wymiarEtatu": "pelny",
+          "wymiarEtatu": "",
           "zmianaWymiaru12m": "",
-          "zatrudnionyOd": "2021-09-01",
+          "zatrudnionyOd": "",
           "pracaZaGranica": "",
           "pracaTymczasowa": "",
           "zaleglosci": "",
@@ -321,20 +321,20 @@
           "typPrzyjecia": ""
         },
         "platnik": {
-          "nazwa": "Gamma Software Sp. z o.o. (fikcyjna)",
-          "adres": "",
-          "nip": "5272367890",
-          "regon": "678912345",
-          "liczbaUbezpieczonych": "powyzej_20"
+          "nazwa": "Pracodawca Testowy Sp. z o.o.",
+          "adres": "ul. Przemysłowa 8, 00-002 Warszawa",
+          "nip": "1234567890",
+          "regon": "123456789",
+          "liczbaUbezpieczonych": ""
         },
         "drugiRodzic": {
-          "imie": "Zofia",
+          "imie": "Marzena",
           "nazwisko": "Zielińska",
-          "pesel": "93010812345",
-          "rola": "matka",
+          "pesel": "87090371522",
+          "rola": "",
           "adres": "",
-          "statusUbezpieczenia": "pracownik",
-          "podstawaWymiaru": "",
+          "statusUbezpieczenia": "",
+          "podstawaWymiaru": "3000",
           "platnikNazwa": "",
           "platnikNip": "",
           "okolicznosc": "",
@@ -342,11 +342,11 @@
           "brak": false
         },
         "dziecko": {
-          "imie": "",
-          "nazwisko": "",
+          "imie": "Jan",
+          "nazwisko": "Zieliński",
           "pesel": "",
-          "dataUrodzenia": "2026-10-05",
-          "miejsceUrodzenia": "",
+          "dataUrodzenia": "2026-11-20",
+          "miejsceUrodzenia": "Warszawa",
           "liczbaDzieci": "1",
           "przewidywanaDataPorodu": "",
           "martwe": "",
@@ -355,7 +355,7 @@
           "liczbaZyjacych": "",
           "zaGranica": "",
           "kraj": "",
-          "pobytWSzpitalu": "nie",
+          "pobytWSzpitalu": "",
           "tydzienCiazy": "",
           "masaUrodzenia": "",
           "szpitalOd": "",
@@ -363,16 +363,7 @@
           "dataPrzyjecia": "",
           "odroczonySzkolny": "",
           "niepelnosprawne": "",
-          "zaZyciem": false,
-          "dzieci": [
-            {
-              "imie": "Antek",
-              "nazwisko": "Zieliński",
-              "pesel": "",
-              "dataUrodzenia": "2026-10-05",
-              "miejsceUrodzenia": "Warszawa"
-            }
-          ]
+          "zaZyciem": false
         },
         "zdrowie": {
           "zwolnienie": "",
@@ -388,19 +379,19 @@
           "urlopPrzedPorodemOd": "",
           "zamiarPelnyWymiar": "",
           "macierzynskiWykorzystanoTyg": "",
-          "matkaRezygnuje": "nie",
+          "matkaRezygnuje": "",
           "planUzupelniajacy": "",
           "terminKoncaMacierzynskiego": "",
           "drugiRodzicUzupelniajacy": "",
-          "planOjcowski": "tak",
+          "planOjcowski": "",
           "ojcowskiZInnegoTytulu": "",
-          "planRodzicielski": "tak",
+          "planRodzicielski": "",
           "rodzicielskieCzesci": "",
           "rodzicielskiWykorzystanoTyg": "",
           "rodzicielskiOd": "",
           "rodzicielskiDo": "",
           "drugiRodzicRodzicielski": "",
-          "laczenieZPraca": "nie",
+          "laczenieZPraca": "",
           "wymiarPracyPrzyLaczeniu": "",
           "planWychowawczy": "",
           "wychowawczyWykorzystanoMies": "",
@@ -409,7 +400,7 @@
           "opiekunczyDniWRoku": ""
         }
       },
-      "profileUpdatedAt": "2026-11-22T00:00:00.000Z"
+      "profileUpdatedAt": "2026-11-21T22:19:10.935Z"
     }
   ]
 }

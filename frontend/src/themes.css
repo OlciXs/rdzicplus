@@ -659,41 +659,27 @@ a.pager-chip { text-decoration: none; }
   .profil-info-lista { flex-direction: column; gap: 2px; }
 }
 
-/* ---------- wniosek do druku (pages/Druk.jsx) ---------- */
+/* ---------- wniosek do złożenia (pages/Druk.jsx) ---------- */
 .check-row { display: flex; gap: 10px; align-items: flex-start; margin: 8px 0; line-height: 1.45; }
 .check-row input { margin-top: 4px; width: 18px; height: 18px; flex: none; }
-.druk-kartka {
-  background: #fff; color: #111; border: 1px solid var(--color-border); border-radius: var(--radius);
-  padding: 32px 28px; font-family: Georgia, "Times New Roman", serif; font-size: 0.98rem; line-height: 1.6;
-  overflow-wrap: anywhere;
+.druk-zapis {
+  margin: 18px 0 24px; padding: 18px 20px 20px;
+  border: 1px solid var(--color-border); border-left: 6px solid var(--color-primary);
+  border-radius: var(--radius); background: var(--color-surface, #fff);
 }
-.druk-kartka p { margin: 0 0 12px; }
-.druk-prawo { text-align: right; }
-.druk-nadawca { margin: 8px 0 24px; }
-.druk-adresat { margin: 0 0 28px auto; width: fit-content; max-width: 60%; font-weight: 700; }
-.druk-tytul { text-align: center; color: #111; font-size: 1.1rem; margin: 0 0 20px; }
-.druk-zam { display: grid; gap: 6px; margin: 0 0 16px; }
-.druk-zam div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; border-bottom: 1px dotted #999; }
-.druk-zam dt { color: #444; }
-.druk-zam dd { margin: 0; font-weight: 700; }
-.druk-podpis { text-align: right; margin-top: 40px; font-size: 0.85rem; }
-.druk-stopka { margin-top: 28px !important; font-size: 0.75rem; color: #555; }
-.druk-zapis { margin: 18px 0 24px; padding: 16px 18px; border: 1px solid var(--color-border); border-radius: var(--radius); background: var(--color-surface, #fff); }
-.druk-zapis-opcje { display: grid; gap: 12px; align-items: start; }
+.druk-zapis .calc-group-title { margin-bottom: 12px; }
+.druk-zapis-opcje { display: grid; gap: 12px; align-items: start; margin-top: 14px; }
 .druk-zapis-opcje .field { max-width: 560px; }
 .druk-zapis-opcje .btn { justify-self: start; }
 .druk-zapis code { font-size: 0.85em; }
-@media (max-width: 620px) {
-  .druk-kartka { padding: 20px 16px; }
-  .druk-adresat { max-width: 100%; }
+.druk-meta { margin: 0 0 4px; }
+.druk-meta div {
+  display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 12px;
+  padding: 7px 0; border-bottom: 1px solid var(--color-border);
 }
-@media print {
-  .no-print, .app-header, header { display: none !important; }
-  body, .app { background: #fff !important; }
-  .container.druk-page { max-width: none; padding: 0; }
-  .druk-kartka { border: 0; border-radius: 0; padding: 0; font-size: 12pt; }
-  body:has(.drukuj-wynik) > .app > main > :not(.result-stack),
-  body:has(.drukuj-wynik) .result-stack .result-card:not(.drukuj-wynik) { display: none !important; }
-  body:has(.drukuj-wynik) .container { max-width: none; padding: 0; }
-  body:has(.drukuj-wynik) .drukuj-wynik { border: 0; padding: 0; }
+.druk-meta div:last-child { border-bottom: 0; }
+.druk-meta dt { color: var(--color-muted); }
+.druk-meta dd { margin: 0; }
+@media (max-width: 620px) {
+  .druk-meta div { grid-template-columns: 1fr; gap: 2px; }
 }

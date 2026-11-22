@@ -256,7 +256,6 @@ export default function Zus() {
                   ) : (
                     <p><span className="badge b-ok">BRAK ZALEGŁOŚCI</span> {zasw.zadluzenie > 0 ? `Zaległość ${zl(zasw.zadluzenie)} jest poniżej progu.` : "Nie masz zaległości w składkach."}</p>
                   )}
-                  <button type="button" className="btn btn-link" onClick={() => window.print()}>Drukuj</button>
                 </div>
               )}
             </section>
