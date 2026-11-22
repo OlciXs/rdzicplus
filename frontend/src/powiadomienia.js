@@ -47,8 +47,8 @@ export function powiadomieniaNaDzien(terminy, dzis, zlozone = {}) {
 
 export const TESTOWE = {
   klucz: "test",
-  tytul: "Test powiadomień RodzicPlus",
-  tresc: "Tak wyglądają przypomnienia o terminach: 7 i 3 dni przed terminem oraz w dniu terminu.",
+  tytul: "Za 3 dni: Upływa termin składania wniosku...",
+  tresc: "Już niedługo upływa termin składania wniosku. Sprawdź, czy masz wszystko gotowe. Postep odznacz w kalendarzu.",
   link: "/kalendarz",
 };
 
