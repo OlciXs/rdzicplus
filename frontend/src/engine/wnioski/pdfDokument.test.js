@@ -78,6 +78,31 @@ describe("PDF — LaTeX na tekst", () => {
     expect(texZ).toContain("81,5\\%");
   });
 
+  it("dokument ogólny (bez szablonu LaTeX) nie wypuszcza surowych poleceń", () => {
+    const d = przygotujDruk(profil, "W5", { dzis: DZIS });
+    const bloki = latexDoBlokow(filtrujWarunki(zbudujDokumentLatex(d, profil).tex, d, profil));
+    const tekst = bloki.map((b) => b.tekst).join("\n");
+
+    // Regresja: w PDF było widać „\footnotesizeRodzicPlus”, „\textbullet” i „\item”.
+    expect(tekst).not.toMatch(/\\[A-Za-z]+/);
+    expect(tekst).not.toContain("\\item");
+    expect(tekst).toContain("RodzicPlus");
+    expect(tekst).toContain("• ");
+    expect(tekst).toContain("Załączniki");
+  });
+
+  it("tryb ZAM nie składa pisma do pracodawcy", () => {
+    const p = { ...profil, ubezpieczony: { ...profil.ubezpieczony, statusUbezpieczenia: "brak" } };
+    const d = przygotujDruk(p, "W1", { dzis: DZIS });
+    expect(d.tryb).toBe("zam");
+
+    const dok = zbudujDokumentLatex(d, p, { szablonId: "P01" });
+    expect(dok.szablonId).toBe(null);
+    const tekst = latexDoBlokow(filtrujWarunki(dok.tex, d, p)).map((b) => b.tekst).join("\n");
+    expect(tekst).toContain("DANE DO WNIOSKU ZAM");
+    expect(tekst).not.toContain("podpis pracownika");
+  });
+
   it("powstaje poprawny plik PDF z polską czcionką", async () => {
     vi.stubGlobal("fetch", vi.fn(async (url) => {
       const nazwa = String(url).split("/").pop();

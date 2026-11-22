@@ -276,7 +276,7 @@ podpis
 \\end{flushright}
 
 \\vfill
-{\\footnotesize\\textcolor{szary}\\itshape Podstawa: ${latexEsc(druk?.podstawa || "")}. Dokument wygenerowany w RodzicPlus na podstawie danych podanych przez wnioskodawcę.}
+{\\footnotesize\\textcolor{szary}\\itshape Podstawa: ${latexEsc(String(druk?.podstawa || "").replace(/\.$/, ""))}. Dokument wygenerowany w RodzicPlus na podstawie danych podanych przez wnioskodawcę.}
 
 \\end{document}
 `;

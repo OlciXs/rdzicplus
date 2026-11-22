@@ -93,6 +93,20 @@ describe("LaTeX — wypełnianie danych", () => {
     expect(dok.tex).toContain("Firma A \\& B");
   });
 
+  it("tryb „zam” (osoba bez pracy) nie korzysta z pisma do pracodawcy", () => {
+    const p = profil({ ubezpieczony: { statusUbezpieczenia: "brak" } });
+    const d = przygotujDruk(p, "W1", { dzis: DZIS });
+    expect(d.tryb).toBe("zam");
+
+    // Nawet gdy ekran poda szablon pisma, w trybie ZAM powstaje zestawienie danych.
+    const dok = zbudujDokumentLatex(d, p, { szablonId: "P01" });
+    expect(dok.szablonId).toBe(null);
+    expect(dok.zrodlo).toBe("ogolny");
+    expect(dok.nazwaPliku).toMatch(/dane-do-wniosku-zam/);
+    expect(dok.tex).toContain("Dane do wniosku ZAM");
+    expect(dok.tex).not.toContain("Kodeksu pracy wnoszę");
+  });
+
   it("wariant bez szablonu dostaje dokument ogólny z danymi", () => {
     const d = druk("W5", { dziecko: { dataUrodzenia: "2026-11-10" } });
     const dok = zbudujDokumentLatex(d, profil());

@@ -46,13 +46,14 @@ export function latexDoTekstu(tekst) {
     .replace(/\\\}/g, "}");
 
   // Formatowanie i odstępy – nie są treścią.
+  // Kolejność ma znaczenie: rozmiar/krój czcionki usuwamy PRZED `\color{…}`, inaczej
+  // `\footnotesize\color{szary}Słowo` skleja się w `\footnotesizeSłowo` i polecenia
+  // nie da się już rozpoznać.
   t = t
+    .replace(/\\(?:footnotesize|scriptsize|small|normalsize|large|Large|LARGE|bfseries|itshape|ttfamily|sffamily|rmfamily|centering|noindent|par|medskip|smallskip|bigskip|vfill|hfill|newline|linebreak)(?![A-Za-z])/g, "")
     .replace(/\\(?:textcolor|color|vspace|hspace|fontsize)\*?(?:\[[^\]]*\])?\{[^{}]*\}/g, "")
     .replace(/\\hrule\s*height\s*[\d.]+\s*pt/g, "")
-    .replace(/\\hrule\b/g, "")
-    // `(?![A-Za-z])` zamiast `\b`: w dokumencie ogólnym polecenie skleja się z tekstem
-    // (`\footnotesizeRodzicPlus`) i wtedy `\b` nie łapie granicy słowa.
-    .replace(/\\(?:footnotesize|scriptsize|small|normalsize|large|Large|LARGE|bfseries|itshape|ttfamily|sffamily|rmfamily|centering|noindent|par|medskip|smallskip|bigskip|vfill|hfill|newline|linebreak)(?![A-Za-z])/g, "");
+    .replace(/\\hrule\b/g, "");
 
   // Pozycje list (`\item`, `\item[etykieta]`) – każda w osobnym wierszu, bez surowego LaTeX-a.
   t = t
