@@ -71,7 +71,7 @@ const SEED = {
           statusUbezpieczenia: "dg",
           podstawaWymiaru: "4877.11",
           ubezpieczenieOd: "2023-06-01",
-          zaleglosci: "nie",
+          zaleglosci: "tak",
         },
         sytuacja: { etap: "po_porodzie", rola: "matka" },
         platnik: {

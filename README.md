@@ -138,7 +138,7 @@ zbierają dane z formularza i wyświetlają wynik.
 | `engine/wnioski/` | **wnioski i ich warianty**: co przysługuje przy danym profilu (niżej) |
 | `calculators/useProfileDefaults.js` | **podstawianie danych z „Moich danych”** do kalkulatorów: komplet pól (podstawa, daty, staż ubezpieczenia, kod B, liczba ubezpieczonych, zaległość, wymiar etatu, tydzień ciąży, dni hospitalizacji) + pasek „Z PROFILU” pokazujący, co zostało wstawione |
 
-Testy (361: kalkulatory, podstawianie profilu, porównanie W1–W4, logika formularza (płeć/rola), warianty wniosków, regresje do `RAPORT_BLEDOW.md`, spójność z bazą wiedzy oraz zgodność szablonów pism i LaTeX-a z YAML-em):
+Testy (362: kalkulatory, podstawianie profilu, porównanie W1–W4, logika formularza (płeć/rola), warianty wniosków, regresje do `RAPORT_BLEDOW.md`, spójność z bazą wiedzy oraz zgodność szablonów pism i LaTeX-a z YAML-em):
 
 ```bash
 cd frontend && npm test

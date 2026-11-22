@@ -43,7 +43,22 @@ export function ocenWariant(wariant, k) {
       return { ...baza, status: "nie_dotyczy", powody: [`Dotyczy sytuacji: ${wariant.etapy.map((e) => ETAPY[e]).join(", ")}`] };
   }
 
-  const warunki = [...wstep, ...wariant.warunki(k)];
+  const ZASIŁKOWE_WNIOSKI = new Set([
+    "chorobowy", "rehabilitacyjne", "przed_porodem_po_utracie_pracy",
+    "macierzynski", "wysokosc", "przejecie", "uzupelniajacy",
+    "ojcowski", "rodzicielski", "adopcja", "opiekunczy", "pogrzebowy",
+  ]);
+  const blokadaZasiłku =
+    k.blokadaZadluzenia === true && ZASIŁKOWE_WNIOSKI.has(wariant.wniosek);
+  const warunki = [
+    ...wstep,
+    ...wariant.warunki(k),
+    ...(blokadaZasiłku ? [{
+      tekst: `Złożenie wniosku o świadczenie jest zablokowane, dopóki zaległość składkowa nie spadnie poniżej ${String(k.P.progZaleglosci).replace(".", ",")} zł (art. 2a)`,
+      ok: false,
+      pola: ["ubezpieczony.zaleglosci"],
+    }] : []),
+  ];
   const niespelnione = warunki.filter((x) => x.ok === false);
   const nieznane = warunki.filter((x) => x.ok === null);
   const status = niespelnione.length ? "niedostepny" : nieznane.length ? "brak_danych" : "dostepny";

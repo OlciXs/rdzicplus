@@ -122,6 +122,12 @@ describe("Marzena – działalność z zaległością", () => {
     const splacona = { ...marzena, ubezpieczony: { ...marzena.ubezpieczony, zaleglosci: "nie" } };
     expect(status(splacona, "chorobowy", "W34").status).toBe("dostepny");
   });
+
+  it("zaległość blokuje też przygotowanie innych zasiłków i wniosków o świadczenia ZUS", () => {
+    expect(status(marzena, "macierzynski", "W1").status).toBe("niedostepny");
+    expect(status(marzena, "rodzicielski", "W25").status).toBe("niedostepny");
+    expect(status(marzena, "wysokosc", "W41").status).toBe("niedostepny");
+  });
 });
 
 describe("zleceniobiorczyni – okres wyczekiwania 90 dni", () => {

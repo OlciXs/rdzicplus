@@ -216,6 +216,15 @@ export default function Wnioski() {
           </p>
         )}
 
+        {profile.ubezpieczony?.zaleglosci === "tak" && (
+          <p className="alert-inline" role="alert">
+            <span className="badge b-err">Zaległość składkowa</span>{" "}
+            Nie możesz składać wniosków o świadczenia ZUS ani przygotowywać formularzy z ich zakresem,
+            dopóki zaległość nie spadnie poniżej progu {String(CFG.progZaleglosci).replace(".", ",")} zł.
+            Po spłacie zaktualizuj odpowiedź w „Moje dane”.
+          </p>
+        )}
+
         {ostrz.length > 0 && (
           <section aria-label="Ostrzeżenia">
             {["blad", "ostrzezenie"].map((poziom) => {
