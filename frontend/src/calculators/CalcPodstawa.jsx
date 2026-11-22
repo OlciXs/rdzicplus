@@ -5,18 +5,66 @@ import { podstawaWymiaru } from "../engine/index.js";
 import {
   Badge, Field, NumberInput, Select, Section, ResultTable, Bullets, ProfilInfo } from "./ui.jsx";
 import { useProfileDefaults, opisPodstawienia } from "./useProfileDefaults.js";
+import { SPRAWY_PODSTAWY } from "./sprawyPodstawy.js";
+import { api } from "../api.js";
 
 const defaultMonths = () => Array.from({ length: 12 }, () => "5000");
 
 export default function CalcPodstawa() {
   const [s, set] = useState({ status: "pracownik", wymiarEtatu: "1", ileMies: "12", kwartalne: "0", roczna: "0" });
   const [months, setMonths] = useState(defaultMonths);
-  const set_ = (k) => (v) => set((p) => ({ ...p, [k]: v }));
+  const set_ = (k) => (v) => { set((p) => ({ ...p, [k]: v })); setSprawaId(""); };
   const profilDane = useProfileDefaults(set, "podstawa");
   const { profile, save } = profilDane;
   const { user } = useAuth();
   const [saveMsg, setSaveMsg] = useState("");
-  const setMonth = (i) => (v) => setMonths((prev) => prev.map((m, j) => (j === i ? v : m)));
+  const setMonth = (i) => (v) => { setMonths((prev) => prev.map((m, j) => (j === i ? v : m))); setSprawaId(""); };
+
+  // Przykładowe sprawy (fikcyjne) i pobranie wynagrodzeń z symulowanego ZUS – zamiennik „konkretnej sprawy
+  // z zestawów” z treści zadania (zestawy ZUS: odłożone, docs/zgodnosc-z-zadaniem.md).
+  const [sprawaId, setSprawaId] = useState("");
+  const [zusMsg, setZusMsg] = useState("");
+  const wczytajSprawe = (id) => {
+    setSprawaId(id);
+    setZusMsg("");
+    const sp = SPRAWY_PODSTAWY.find((x) => x.id === id);
+    if (!sp) return;
+    set((p) => ({ ...p, ...sp.stan }));
+    setMonths([...sp.miesiace]);
+  };
+  const pobierzZZus = async () => {
+    setSprawaId("");
+    try {
+      const d = await api("/api/zus/dane");
+      const kwoty = (d.wynagrodzenia ?? []).map((w) => String(w.kwota)).slice(-12);
+      if (!kwoty.length) { setZusMsg("W symulowanym ZUS nie ma wynagrodzeń dla tej osoby – wpisz je ręcznie albo wybierz przykładową sprawę."); return; }
+      set((p) => ({ ...p, status: d.statusUbezpieczenia === "pracownik" ? "pracownik" : "niepracownik", ileMies: String(Math.min(12, kwoty.length)) }));
+      // Najnowszy miesiąc na końcu listy z ZUS – w siatce kolejność nie ma znaczenia dla średniej.
+      setMonths([...kwoty, ...Array.from({ length: 12 - kwoty.length }, () => "0")]);
+      setZusMsg(`Wczytano ${kwoty.length} miesięcy z symulowanych danych ZUS (${d.statusUbezpieczenia === "pracownik" ? "wynagrodzenie" : "zadeklarowana podstawa składek"}).`);
+    } catch (err) {
+      setZusMsg(`Nie udało się pobrać danych z ZUS: ${err.message}`);
+    }
+  };
+  const sprawa = SPRAWY_PODSTAWY.find((x) => x.id === sprawaId);
+  const wyborSprawy = (
+    <Section title="Przykładowa sprawa albo dane z ZUS">
+      <Field label="Przykładowe sprawy (dane fikcyjne)" hint="Typowe sytuacje z załącznika do zadania – każda z policzonym wynikiem.">
+        <Select value={sprawaId} onChange={wczytajSprawe} options={[
+          { value: "", label: "— wybierz sprawę —" },
+          ...SPRAWY_PODSTAWY.map((x) => ({ value: x.id, label: x.nazwa })),
+        ]} />
+      </Field>
+      {user && (
+        <div className="field">
+          <span className="field-label">Moje wynagrodzenia</span>
+          <button type="button" className="btn btn-outline" onClick={pobierzZZus}>Pobierz z ZUS (symulacja)</button>
+        </div>
+      )}
+      {sprawa && <p className="field-hint field-wide">{sprawa.opis} Oczekiwana podstawa: <b>{zl(sprawa.podstawa)}</b>.</p>}
+      {zusMsg && <p className="field-hint field-wide" role="status">{zusMsg}</p>}
+    </Section>
+  );
 
   const r = podstawaWymiaru({
     status: s.status,
@@ -37,6 +85,7 @@ export default function CalcPodstawa() {
       />
         <div className="calc-cols">
           <div>
+            {wyborSprawy}
             <Section title="Status i okres">
               <Field label="Status">
                 <Select value={s.status} onChange={set_("status")} options={[
@@ -86,6 +135,7 @@ export default function CalcPodstawa() {
       />
       <div className="calc-cols">
         <div>
+          {wyborSprawy}
           <Section
             title="Status i okres"
             note="Miesiące z przepracowanym czasem < połowa obowiązującego wymiaru są wykluczane (wpisz 0). Przy ≥ połowie – miesiąc uzupełniamy do pełnego (w uproszczeniu: podaj kwotę po uzupełnieniu)."

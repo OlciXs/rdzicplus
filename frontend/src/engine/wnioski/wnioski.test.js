@@ -375,12 +375,11 @@ describe("SKLADANIE – spójność z rejestrem", () => {
     const ids = new Set(WARIANTY.map((v) => v.id));
     expect(Object.keys(SKLADANIE).filter((id) => !ids.has(id))).toEqual([]);
   });
-  it("W34: działalność i zlecenie nie dostają formularza macierzyńskiego ZAM przy zasiłku chorobowym", () => {
-    for (const statusUbezpieczenia of ["dg", "zlecenie"]) {
-      const p = profil({ sytuacja: { etap: "ciaza", rola: "matka" }, ubezpieczony: { statusUbezpieczenia, ubezpieczenieOd: "2020-01-01", zaleglosci: "nie" }, zdrowie: { zwolnienie: "B" } });
-      const v = status(p, "chorobowy", "W34");
-      expect(v.dokument).not.toMatch(/ZAM/);
-      expect(v.skladanie).toBe("automatycznie");
-    }
+  it("W34 wg treści zadania ZUS (s. 3): działalność → ZAS-53, zlecenie → płatnik i Z-3a; nigdy formularz macierzyński ZAM", () => {
+    const w34 = (statusUbezpieczenia) => status(profil({ sytuacja: { etap: "ciaza", rola: "matka" }, ubezpieczony: { statusUbezpieczenia, ubezpieczenieOd: "2020-01-01", zaleglosci: "nie" }, zdrowie: { zwolnienie: "B" } }), "chorobowy", "W34");
+    expect(w34("dg").dokument).toMatch(/ZAS-53/);
+    expect(w34("dg").skladanie).toBe("wniosek");
+    expect(w34("zlecenie").dokument).toMatch(/Z-3a/);
+    for (const t of ["dg", "zlecenie"]) expect(w34(t).dokument).not.toMatch(/\bZAM\b/);
   });
 });

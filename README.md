@@ -3,6 +3,13 @@
 Aplikacja dla przyszłych rodziców: mówi, czy dostanie pieniądze z ZUS, ile, jak długo
 i co gdzie złożyć.
 
+## Rozwiązania zewnętrzne
+
+Zgodnie z § 4 ust. 1 regulaminu zadania: React, React Router, jsPDF (+ czcionka DejaVu Sans), Express, cors,
+Vite, Vitest, yaml, Python + XeLaTeX/Tectonic, Docker, GitHub Actions, Google Cloud. Pełna lista z wersjami
+i licencjami oraz tekst na slajd: [docs/rozwiazania-zewnetrzne.md](docs/rozwiazania-zewnetrzne.md).
+Integracje ZUS / PUE / mObywatel / USC są wyłącznie symulowane (dane fikcyjne).
+
 ## Uruchamianie przez Docker Compose
 
 Wymagany jest Docker z Compose. Z katalogu głównego projektu uruchom:

@@ -19,7 +19,17 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 > **Do potwierdzenia w generatorze:** treść pism oparta na `docs/02` (szkic z Mistrala) – sprawdzić z rozporządzeniem o wnioskach; W1 po porodzie (urlop przysługuje z mocy prawa, pismo to raczej „informacja + wniosek o 81,5%”); zakres danych ZAM
 > **Do weryfikacji (oznaczone w kodzie `do_potwierdzenia`):** W4 uzupełniający dla nie-pracowników, W12 łączenie z pracą (wydłużona część, pole I14), W44 podwyższenie (szacunek podatku), W47 chorobowy po ustaniu (14 dni), W11 staż 6 mies., W19 świadczenie rodzicielskie (poza ZUS). W dokumentach Mistrala jest też nieaktualny **Z-3b** (zlikwidowany 24.10.2026) – w rejestrze go nie używamy.
 
-### Przegląd po PR #11–#14 + kalendarz (Claude, 22.11 nad ranem, bez commita)
+### Zgodność z treścią zadania (22.11 rano) – pełny raport: [docs/zgodnosc-z-zadaniem.md](docs/zgodnosc-z-zadaniem.md)
+- [ ] ⏸️ **Upload / wybór przykładowych spraw ZUS** – odłożone (może później, niegwarantowane); w kalkulatorze f) zamiennik: 8 fikcyjnych spraw + „Pobierz z ZUS (symulacja)”
+- [ ] **❌ Wskazanie, które funkcje używają AI** (pkt 4 i 9) – sekcja w README / prezentacji
+- [ ] **❌ Link do demo, prezentacja ≤ 10 slajdów, film ≤ 3 min, zrzuty ekranu** w README
+- [x] Lista rozwiązań zewnętrznych – [docs/rozwiazania-zewnetrzne.md](docs/rozwiazania-zewnetrzne.md) + README; **zostało wkleić slajd do prezentacji**
+- [ ] ⚠️ PUE/eZUS: symulacja „zapytania w razie wątpliwości”
+- [x] „Wsparcie”: 8 sprawdzonych organizacji z filtrem wg sytuacji (wcześniak / ciężko chore / poronienie i strata)
+- [x] Kalkulator zintegrowany `/kalkulatory/zintegrowany` (opcje a–g na jednej stronie)
+- [x] W34 działalność → ZAS-53, zlecenie → Z-3a / ZAM (wg treści zadania s. 3 i 6)
+
+ (Claude, 22.11 nad ranem, bez commita)
 Sprawdzone: 334 testy (17 plików), build, API 44/44 w Dockerze, kalendarz w przeglądarce (komputer + telefon).
 
 **Naprawione:**

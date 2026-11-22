@@ -859,7 +859,9 @@ const ZAM_NIEPRAC = (k) =>
   ["dg", "wspolpraca"].includes(k.tytul)
     ? "ZAM – wniosek o zasiłek macierzyński do ZUS, najwygodniej przez eZUS"
     : k.tytul === "zlecenie"
-      ? "Wniosek o zasiłek macierzyński – składasz u zleceniodawcy (przekazuje go do ZUS)"
+      // Treść zadania ZUS, s. 6: przy zleceniu składa się ZAM; uprawniony płatnik (> 20 osób) wypłaca sam,
+      // inny przesyła do ZUS zaświadczenie płatnika Z-3a.
+      ? "ZAM – wniosek o zasiłek macierzyński składasz u zleceniodawcy (przy > 20 ubezpieczonych wypłaca sam, inaczej przekazuje do ZUS z zaświadczeniem Z-3a)"
       : "ZAM – wniosek o zasiłek macierzyński do ZUS";
 // Pracownik składa wniosek o urlop u pracodawcy, pozostali – wniosek o zasiłek (ZAM) do ZUS.
 const PRAC_ALBO_ZAM = (wniosekPracownika) => (k) =>
@@ -874,13 +876,13 @@ export const SKLADANIE = {
     dokument: (k) =>
       k.pracownik === true
         ? "Nic nie składasz – e-ZLA z kodem B trafia do ZUS i pracodawcy, zaświadczenie Z-3 wystawia pracodawca"
-        // Rozporządzenie z 27.09.2026, § 2–3: do zasiłku chorobowego z ZUS wystarcza zaświadczenie lekarskie
-        // (e-ZLA); przy działalności nie ma zaświadczenia płatnika, przy zleceniu wystawia je zleceniodawca.
-        // (Wcześniej było „ZAM” – to formularz zasiłku MACIERZYŃSKIEGO, nie chorobowego.)
+        // Treść zadania ZUS, s. 3 („Przekazanie zaświadczenia”): działalność → wniosek o zasiłek chorobowy ZAS-53
+        // do ZUS; zlecenie → dokumenty do ZUS albo do płatnika, który (gdy nie wypłaca sam) przesyła Z-3a.
+        // (Kiedyś było tu „ZAM” – to formularz zasiłku MACIERZYŃSKIEGO, nie chorobowego.)
         : ["dg", "wspolpraca"].includes(k.tytul)
-          ? "Nic nie składasz – ZUS dostaje e-ZLA z kodem B od lekarza i sam wypłaca zasiłek"
-          : "Nic nie składasz sama – zleceniodawca przekazuje do ZUS zaświadczenie płatnika składek (Z-3a)",
-    skladanie: "automatycznie",
+          ? "ZAS-53 – wniosek o zasiłek chorobowy do ZUS (e-ZLA z kodem B ZUS dostaje od lekarza)"
+          : "Zgłoś zwolnienie zleceniodawcy – uprawniony płatnik wypłaca zasiłek sam, inny przekazuje do ZUS zaświadczenie płatnika Z-3a",
+    skladanie: (k) => (k.pracownik === true ? "automatycznie" : "wniosek"),
   },
   W36: { dokument: "Nic nie składasz – wystarczy kod B na e-ZLA", skladanie: "automatycznie" },
   W46: { dokument: "Karta wypadku w drodze do/z pracy – dołączasz do zwolnienia lekarskiego", skladanie: "dolacz" },
