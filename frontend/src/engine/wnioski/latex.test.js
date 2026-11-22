@@ -12,14 +12,16 @@ import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { parse } from "yaml";
 
-const KORZEN = resolve(__dirname, "../../../../../");
+// Katalog główny repo = 4 poziomy nad frontend/src/engine/wnioski (było 5 – poza repo, ENOENT w CI).
+const KORZEN = resolve(__dirname, "../../../../");
 const YAML = resolve(KORZEN, "szablony_pism_2026.yaml");
 const LATEX = resolve(KORZEN, "latex");
 
 const saPliki = existsSync(YAML) && existsSync(LATEX) ? describe : describe.skip;
 
 saPliki("LaTeX — zgodność z szablonami pism", () => {
-  const dane = parse(readFileSync(YAML, "utf-8"));
+  // describe.skip też wykonuje to ciało przy zbieraniu testów – czytamy plik tylko, gdy istnieje.
+  const dane = existsSync(YAML) ? parse(readFileSync(YAML, "utf-8")) : { szablony: [] };
   const ids = dane.szablony.map((s) => s.id);
   const katalog = resolve(LATEX, "szablony");
 
