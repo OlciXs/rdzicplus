@@ -223,7 +223,6 @@ export default function Kalendarz() {
         </p>
 
         {events.length > 0 && (
-<<<<<<< HEAD
           <div className="calendar-actions">
             <button type="button" className="btn btn-outline" onClick={pobierzIcs}>📅 Dodaj do kalendarza w telefonie (.ics)</button>
             <button
@@ -242,18 +241,6 @@ export default function Kalendarz() {
             )}
             <span className="calendar-upcoming">{nadchodzace} nadchodzących terminów · przypomnienia 7 dni i 1 dzień wcześniej</span>
           </div>
-=======
-          <p>
-            <button type="button" className="btn btn-outline" onClick={pobierzIcs}>📅 Dodaj do kalendarza w telefonie (.ics)</button>{" "}
-            {stanZgody !== "granted" && stanZgody !== "unsupported" && (
-              <button type="button" className="btn btn-outline" onClick={wlaczPowiadomienia}>🔔 Włącz powiadomienia</button>
-            )}{" "}
-            <span className="note">
-              {nadchodzace} nadchodzących terminów · przypomnienia 7 i 3 dni wcześniej oraz w dniu terminu
-              {stanZgody === "granted" ? " · powiadomienia włączone" : ""} · klawisz <kbd>N</kbd> – testowe powiadomienie
-            </span>
-          </p>
->>>>>>> 213c671904f690eec90d42a24a14a01cd2f9391c
         )}
 
         {events.length === 0 ? (
