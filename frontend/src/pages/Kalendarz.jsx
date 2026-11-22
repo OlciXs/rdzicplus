@@ -20,6 +20,11 @@ import { etykietaTerminu, klasaBadga } from "./kalendarzEtykiety.js";
 // Daty z silnika to „RRRR-MM-DD” – w kalendarzu porównujemy je jako tekst (bez stref czasowych).
 const isoDnia = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const fmt = (iso) => (iso ? new Date(`${iso}T12:00:00`).toLocaleDateString("pl-PL", { day: "numeric", month: "long", year: "numeric" }) : "—");
+const plusDni = (iso, dni) => {
+  const d = new Date(`${iso}T12:00:00`);
+  d.setDate(d.getDate() + dni);
+  return isoDnia(d);
+};
 
 const dniDo = (iso, dzis) => Math.round((Date.parse(`${iso}T00:00:00Z`) - Date.parse(`${dzis}T00:00:00Z`)) / 86400000);
 // W panelu szczegółów skracamy bardzo długi opis – pełny tekst jest w „Złóż wniosek”.
@@ -48,8 +53,65 @@ export default function Kalendarz() {
     try { return JSON.parse(localStorage.getItem(KLUCZ) || "{}"); }
     catch { return {}; }
   });
+  const [notificationsEnabled, setNotificationsEnabled] = useState(() => {
+    try { return localStorage.getItem("rodzicplus-calendar-notifications") === "1"; }
+    catch { return false; }
+  });
+  const [notificationPermission, setNotificationPermission] = useState(() =>
+    typeof Notification === "undefined" ? "unsupported" : Notification.permission
+  );
 
   const events = useMemo(() => (profile ? terminyWnioskow(profile, { params: CFG }) : []), [profile]);
+
+  const pokazPowiadomienie = (tytul, body) => {
+    if (typeof Notification === "undefined" || Notification.permission !== "granted") return;
+    const notification = new Notification(tytul, {
+      body,
+      icon: "/favicon.ico",
+      tag: `rodzicplus-calendar-${encodeURIComponent(body)}`,
+    });
+    notification.onclick = () => {
+      window.focus();
+      notification.close();
+    };
+  };
+
+  useEffect(() => {
+    if (!notificationsEnabled || typeof Notification === "undefined" || Notification.permission !== "granted") return;
+
+    const timers = [];
+    for (const e of events) {
+      if (completed[e.id] || (e.typ !== "termin" && e.typ !== "koniec")) continue;
+      const przypomnienia = [e.przypomnienie, plusDni(e.data, -1)].filter(Boolean);
+      for (const reminderDate of [...new Set(przypomnienia)]) {
+        if (reminderDate > dzis) {
+          const ms = Date.parse(`${reminderDate}T09:00:00`) - Date.now();
+          if (ms > 0 && ms < 2_147_483_647) {
+            timers.push(setTimeout(() => {
+              const dni = dniDo(e.data, isoDnia(new Date()));
+              pokazPowiadomienie(
+                "RodzicPlus – przypomnienie o terminie",
+                dni === 0 ? `Dzisiaj masz koniec terminu na wniosek: ${e.tytul}`
+                  : `Za ${dni} ${dni === 1 ? "dzień" : "dni"} masz koniec terminu na wniosek: ${e.tytul}`
+              );
+            }, ms));
+          }
+        } else if (reminderDate === dzis) {
+          const dni = dniDo(e.data, dzis);
+          const key = `rodzicplus-calendar-notified-${e.id}-${reminderDate}`;
+          if (!localStorage.getItem(key)) {
+            pokazPowiadomienie(
+              "RodzicPlus – przypomnienie o terminie",
+              dni === 0 ? `Dzisiaj masz koniec terminu na wniosek: ${e.tytul}`
+                : `Za ${dni} ${dni === 1 ? "dzień" : "dni"} masz koniec terminu na wniosek: ${e.tytul}`
+            );
+            localStorage.setItem(key, "1");
+          }
+        }
+      }
+    }
+    return () => timers.forEach(clearTimeout);
+  }, [notificationsEnabled, events, dzis, completed]);
 
   // Na start pokazujemy miesiąc najbliższego nadchodzącego terminu (a gdy wszystkie minęły – ostatniego).
   useEffect(() => {
@@ -79,6 +141,36 @@ export default function Kalendarz() {
     a.download = "rodzicplus-terminy.ics";
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  const przełączPowiadomienia = async () => {
+    if (notificationsEnabled) {
+      setNotificationsEnabled(false);
+      try { localStorage.setItem("rodzicplus-calendar-notifications", "0"); } catch { /* stan zostaje w bieżącej sesji */ }
+      return;
+    }
+    if (typeof Notification === "undefined") {
+      setNotificationPermission("unsupported");
+      return;
+    }
+    const permission = Notification.permission === "default"
+      ? await Notification.requestPermission()
+      : Notification.permission;
+    setNotificationPermission(permission);
+    if (permission !== "granted") return;
+
+    setNotificationsEnabled(true);
+    try { localStorage.setItem("rodzicplus-calendar-notifications", "1"); } catch { /* stan zostaje w bieżącej sesji */ }
+
+    const najblizszy = events.find((e) => e.typ !== "info" && e.data >= dzis && !completed[e.id]);
+    const dni = najblizszy ? dniDo(najblizszy.data, dzis) : null;
+    pokazPowiadomienie(
+      "Powiadomienia kalendarza włączone",
+      najblizszy
+        ? (dni === 0 ? `Dzisiaj masz koniec terminu na wniosek: ${najblizszy.tytul}`
+          : `Najbliższy termin to za ${dni} ${dni === 1 ? "dzień" : "dni"}: ${najblizszy.tytul}`)
+        : "Będziemy przypominać o nadchodzących terminach wniosków."
+    );
   };
 
   if (loading) return <div className="app"><AppHeader /><main className="container"><p className="center-msg">Wczytywanie…</p></main></div>;
@@ -120,10 +212,24 @@ export default function Kalendarz() {
         </p>
 
         {events.length > 0 && (
-          <p>
-            <button type="button" className="btn btn-outline" onClick={pobierzIcs}>📅 Dodaj do kalendarza w telefonie (.ics)</button>{" "}
-            <span className="note">{nadchodzace} nadchodzących terminów · przypomnienia 7 dni i 1 dzień wcześniej</span>
-          </p>
+          <div className="calendar-actions">
+            <button type="button" className="btn btn-outline" onClick={pobierzIcs}>📅 Dodaj do kalendarza w telefonie (.ics)</button>
+            <button
+              type="button"
+              className={`btn ${notificationsEnabled ? "btn-primary" : "btn-outline"}`}
+              onClick={przełączPowiadomienia}
+              disabled={notificationPermission === "unsupported"}
+            >
+              {notificationsEnabled ? "🔔 Wyłącz powiadomienia" : "🔔 Włącz powiadomienia"}
+            </button>
+            {notificationPermission === "denied" && (
+              <span className="note">Powiadomienia są zablokowane w ustawieniach przeglądarki.</span>
+            )}
+            {notificationPermission === "unsupported" && (
+              <span className="note">Ta przeglądarka nie obsługuje powiadomień systemowych.</span>
+            )}
+            <span className="calendar-upcoming">{nadchodzace} nadchodzących terminów · przypomnienia 7 dni i 1 dzień wcześniej</span>
+          </div>
         )}
 
         {events.length === 0 ? (
@@ -152,7 +258,7 @@ export default function Kalendarz() {
                   return (
                     <button
                       type="button"
-                      className={`calendar-day ${day ? "" : "calendar-empty"} ${dzien === dzis ? "calendar-today" : ""}`}
+                      className={`calendar-day ${day ? "" : "calendar-empty"} ${dzien === dzis ? "calendar-today" : ""} ${dzien === selectedDay ? "calendar-day-selected" : ""}`}
                       key={i}
                       disabled={!day}
                       onClick={() => dzien && setSelectedDay(dzien)}

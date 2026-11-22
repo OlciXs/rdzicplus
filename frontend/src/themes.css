@@ -219,6 +219,15 @@ h2 { font-size: 1.1rem; margin: 0 0 8px; color: var(--color-navy); }
 }
 .calendar-toolbar h2 { margin: 0; text-align: center; text-transform: capitalize; }
 .calendar-toolbar .btn { min-height: 44px; padding: 6px 10px; font-size: 1.4rem; }
+.calendar-actions {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  margin: 12px 0 18px;
+}
+.calendar-upcoming {
+  flex-basis: 100%; display: block;
+  color: var(--color-muted); font-size: 0.9rem;
+  margin-top: 2px;
+}
 .calendar-grid {
   display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));
   border-top: 1px solid var(--color-border);
@@ -293,7 +302,7 @@ button.calendar-day:focus-visible { outline: 3px solid var(--color-navy); outlin
 .calendar-dot.is-completed { opacity: 0.45; filter: grayscale(0.8); }
 
 /* panel szczegółów wybranego dnia (pod siatką) */
-.calendar-detail { border-left: 5px solid var(--color-primary); }
+.calendar-detail { border-left: 0; }
 .calendar-detail-heading {
   display: flex; align-items: center; justify-content: space-between;
   gap: 12px; flex-wrap: wrap; margin-bottom: 12px;
