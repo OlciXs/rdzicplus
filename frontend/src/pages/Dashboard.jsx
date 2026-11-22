@@ -53,7 +53,7 @@ export default function Dashboard() {
 
         <section className="info-card" aria-label="Twoje dane">
           <div className="info-card-heading">
-            <h2>Twoje dane z mObywatela</h2>
+            <h2>Twoje dane</h2>
             <Link className="text-link" to="/profil">Edytuj</Link>
           </div>
           <dl className="data-list">
@@ -113,7 +113,7 @@ export default function Dashboard() {
           <span className="calc-cta-body">
             <span className="calc-cta-title">Policz swoje świadczenia</span>
             <span className="calc-cta-desc">
-              Siedem kalkulatorów: chorobowy, macierzyński, rodzicielski, adopcja, podstawa wymiaru i dokumenty.
+              Siedem kalkulatorów: chorobowy w ciąży, macierzyński, łączenie urlopu z pracą, oboje rodzice, adopcja, podstawa wymiaru i dokumenty – osobno albo razem w kalkulatorze zintegrowanym.
             </span>
           </span>
           <span className="calc-cta-arrow" aria-hidden="true">→</span>
@@ -157,7 +157,7 @@ export default function Dashboard() {
           <span className="calc-cta-icon"><Icon name="calendar" /></span>
           <span className="calc-cta-body">
             <span className="calc-cta-title">Kalendarz terminów</span>
-            <span className="calc-cta-desc">Ostateczne terminy wniosków i przypomnienia tydzień wcześniej.</span>
+            <span className="calc-cta-desc">Ostateczne terminy wniosków i przypomnienia: 7 i 3 dni wcześniej oraz w dniu terminu.</span>
           </span>
           <span className="calc-cta-arrow" aria-hidden="true">→</span>
         </Link>
@@ -166,7 +166,7 @@ export default function Dashboard() {
           <span className="calc-cta-icon"><Icon name="heart" /></span>
           <span className="calc-cta-body">
             <span className="calc-cta-title">Wsparcie w sytuacjach szczególnych</span>
-            <span className="calc-cta-desc">Hospicja i fundacje dla wcześniaków oraz rodzin po stracie dziecka.</span>
+            <span className="calc-cta-desc">Fundacje i hospicja: wcześniak, ciężko chore dziecko, poronienie, śmierć dziecka.</span>
           </span>
           <span className="calc-cta-arrow" aria-hidden="true">→</span>
         </Link>

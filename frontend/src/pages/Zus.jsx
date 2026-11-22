@@ -201,7 +201,7 @@ export default function Zus() {
               <h2 className="result-title">4. Zaświadczenie o niezaleganiu w składkach</h2>
               <p className="note">
                 Ważne przy działalności gospodarczej: zaległość większa niż {zl(CFG.progZaleglosci)} (1% płacy minimalnej)
-                na dzień porodu blokuje zasiłek do czasu spłaty (art. 2a ustawy zasiłkowej).
+                na dzień porodu sprawia, że prawo do zasiłku powstaje dopiero od dnia spłaty (art. 2a ustawy zasiłkowej).
               </p>
               <div className="calc-grid">
                 <label className="field">
@@ -223,8 +223,8 @@ export default function Zus() {
                     <p><span className="badge b-ok">NIE DOTYCZY</span> Składki za Ciebie opłaca pracodawca – jego ewentualne zaległości nie blokują Twojego zasiłku.</p>
                   ) : blokada ? (
                     <p>
-                      <span className="badge b-err">ZALEGŁOŚĆ {zl(zasw.zadluzenie)}</span> Przekracza {zl(CFG.progZaleglosci)} – zasiłek
-                      nie zostanie wypłacony, dopóki nie spłacisz zaległości. Najlepiej spłać ją przed porodem.
+                      <span className="badge b-err">ZALEGŁOŚĆ {zl(zasw.zadluzenie)}</span> Przekracza {zl(CFG.progZaleglosci)} – prawo do zasiłku
+                      powstaje dopiero od dnia spłaty, a za dni przed spłatą zasiłek przepada (art. 2a ustawy zasiłkowej). Spłać zaległość przed porodem albo zwolnieniem.
                     </p>
                   ) : (
                     <p><span className="badge b-ok">BRAK ZALEGŁOŚCI</span> {zasw.zadluzenie > 0 ? `Zaległość ${zl(zasw.zadluzenie)} jest poniżej progu.` : "Nie masz zaległości w składkach."}</p>

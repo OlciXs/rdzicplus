@@ -62,7 +62,7 @@ export default function CalcMacierzynski() {
     blokMac = (
       <Bullets items={[
         <>Wymiar: <b>{tygMac} tygodni</b> ({n} {n === 1 ? "dziecko" : "dzieci"}), z tego przed porodem max {CFG.przedPorodemMax} tyg.</>,
-        <>Przed porodem: <b>{przed} tyg.</b> (wymaga zaświadczenia o przewidywanej dacie porodu; wniosek ≥ 14 dni przed — RWN § 2), po porodzie: <b>{tygMac - przed} tyg.</b></>,
+        <>Przed porodem: <b>{przed} tyg.</b> (wymaga zaświadczenia o przewidywanej dacie porodu; wniosek ≥ 14 dni przed – RWN § 2), po porodzie: <b>{tygMac - przed} tyg.</b></>,
         <>Minimum matki po porodzie: <b>{CFG.wylaczneMacierzynskieMatki} tyg.</b> (pierwsze 14 tygodni matka wykorzystuje osobiście).</>,
       ]} />
     );
@@ -75,7 +75,7 @@ export default function CalcMacierzynski() {
         {porod && <span> Od {fmtD(porod)} do {fmtD(koniec)} (~{dni} dni).</span>} Przy urodzeniu więcej
         niż jednego dziecka – wymiar wg liczby dzieci pozostałych przy życiu. Dokumenty: odpis skrócony
         aktu urodzenia z adnotacją o martwym urodzeniu albo zaświadczenie o martwym urodzeniu.
-        Przysługuje też zasiłek pogrzebowy {zl(7000)} (wniosek Z-12, 12 mies. od pochówku).
+        Przysługuje też zasiłek pogrzebowy {zl(7000)} (wniosek Z-12 w ciągu 12 mies. od dnia zgonu).
       </p>
     );
   } else {
@@ -189,7 +189,7 @@ export default function CalcMacierzynski() {
           <section className="result-card warning">
             <h3 className="result-title">Brak podstawy wymiaru</h3>
             <p>
-              Nie podano podstawy wymiaru zasiłku (0 zł). Kwoty nie są liczone — sprawdź, czy
+              Nie podano podstawy wymiaru zasiłku (0 zł). Kwoty nie są liczone – sprawdź, czy
               w dniu porodu podlegałaś ubezpieczeniu chorobowemu. Bez ubezpieczenia zasiłek
               macierzyński nie przysługuje (rozważ świadczenie rodzicielskie w gminie).
             </p>
@@ -263,7 +263,7 @@ export default function CalcMacierzynski() {
             <>Urlop ojcowski: do {CFG.deadlineOjcowskiMies}. miesiąca życia dziecka (wniosek ≥ {CFG.ochronaWkladDni.ojcowski} dni przed; 1 lub 2 części po min. 1 tydz.) – po terminie prawo wygasa.</>,
             <>Rezygnacja matki na rzecz ojca: wniosek ≥ 7 dni przed powrotem do pracy (po min. 14 tyg. po porodzie).</>,
             <>Uzupełniający: wniosek ≥ {CFG.ochronaWkladDni.uzupelniajacy} dni przed końcem macierzyńskiego.</>,
-            <>Od złożenia każdego wniosku urlopowego w terminie biegnie ochrona zatrudnienia (KP art. 177 § 1).</>,
+            <>Od złożenia każdego wniosku urlopowego w terminie biegnie ochrona zatrudnienia (KP art. 177 § 1¹).</>,
           ]} />
         </section>
       </div>

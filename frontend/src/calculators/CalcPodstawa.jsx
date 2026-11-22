@@ -90,7 +90,7 @@ export default function CalcPodstawa() {
               <Field label="Status">
                 <Select value={s.status} onChange={set_("status")} options={[
                   { value: "pracownik", label: "Pracownik (umowa o pracę)" },
-                  { value: "niepracownik", label: "Nie-pracownik (zlecenie, działalność)" },
+                  { value: "niepracownik", label: "Zlecenie lub działalność gospodarcza" },
                 ]} />
               </Field>
               <Field label="Liczba pełnych miesięcy ubezpieczenia (jeśli < 12)">
@@ -123,7 +123,7 @@ export default function CalcPodstawa() {
       ...profile,
       ubezpieczony: { ...profile.ubezpieczony, podstawaWymiaru: Math.round(podstawa * 100) / 100 },
     });
-    setSaveMsg(res.ok ? "Zapisano w „Moje dane” - inne kalkulatory podstawią tę kwotę." : "Nie udało się zapisać.");
+    setSaveMsg(res.ok ? "Zapisano w „Moje dane” – inne kalkulatory podstawią tę kwotę." : "Nie udało się zapisać.");
   };
 
   return (
@@ -138,16 +138,16 @@ export default function CalcPodstawa() {
           {wyborSprawy}
           <Section
             title="Status i okres"
-            note="Miesiące z przepracowanym czasem < połowa obowiązującego wymiaru są wykluczane (wpisz 0). Przy ≥ połowie – miesiąc uzupełniamy do pełnego (w uproszczeniu: podaj kwotę po uzupełnieniu)."
+            note="Miesiące, w których przepracowano mniej niż połowę obowiązującego czasu pracy, pomija się (wpisz 0). Przy co najmniej połowie wynagrodzenie uzupełnia się do pełnego miesiąca (w uproszczeniu: podaj kwotę po uzupełnieniu)."
           >
             <Field label="Status">
               <Select value={s.status} onChange={set_("status")} options={[
                 { value: "pracownik", label: "Pracownik (umowa o pracę)" },
-                { value: "niepracownik", label: "Nie-pracownik (zlecenie, działalność)" },
+                { value: "niepracownik", label: "Zlecenie lub działalność gospodarcza" },
               ]} />
             </Field>
             {s.status === "pracownik" && (
-              <Field label="Wymiar etatu" hint="Minimum podstawy (4 147,10 zł) liczymy proporcjonalnie do etatu — art. 45 ust. 1 u.z.">
+              <Field label="Wymiar etatu" hint="Minimum podstawy (4 147,10 zł) liczymy proporcjonalnie do etatu – art. 45 ust. 1 ustawy zasiłkowej.">
                 <Select value={s.wymiarEtatu} onChange={set_("wymiarEtatu")} options={[
                   { value: "1", label: "Pełny etat" },
                   { value: "0.75", label: "3/4 etatu" },
@@ -221,9 +221,9 @@ export default function CalcPodstawa() {
             ]}
           />
           <Bullets items={[
-            "Miesiące z przepracowanym < połową czasu pracy wyłącza się (art. 38 ust. 2); przy ≥ połowie – wynagrodzenie uzupełnia się (art. 37–38).",
+            "Miesiące, w których przepracowano mniej niż połowę obowiązującego czasu pracy, wyłącza się (art. 38 ust. 2); przy co najmniej połowie wynagrodzenie się uzupełnia (art. 37–38).",
             "Składniki wypłacane nadal w okresie zasiłku (np. dodatek stażowy) nie wliczają się (art. 41).",
-            "Nowa podstawa tylko gdy przerwa między zasiłkami ≥ 1 miesiąca (art. 43); nie-pracownicy: przychód deklarowany (art. 48–48a).",
+            "Podstawę ustala się na nowo dopiero po przerwie między zasiłkami wynoszącej co najmniej 3 miesiące kalendarzowe (art. 43). Przy zleceniu i działalności podstawą jest zadeklarowana podstawa składek (art. 48–48a).",
           ]} />
         </section>
       </div>

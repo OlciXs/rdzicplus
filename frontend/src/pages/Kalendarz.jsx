@@ -22,16 +22,9 @@ import { KLUCZ_POWIADOMIEN, TESTOWE, pokaz, poprosOZgode } from "../powiadomieni
 // Daty z silnika to „RRRR-MM-DD” – w kalendarzu porównujemy je jako tekst (bez stref czasowych).
 const isoDnia = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const fmt = (iso) => (iso ? new Date(`${iso}T12:00:00`).toLocaleDateString("pl-PL", { day: "numeric", month: "long", year: "numeric" }) : "—");
-const plusDni = (iso, dni) => {
-  const d = new Date(`${iso}T12:00:00`);
-  d.setDate(d.getDate() + dni);
-  return isoDnia(d);
-};
-
 const dniDo = (iso, dzis) => Math.round((Date.parse(`${iso}T00:00:00Z`) - Date.parse(`${dzis}T00:00:00Z`)) / 86400000);
 // W panelu szczegółów skracamy bardzo długi opis – pełny tekst jest w „Złóż wniosek”.
 const krotkiOpis = (tekst, max = 160) => (!tekst || tekst.length <= max ? tekst : `${tekst.slice(0, max - 1).trimEnd()}…`);
-const ileWydarzen = (n) => (n === 1 ? "wydarzenie" : n >= 2 && n <= 4 ? "wydarzenia" : "wydarzeń");
 
 
 const TYP = {
@@ -84,7 +77,10 @@ export default function Kalendarz() {
     const timers = [];
     for (const e of events) {
       if (completed[e.id] || (e.typ !== "termin" && e.typ !== "koniec")) continue;
-      const przypomnienia = [e.przypomnienie, plusDni(e.data, -1)].filter(Boolean);
+      // Te same przypomnienia co w siatce, w .ics i w opisie na stronie: 7 i 3 dni przed oraz w dniu terminu
+      // (wcześniej było 7 dni i 1 dzień). Dzisiejsze wysyła globalnie components/Powiadomienia.jsx –
+      // tu tylko planujemy przyszłe, gdy strona jest otwarta (inaczej dzisiejsze przychodziły podwójnie).
+      const przypomnienia = (e.przypomnienia ?? []).map((p) => p.data);
       for (const reminderDate of [...new Set(przypomnienia)]) {
         if (reminderDate > dzis) {
           const ms = Date.parse(`${reminderDate}T09:00:00`) - Date.now();
@@ -93,21 +89,9 @@ export default function Kalendarz() {
               const dni = dniDo(e.data, isoDnia(new Date()));
               pokazPowiadomienie(
                 "RodzicPlus – przypomnienie o terminie",
-                dni === 0 ? `Dzisiaj masz koniec terminu na wniosek: ${e.tytul}`
-                  : `Za ${dni} ${dni === 1 ? "dzień" : "dni"} masz koniec terminu na wniosek: ${e.tytul}`
+                dni === 0 ? `Dziś mija termin: ${e.tytul}` : `Za ${dni} ${dni === 1 ? "dzień" : "dni"} mija termin: ${e.tytul}`
               );
             }, ms));
-          }
-        } else if (reminderDate === dzis) {
-          const dni = dniDo(e.data, dzis);
-          const key = `rodzicplus-calendar-notified-${e.id}-${reminderDate}`;
-          if (!localStorage.getItem(key)) {
-            pokazPowiadomienie(
-              "RodzicPlus – przypomnienie o terminie",
-              dni === 0 ? `Dzisiaj masz koniec terminu na wniosek: ${e.tytul}`
-                : `Za ${dni} ${dni === 1 ? "dzień" : "dni"} masz koniec terminu na wniosek: ${e.tytul}`
-            );
-            localStorage.setItem(key, "1");
           }
         }
       }
@@ -163,9 +147,9 @@ export default function Kalendarz() {
       pokazPowiadomienie(
         "Powiadomienia kalendarza włączone",
         najblizszy
-          ? (dni === 0 ? `Dzisiaj masz koniec terminu na wniosek: ${najblizszy.tytul}`
-            : `Najbliższy termin to za ${dni} ${dni === 1 ? "dzień" : "dni"}: ${najblizszy.tytul}`)
-          : "Będziemy przypominać o nadchodzących terminach wniosków."
+          ? (dni === 0 ? `Dziś mija termin: ${najblizszy.tytul}`
+            : `Najbliższy termin za ${dni} ${dni === 1 ? "dzień" : "dni"}: ${najblizszy.tytul}. Przypomnimy 7 i 3 dni wcześniej oraz w dniu terminu.`)
+          : "Przypomnimy o terminach 7 i 3 dni wcześniej oraz w dniu terminu."
       );
     } else {
       pokaz({
@@ -265,7 +249,7 @@ export default function Kalendarz() {
                       key={i}
                       disabled={!day}
                       onClick={() => dzien && setSelectedDay(dzien)}
-                      aria-label={dzien ? `${fmt(dzien)}: ${wpisy.length} wpisów` : undefined}
+                      aria-label={dzien ? `${fmt(dzien)}: ${wpisy.length} ${wpisy.length === 1 ? "wpis" : wpisy.length >= 2 && wpisy.length <= 4 ? "wpisy" : "wpisów"}` : undefined}
                     >
                       {day && <span className="calendar-day-number">{day}</span>}
                       {wpisy.filter((w) => !w.przypomnienie).map(({ e }) => (

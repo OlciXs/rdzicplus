@@ -121,7 +121,7 @@ export function ostrzezenia(k) {
   if (k.ubezpieczonyWDniuZdarzenia === false && k.maChorobowe)
     dodaj("V1", "blad", "Ubezpieczenie chorobowe ustaje przed porodem / przyjęciem dziecka – bez wyjątków z art. 30 nie będzie zasiłku macierzyńskiego.");
   if (k.blokadaZadluzenia)
-    dodaj("V22", "blad", `Zaległość w składkach powyżej ${k.P.progZaleglosci} zł blokuje wszystkie zasiłki do czasu spłaty. Prawo przedawnia się po 6 miesiącach.`);
+    dodaj("V22", "blad", `Zaległość w składkach powyżej ${String(k.P.progZaleglosci).replace(".", ",")} zł: prawo do zasiłków powstaje dopiero od dnia spłaty, a za wcześniejsze dni zasiłek przepada (art. 2a ustawy zasiłkowej). Spłać zaległość jak najszybciej.`);
   if (k.wyczekiwanieSpelnione === false)
     dodaj(k.grupa === "dobrowolne" ? "V2" : "V3", "ostrzezenie",
       `Zasiłek chorobowy przysługuje po ${k.okresWyczekiwania} dniach ubezpieczenia (masz ${k.dniUbezpieczenia}). Zasiłku macierzyńskiego to nie dotyczy.${k.grupa === "dobrowolne" ? " Zgłoszenie do dobrowolnego chorobowego nie działa wstecz." : ""}`);
@@ -150,7 +150,7 @@ export function ostrzezenia(k) {
     dodaj("info_ZUA", "info", "Po zakończeniu zasiłku macierzyńskiego dobrowolne ubezpieczenie chorobowe trzeba zgłosić ponownie (ZUS ZUA), inaczej nie będzie kolejnych zasiłków.");
   if (k.potrzebaOpieki && k.potrzebaOpieki !== "brak")
     dodaj("V33", "info", "Zasiłek opiekuńczy nie jest wypłacany automatycznie – trzeba złożyć wniosek (Z-15A / Z-15B).");
-  dodaj("V49", "info", "Umowa zawarta lub podwyższona podstawa składek tylko po to, by dostać wyższy zasiłek, może zostać zakwestionowana przez ZUS.");
-  dodaj("V27", "info", "Prawo do zasiłku przedawnia się po 6 miesiącach od ostatniego dnia okresu, za który przysługuje.");
+  dodaj("V49", "info", "Umowę zawartą albo podstawę składek podwyższoną tylko po to, by dostać wyższy zasiłek, ZUS może zakwestionować.");
+  dodaj("V27", "info", "Roszczenie o wypłatę zasiłku przedawnia się po 6 miesiącach od ostatniego dnia okresu, za który zasiłek przysługuje (art. 67 ustawy zasiłkowej).");
   return out;
 }

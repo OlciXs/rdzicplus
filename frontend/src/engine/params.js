@@ -122,7 +122,7 @@ export const PARAM_GROUPS = [
       oczekiwanieObowiazkowe: "Okres oczekiwania – obowiązkowe",
       oczekiwanieDobrowolne: "Okres oczekiwania – dobrowolne",
       wynagrodzenieChorobowe: "Wynagrodzenie chorobowe (płaci pracodawca)",
-      wynagrodzenieChorobowe50: "Wynagrodzenie chorobowe po 50. r.ż.",
+      wynagrodzenieChorobowe50: "Wynagrodzenie chorobowe po 50. roku życia",
       okresZasilkowy: "Okres zasiłkowy",
       okresZasilkowyCiaza: "Okres zasiłkowy w ciąży",
       przerwaZnaczaOkres: "Przerwa sumująca okresy",

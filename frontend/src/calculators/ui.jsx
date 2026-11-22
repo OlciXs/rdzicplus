@@ -172,14 +172,14 @@ export function ProfilInfo({ pola = [], zalogowany }) {
   if (!zalogowany) {
     return (
       <p className="note" role="status">
-        Wypełnij „Moje dane” po zalogowaniu — kalkulatory podstawią Twoje kwoty i daty same.
+        Wypełnij „Moje dane” po zalogowaniu – kalkulatory podstawią Twoje kwoty i daty same.
       </p>
     );
   }
   if (!pola.length) {
     return (
       <p className="note" role="status">
-        Brak danych w profilu dla tego kalkulatora — uzupełnij „Moje dane”, żeby nie wpisywać ich ręcznie.
+        Brak danych w profilu dla tego kalkulatora – uzupełnij „Moje dane”, żeby nie wpisywać ich ręcznie.
       </p>
     );
   }
@@ -187,7 +187,7 @@ export function ProfilInfo({ pola = [], zalogowany }) {
     <div className="profil-info" role="status">
       <Badge>Z PROFILU</Badge>
       <span className="profil-info-opis">
-        Te wartości wzięliśmy z „Moich danych” — możesz je zmienić poniżej:
+        Te wartości wzięliśmy z „Moich danych” – możesz je zmienić poniżej:
       </span>
       <ul className="profil-info-lista">
         {pola.map((p) => (

@@ -115,7 +115,7 @@ export default function CalcChorobowy() {
           </Section>
 
           <Section title="Podstawa wymiaru i sytuacja zatrudnienia">
-            <Field label="Miesięczna podstawa wymiaru zasiłku" hint="Po 13,71% – możesz policzyć w kalkulatorze „Podstawa wymiaru”.">
+            <Field label="Miesięczna podstawa wymiaru zasiłku" hint="Po odliczeniu składek (13,71%) – możesz ją policzyć w kalkulatorze „Podstawa wymiaru”.">
               <NumberInput value={s.podstawa} onChange={set_("podstawa")} min="0" step="0.01" />
             </Field>
             <Field label="Zaległość składkowa (zł)" hint="Dotyczy działalności / zlecenia.">
@@ -160,7 +160,7 @@ export default function CalcChorobowy() {
             </p>
           )}
           {zalegloscBlokada && (
-            <p><Badge tone="err">BLOKADA</Badge> Zaległość {zl(num(s.zaleglosc))} przekracza {zl(CFG.progZaleglosci)} (1% minimalnego wynagrodzenia) – zasiłek nie przysługuje do czasu spłaty (art. 2a UZ).</p>
+            <p><Badge tone="err">BLOKADA</Badge> Zaległość {zl(num(s.zaleglosc))} przekracza {zl(CFG.progZaleglosci)} (1% minimalnego wynagrodzenia) – prawo do zasiłku powstaje dopiero od dnia spłaty, a za wcześniejsze dni zasiłek przepada (art. 2a UZ).</p>
           )}
         </section>
 
@@ -168,12 +168,12 @@ export default function CalcChorobowy() {
           <h3 className="result-title">2. Kto wypłaca – wynagrodzenie chorobowe vs zasiłek</h3>
           {s.status === "obw" ? (
             <Bullets items={[
-              <>Wynagrodzenie chorobowe (pracodawca, z własnych środków): <b>{dniWynagr} dni</b> – limit {limitWyn} dni w roku ({wiek50 ? "po 50 r.ż." : "pracownik do 50 r.ż."}), wykorzystane wcześniej: {num(s.wykorzWynagr)}.</>,
+              <>Wynagrodzenie chorobowe (pracodawca, z własnych środków): <b>{dniWynagr} dni</b> – limit {limitWyn} dni w roku ({wiek50 ? "po 50. roku życia" : "do 50. roku życia"}), wykorzystane wcześniej: {num(s.wykorzWynagr)}.</>,
               <>Zasiłek chorobowy za pozostałe <b>{dniZasilku} dni</b> wypłaca: {platnikDuzy ? `płatnik składek (zgłasza > ${CFG.progPlatnika} ubezpieczonych)` : `ZUS (płatnik zgłasza ≤ ${CFG.progPlatnika} ubezpieczonych – przekazuje dokumenty w 7 dni)`}.</>,
-              <>Wynagrodzenie chorobowe w ciąży wynosi 100% (KP art. 92 § 1 pkt 2) i wlicza się do okresu zasiłkowego (UZ art. 12 ust. 1).</>,
+              <>Wynagrodzenie chorobowe w ciąży wynosi 100% (KP art. 92 § 1 pkt 2) i wlicza się do okresu zasiłkowego.</>,
             ]} />
           ) : (
-            <Bullets items={["Nie-pracownik: zasiłek od pierwszego dnia niezdolności, zawsze wypłaca ZUS."]} />
+            <Bullets items={["Zlecenie, działalność i inne tytuły niepracownicze: bez wynagrodzenia chorobowego – zasiłek od pierwszego dnia niezdolności. Wypłaca ZUS, a przy zleceniu u płatnika zgłaszającego ponad 20 ubezpieczonych – zleceniodawca."]} />
           )}
         </section>
 
@@ -198,7 +198,7 @@ export default function CalcChorobowy() {
           {!wyplata && (
             <p className="alert-inline">
               <Badge tone="err">0 ZŁ</Badge> Kwoty wynoszą 0 zł, bo{" "}
-              {!maPrawo ? "nie minął okres oczekiwania (punkt 1)" : "zaległość składkowa blokuje wypłatę (art. 2a UZ)"}.
+              {!maPrawo ? "nie minął okres wyczekiwania (punkt 1)" : "zaległość składkowa blokuje wypłatę (art. 2a UZ)"}.
             </p>
           )}
           {!kodB && <p className="note">Bez kodu „B”: stawka {CFG.stChorobowy}%, okres zasiłkowy {CFG.okresZasilkowy} dni.</p>}
@@ -208,7 +208,7 @@ export default function CalcChorobowy() {
           <h3 className="result-title">4. Okres zasiłkowy</h3>
           <Bullets items={[
             <>Maksymalny okres zasiłkowy: <b>{okresMax} dni</b> {kodB ? "(ciąża – kod B)" : "(standardowo)"}. Po tym epizodzie pozostaje <b>{poTymOkresie} dni</b>.</>,
-            <>Przerwa ≤ {CFG.przerwaZnaczaOkres} dni nie zeruje okresu zasiłkowego – wyjątek: nowa niezdolność w ciąży (kod „B”) liczona jest od nowa (art. 9 ust. 2).</>,
+            <>Przerwa ≤ {CFG.przerwaZnaczaOkres} dni nie zeruje okresu zasiłkowego – wyjątek: nowa niezdolność w ciąży (kod „B”) liczona jest od nowa (art. 9 UZ).</>,
           ]} />
           {dNz > pozostaloPrzed && (
             <p><Badge tone="warn">UWAGA</Badge> Ten epizod ({dNz} dni) jest dłuższy niż pozostały okres zasiłkowy – płatne jest max {pozostaloPrzed} dni, dalej możliwe świadczenie rehabilitacyjne.</p>
@@ -219,7 +219,7 @@ export default function CalcChorobowy() {
           <h3 className="result-title">5. Co po wyczerpaniu 270 dni – świadczenie rehabilitacyjne</h3>
           <Bullets items={[
             <>Wysokość: <b>{CFG.stRehab90}%</b> przez pierwsze 3 miesiące, <b>{CFG.stRehab75}%</b> dalej, <b>100% w ciąży</b>; max 12 miesięcy; warunek rokowania odzyskania zdolności do pracy.</>,
-            <>Wniosek ZAS-14A najpóźniej 6 tygodni przed końcem okresu zasiłkowego; wypłaca ZUS.</>,
+            <>Wniosek ZUS Np-7 z zaświadczeniem OL-9 od lekarza prowadzącego – najpóźniej 6 tygodni przed końcem okresu zasiłkowego; o prawie orzeka lekarz orzecznik ZUS, wypłaca ZUS.</>,
           ]} />
         </section>
 

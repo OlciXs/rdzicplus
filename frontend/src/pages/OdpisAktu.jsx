@@ -156,9 +156,10 @@ export default function OdpisAktu() {
         <section className="info-card">
           <h2>Czy w ogóle potrzebujesz odpisu?</h2>
           <p className="note">
-            <b>Do zasiłku macierzyńskiego w ZUS – zwykle nie.</b> Wystarczy, że we wniosku podasz dane dziecka
-            (imię, nazwisko, PESEL), a ZUS sam pobierze informacje z rejestru stanu cywilnego. Odpis bywa potrzebny
-            np. pracodawcy przy wniosku o urlop albo w urzędach za granicą.
+            <b>Jeśli zasiłek macierzyński wypłaca ZUS – nie.</b> Wystarczy, że we wniosku podasz dane dziecka
+            (imię, nazwisko, PESEL), a ZUS sam pobierze odpis z rejestru stanu cywilnego (§ 13 ust. 2 rozporządzenia z 27.09.2026).
+            Odpis skrócony dołączasz, gdy zasiłek wypłaca pracodawca (zgłasza ponad 20 ubezpieczonych) – razem z wnioskiem
+            o urlop – oraz w urzędach za granicą.
           </p>
         </section>
 
@@ -169,7 +170,7 @@ export default function OdpisAktu() {
             <div className="calc-grid">
               {dzieciProfilu.length > 1 && (
                 <label className="field field-wide">
-                  <span className="field-label">Dla którego dziecka złożysz odpis?</span>
+                  <span className="field-label">Dla którego dziecka składasz wniosek?</span>
                   <select className="input" value={form.dzieckoIndex} onChange={wybierzDziecko}>
                     {dzieciProfilu.map((d, i) => (
                       <option key={i} value={i}>{i + 1}. {[d.imie, d.nazwisko].filter(Boolean).join(" ") || `Dziecko ${i + 1}`}</option>
@@ -197,7 +198,7 @@ export default function OdpisAktu() {
               {busy ? "Wysyłam…" : "Złóż wniosek"}
             </button>
             <button className="btn btn-outline" type="button" onClick={zapiszDoProfilu} disabled={savingToProfile}>
-              {savingToProfile ? "Zapisuję…" : "Zapisz w Moje dane"}
+              {savingToProfile ? "Zapisuję…" : "Zapisz w „Moje dane”"}
             </button>
             {errors._ && <span className="field-error" role="alert">{errors._}</span>}
             {profileMsg && <span className="form-ok" role="status">{profileMsg}</span>}

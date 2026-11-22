@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import AppHeader from "../components/AppHeader.jsx";
 import { useAuth } from "../auth.js";
 import { useProfile } from "../profile.js";
+import { CFG, zl } from "../calculators/config.js";
 
 import {
   ROLE, ETAPY_DLA, HINT_ETAPU, ROLE_DLA, jestOpcjonalne,
@@ -29,7 +30,7 @@ const TYTULY = [
   ["marynarz", "Marynarz"],
   ["uaktywniajaca", "Umowa uaktywniająca (opiekun dziecka)"],
   ["dzielo", "Tylko umowa o dzieło"],
-  ["student_zlecenie", "Zlecenie - uczeń / student do 26. roku życia"],
+  ["student_zlecenie", "Zlecenie – uczeń / student do 26. roku życia"],
   ["nierejestrowa", "Działalność nierejestrowana"],
   ["ulga_na_start", "Działalność na uldze na start"],
   ["brak", "Brak tytułu (bezrobotna/y, student, osoba nieubezpieczona)"],
@@ -59,7 +60,7 @@ const RODZAJE_PRZYJECIA = [
   ["rodzina_zastepcza_zawodowa", "Zawodowa rodzina zastępcza"],
 ];
 const OKOLICZNOSCI = [
-  ["brak", "Nic szczególnego - matka opiekuje się dzieckiem"],
+  ["brak", "Nic szczególnego – matka opiekuje się dzieckiem"],
   ["zgon", "Matka zmarła"],
   ["porzucenie", "Matka porzuciła dziecko"],
   ["szpital", "Matka przebywa w szpitalu / placówce leczniczej"],
@@ -125,7 +126,7 @@ const STEPS = [
           {
             name: "rola", label: "Kim jesteś dla dziecka?", type: "select", wide: true,
             options: (c) => ROLE_DLA(c.plec),
-            hint: "Podpowiedzieliśmy na podstawie PESEL - od roli zależy, jakie uprawnienia masz (np. urlop ojcowski tylko dla ojca).",
+            hint: "Podpowiedzieliśmy na podstawie PESEL-u – od roli zależy, jakie masz uprawnienia (np. urlop ojcowski tylko dla ojca).",
           },
           { name: "typPrzyjecia", label: "Rodzaj przyjęcia dziecka", type: "select", options: RODZAJE_PRZYJECIA, wide: true, if: (c) => c.etap === "przyjecie",
             hint: "Zawodowa rodzina zastępcza nie ma prawa do urlopu na warunkach urlopu macierzyńskiego." },
@@ -136,7 +137,7 @@ const STEPS = [
   {
     id: "ty",
     title: "Ty i ubezpieczenie",
-    intro: "Dane stałe oraz informacje o Twoim ubezpieczeniu chorobowym - od nich zależy, czy i od kiedy przysługuje zasiłek.",
+    intro: "Dane stałe oraz informacje o Twoim ubezpieczeniu chorobowym – od nich zależy, czy i od kiedy przysługuje zasiłek.",
     sections: [
       {
         data: "ubezpieczony",
@@ -151,9 +152,9 @@ const STEPS = [
           { name: "ulgaWyczekiwania", label: "Czy skraca się Twój okres wyczekiwania na zasiłek?", type: "select", wide: true, if: (c) => c.maTytul,
             options: [
               ["brak", "Nie dotyczy"],
-              ["absolwent", "Absolwent - ubezpieczenie podjęte w ciągu 90 dni od ukończenia nauki"],
+              ["absolwent", "Absolwent – ubezpieczenie podjęte w ciągu 90 dni od ukończenia nauki"],
               ["10_lat", "Mam co najmniej 10 lat wcześniejszego obowiązkowego ubezpieczenia chorobowego"],
-              ["posel", "Poseł / senator - w ciągu 90 dni od końca kadencji"],
+              ["posel", "Poseł / senator – w ciągu 90 dni od końca kadencji"],
             ] },
           { name: "podstawaWymiaru", label: "Podstawa wymiaru zasiłku (zł/mies.)", type: "money", if: (c) => c.maTytul,
             hint: "Jeśli jej nie znasz, policz ją w kalkulatorze „Podstawa wymiaru”." },
@@ -164,8 +165,8 @@ const STEPS = [
           { name: "zatrudnionyOd", label: "Zatrudniona/y w obecnej firmie od", type: "date", if: (c) => c.pracownik },
           yn("pracaZaGranica", "Czy praca jest wykonywana za granicą?", { if: (c) => c.pracownik }),
           yn("pracaTymczasowa", "Czy to praca tymczasowa (agencja pracy tymczasowej)?", { if: (c) => c.pracownik }),
-          yn("zaleglosci", "Czy masz zaległości w składkach ZUS powyżej 48,06 zł?", { if: (c) => c.dobrowolne, wide: true,
-            hint: "Zadłużenie powyżej 1% minimalnego wynagrodzenia blokuje prawo do zasiłku do czasu spłaty." }),
+          yn("zaleglosci", `Czy masz zaległości w składkach ZUS powyżej ${zl(CFG.progZaleglosci)}?`, { if: (c) => c.dobrowolne, wide: true,
+            hint: "Przy zaległości powyżej 1% minimalnego wynagrodzenia prawo do zasiłku powstaje dopiero od dnia spłaty – za wcześniejsze dni zasiłek przepada (art. 2a ustawy zasiłkowej)." }),
           yn("wiecejNizJedenTytul", "Czy masz więcej niż jeden tytuł do ubezpieczenia chorobowego (np. etat + zlecenie)?", { if: (c) => c.maTytul, wide: true }),
           yn("emeryturaRenta", "Czy masz prawo do emerytury lub renty?", { if: (c) => !!c.grupa }),
           yn("zasilekBezrobotnych", "Czy pobierasz zasiłek dla bezrobotnych lub inne świadczenie z urzędu pracy?", { if: (c) => c.grupa === "brak", wide: true }),
@@ -193,14 +194,14 @@ const STEPS = [
           { name: "adres", label: "Adres", wide: true },
           { name: "nip", label: "NIP", placeholder: "0000000000", inputMode: "numeric", kind: "nip" },
           { name: "regon", label: "REGON", placeholder: "000000000", inputMode: "numeric", kind: "regon" },
-          { name: "liczbaUbezpieczonych", label: "Ilu pracowników zgłasza pracodawca do ubezpieczenia chorobowego?", type: "select", wide: true,
+          { name: "liczbaUbezpieczonych", label: "Ile osób zgłasza płatnik (pracodawca, zleceniodawca) do ubezpieczenia chorobowego?", type: "select", wide: true,
             if: (c) => ["pracownik", "uaktywniajaca"].includes(c.grupa) || c.u.statusUbezpieczenia === "zlecenie",
             options: [["do_20", "Do 20 osób (zasiłek wypłaca ZUS)"], ["powyzej_20", "Powyżej 20 osób (zasiłek wypłaca pracodawca)"], ["nie_wiem", "Nie wiem"]],
             hint: "Decyduje, kto wypłaca zasiłek: pracodawca czy ZUS." },
         ],
       },
     ],
-    emptyNote: "Bez tytułu do ubezpieczenia nie masz płatnika składek - nic tu nie wpisujesz. Przejdź dalej.",
+    emptyNote: "Bez tytułu do ubezpieczenia nie masz płatnika składek – nic tu nie wpisujesz. Przejdź dalej.",
   },
   {
     id: "dziecko",
@@ -227,12 +228,12 @@ const STEPS = [
           { name: "tydzienCiazy", label: "Tydzień ciąży w chwili porodu", type: "select", if: (c) => tak(c.d.pobytWSzpitalu),
             options: [["ponizej_28", "Poniżej 28. tygodnia"], ["28_37", "Od 28. do 37. tygodnia"], ["po_37", "Po 37. tygodniu"]] },
           { name: "masaUrodzenia", label: "Masa urodzeniowa (g)", type: "number", min: 300, max: 7000, if: (c) => tak(c.d.pobytWSzpitalu) },
-          { name: "szpitalOd", label: "Pobyt w szpitalu - od", type: "date", if: (c) => tak(c.d.pobytWSzpitalu) },
-          { name: "szpitalDo", label: "Pobyt w szpitalu - do", type: "date", after: "szpitalOd", if: (c) => tak(c.d.pobytWSzpitalu), hint: "Zostaw puste, jeśli pobyt trwa." },
+          { name: "szpitalOd", label: "Pobyt w szpitalu – od", type: "date", if: (c) => tak(c.d.pobytWSzpitalu) },
+          { name: "szpitalDo", label: "Pobyt w szpitalu – do", type: "date", after: "szpitalOd", if: (c) => tak(c.d.pobytWSzpitalu), hint: "Zostaw puste, jeśli pobyt trwa." },
           { name: "dataPrzyjecia", label: "Data przyjęcia dziecka na wychowanie", type: "date", max: "today", if: (c) => c.etap === "przyjecie" },
           yn("odroczonySzkolny", "Czy dziecko ma odroczony obowiązek szkolny?", { if: (c) => c.etap === "przyjecie", wide: true }),
           yn("niepelnosprawne", "Czy dziecko ma orzeczenie o niepełnosprawności?", { if: (c) => c.etap && c.etap !== "ciaza", wide: true }),
-          { name: "zaZyciem", label: "Oświadczenie „Za życiem” (ciężkie, nieodwracalne upośledzenie dziecka) — opcjonalne", type: "checkbox", wide: true, optional: true, if: (c) => !!c.etap },
+          { name: "zaZyciem", label: "Zaświadczenie „Za życiem” (ciężkie i nieodwracalne upośledzenie albo nieuleczalna choroba zagrażająca życiu dziecka) – opcjonalne", type: "checkbox", wide: true, optional: true, if: (c) => !!c.etap },
         ],
       },
     ],
@@ -246,17 +247,17 @@ const STEPS = [
         data: "drugiRodzic",
         title: "Drugi rodzic / opiekun",
         fields: [
-          { name: "brak", label: "Nie mam drugiego rodzica / opiekuna - wychowuję dziecko samodzielnie", type: "checkbox", wide: true },
+          { name: "brak", label: "Nie mam drugiego rodzica / opiekuna – wychowuję dziecko samodzielnie", type: "checkbox", wide: true },
           { name: "imie", label: "Imię", if: (c) => c.drugi },
           { name: "nazwisko", label: "Nazwisko", if: (c) => c.drugi },
           { name: "pesel", label: "PESEL", inputMode: "numeric", kind: "pesel", if: (c) => c.drugi, hint: "Najczęściej brakujące dane we wnioskach." },
           { name: "rola", label: "Kim jest dla dziecka?", type: "select", options: ROLE, if: (c) => c.drugi },
           { name: "adres", label: "Adres zamieszkania", wide: true, if: (c) => c.drugi },
           { name: "statusUbezpieczenia", label: "Tytuł ubezpieczenia drugiego rodzica", type: "select", options: TYTULY, wide: true, if: (c) => c.drugi,
-            hint: "Bez ubezpieczenia chorobowego ojciec nie przejmie urlopu macierzyńskiego." },
+            hint: "Bez ubezpieczenia chorobowego drugi rodzic nie dostanie zasiłku macierzyńskiego za przejętą część urlopu." },
           { name: "podstawaWymiaru", label: "Podstawa wymiaru zasiłku (zł/mies.)", type: "money", if: (c) => c.drugi },
-          { name: "platnikNazwa", label: "Pracodawca drugiego rodzica - nazwa", wide: true, if: (c) => c.drugi },
-          { name: "platnikNip", label: "Pracodawca drugiego rodzica - NIP", inputMode: "numeric", kind: "nip", if: (c) => c.drugi },
+          { name: "platnikNazwa", label: "Pracodawca drugiego rodzica – nazwa", wide: true, if: (c) => c.drugi },
+          { name: "platnikNip", label: "Pracodawca drugiego rodzica – NIP", inputMode: "numeric", kind: "nip", if: (c) => c.drugi },
           { name: "okolicznosc", label: "Czy zaszła któraś z tych okoliczności dotyczących matki?", type: "select", options: OKOLICZNOSCI, wide: true,
             if: (c) => c.drugi && c.rola !== "matka" && c.etap && c.etap !== "ciaza" },
           { name: "dataOkolicznosci", label: "Od kiedy / data zdarzenia", type: "date",
@@ -281,10 +282,10 @@ const STEPS = [
           { name: "zlaOd", label: "Zwolnienie od", type: "date", if: (c) => ["B", "bez_B"].includes(c.f.zdrowie?.zwolnienie) },
           { name: "zlaDo", label: "Zwolnienie do", type: "date", after: "zlaOd", if: (c) => ["B", "bez_B"].includes(c.f.zdrowie?.zwolnienie) },
           yn("wczesniejszeZwolnienia", "Czy w ostatnich 12 miesiącach korzystałaś ze zwolnień bez kodu B?", { wide: true,
-            hint: "Przerwa krótsza niż 60 dni przed zwolnieniem z kodem B może wyzerować okres zasiłkowy." }),
+            hint: "Zwolnienie w ciąży (kod B) otwiera nowy okres zasiłkowy (270 dni) – wcześniejszych zwolnień się nie dolicza, nawet po przerwie krótszej niż 60 dni." }),
           yn("okresZasilkowyWyczerpany", "Czy wyczerpał Ci się okres zasiłkowy (182 / 270 dni)?", { wide: true }),
-          yn("rokowaniaPoprawy", "Czy lekarz orzekł, że dalsze leczenie przywróci zdolność do pracy?", { wide: true, if: (c) => tak(c.f.zdrowie?.okresZasilkowyWyczerpany) }),
-          yn("wypadekWDrodze", "Czy niezdolność wynika z wypadku w drodze do/z pracy?", { wide: true }),
+          yn("rokowaniaPoprawy", "Czy lekarz orzecznik ZUS uznał, że dalsze leczenie lub rehabilitacja przywróci Ci zdolność do pracy?", { wide: true, if: (c) => tak(c.f.zdrowie?.okresZasilkowyWyczerpany) }),
+          yn("wypadekWDrodze", "Czy niezdolność do pracy wynika z wypadku w drodze do pracy lub z pracy?", { wide: true }),
         ],
       },
     ],
@@ -292,7 +293,7 @@ const STEPS = [
   {
     id: "urlopy",
     title: "Urlopy i plany",
-    intro: "Co chcesz wykorzystać i co już wykorzystano. Odpowiedz tylko na to, co wiesz - resztę można uzupełnić później.",
+    intro: "Co chcesz wykorzystać i co już wykorzystano. Odpowiedz tylko na to, co wiesz – resztę można uzupełnić później.",
     sections: [
       {
         data: "urlopy",
@@ -300,7 +301,7 @@ const STEPS = [
         show: (c) => c.etap === "ciaza" || c.etap === "po_porodzie",
         fields: [
           { name: "urlopPrzedPorodemOd", label: "Planowany początek urlopu przed porodem", type: "date", if: (c) => c.etap === "ciaza" && c.rola === "matka",
-            hint: "Najwcześniej 6 tygodni przed przewidywaną datą porodu; wniosek minimum 14 dni wcześniej." },
+            hint: "Najwcześniej 6 tygodni przed przewidywaną datą porodu; wniosek najpóźniej 14 dni przed rozpoczęciem urlopu." },
           yn("zamiarPelnyWymiar", "Czy zamierzasz wykorzystać pełny urlop macierzyński i rodzicielski (z min. 1 dniem rodzicielskiego przed 1. urodzinami dziecka)?",
             { wide: true, if: (c) => c.rola === "matka", hint: "Od tego zależy możliwość wniosku o zasiłek 81,5% (do 21 dni po porodzie)." }),
           { name: "macierzynskiWykorzystanoTyg", label: "Ile tygodni urlopu macierzyńskiego po porodzie już wykorzystano?", type: "number", min: 0, max: 37, if: (c) => c.etap === "po_porodzie" },
@@ -322,8 +323,8 @@ const STEPS = [
           yn("planRodzicielski", "Czy chcesz skorzystać z urlopu rodzicielskiego?", { wide: true }),
           { name: "rodzicielskieCzesci", label: "Ile części urlopu rodzicielskiego już wykorzystano?", type: "number", min: 0, max: 5, if: (c) => tak(c.f.urlopy?.planRodzicielski), hint: "Urlop można podzielić maksymalnie na 5 części." },
           { name: "rodzicielskiWykorzystanoTyg", label: "Ile tygodni urlopu rodzicielskiego już wykorzystano?", type: "number", min: 0, max: 67, if: (c) => tak(c.f.urlopy?.planRodzicielski) },
-          { name: "rodzicielskiOd", label: "Planowany urlop rodzicielski - od", type: "date", if: (c) => tak(c.f.urlopy?.planRodzicielski), hint: "Wniosek składa się minimum 21 dni przed." },
-          { name: "rodzicielskiDo", label: "Planowany urlop rodzicielski - do", type: "date", after: "rodzicielskiOd", if: (c) => tak(c.f.urlopy?.planRodzicielski) },
+          { name: "rodzicielskiOd", label: "Planowany urlop rodzicielski – od", type: "date", if: (c) => tak(c.f.urlopy?.planRodzicielski), hint: "Wniosek składa się najpóźniej 21 dni przed rozpoczęciem urlopu." },
+          { name: "rodzicielskiDo", label: "Planowany urlop rodzicielski – do", type: "date", after: "rodzicielskiOd", if: (c) => tak(c.f.urlopy?.planRodzicielski) },
           { name: "drugiRodzicRodzicielski", label: "Czy drugi rodzic zamierza korzystać z urlopu rodzicielskiego?", type: "select", wide: true,
             if: (c) => tak(c.f.urlopy?.planRodzicielski) && c.drugi,
             options: [["nie", "Nie zamierza"], ["tak", "Tak, zamierza"], ["nie_wiem", "Jeszcze nie ustaliliśmy"]],
@@ -385,7 +386,7 @@ function validate(form, sections) {
       if (f.type === "number") {
         const n = Number(v);
         if (Number.isNaN(n) || (f.min !== undefined && n < f.min) || (f.max !== undefined && n > f.max)) {
-          errs[key] = `Wpisz liczbę od ${f.min ?? 0} do ${f.max ?? "..."}.`;
+          errs[key] = (f.max !== undefined ? `Wpisz liczbę od ${f.min ?? 0} do ${f.max}.` : `Wpisz liczbę nie mniejszą niż ${f.min ?? 0}.`);
         }
       }
       if (f.after) {
@@ -718,7 +719,7 @@ export default function ProfilePage() {
       <main className="container">
         <h1>Moje dane</h1>
         <p className="lead">
-          Wpisz je raz - na ich podstawie dobierzemy wnioski, które możesz złożyć, i podstawimy dane do formularzy.
+          Wpisz je raz – na ich podstawie dobierzemy wnioski, które możesz złożyć, i podstawimy dane do formularzy.
           Wszystkie pola są opcjonalne, możesz uzupełniać stopniowo; zapisujemy po każdym etapie.
         </p>
 
@@ -748,7 +749,7 @@ export default function ProfilePage() {
                 <div><dt>Imię i nazwisko</dt><dd>{form.ubezpieczony.imie} {form.ubezpieczony.nazwisko}</dd></div>
                 <div><dt>PESEL</dt><dd>{form.ubezpieczony.peselMasked ?? user?.peselMasked}</dd></div>
                 <div><dt>Data urodzenia</dt><dd>{form.ubezpieczony.dataUrodzenia || "-"}</dd></div>
-                <div><dt>Płeć (z PESEL)</dt><dd>{form.ubezpieczony.plec === "K" ? "Kobieta" : form.ubezpieczony.plec === "M" ? "Mężczyzna" : "-"}</dd></div>
+                <div><dt>Płeć (z PESEL-u)</dt><dd>{form.ubezpieczony.plec === "K" ? "Kobieta" : form.ubezpieczony.plec === "M" ? "Mężczyzna" : "-"}</dd></div>
               </dl>
             </section>
           )}

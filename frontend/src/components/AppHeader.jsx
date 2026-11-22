@@ -8,7 +8,7 @@ export default function AppHeader({ actions = null, children = null }) {
 
   return (
     <header className="topbar">
-      <Link to="/" className="brand brand-link" aria-label="RodzicPlus - strona główna">
+      <Link to="/" className="brand brand-link" aria-label="RodzicPlus – strona główna">
         <Logo size={34} variant="on-brand" />
         <span className="brand-name">RodzicPlus</span>
       </Link>

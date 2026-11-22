@@ -29,6 +29,20 @@ Priorytety: **P0** = bez tego nie oddajemy · **P1** = wyróżnik, który daje p
 - [x] Kalkulator zintegrowany `/kalkulatory/zintegrowany` (opcje a–g na jednej stronie)
 - [x] W34 działalność → ZAS-53, zlecenie → Z-3a / ZAM (wg treści zadania s. 3 i 6)
 
+### Korekta tekstów UI – „kwiatki” (Claude, 22.11 rano, bez commita)
+Przejrzane wszystkie teksty: strony, „Moje dane”, 7 kalkulatorów, rejestr wniosków, ocena, kalendarz, druki, backend. 351 testów + build OK, sprawdzone w Dockerze.
+- [x] Logowanie i panel: nieprawdziwe zdania (kalkulatory „po zalogowaniu”, „bez prawdziwego logowania”), zła lista kalkulatorów, przypomnienia „tydzień wcześniej” → 7 i 3 dni oraz w dniu terminu
+- [x] Kalendarz: powiadomienia w przeglądarce szły 7 dni i 1 dzień przed (inaczej niż siatka i .ics) i dzisiejsze przychodziły podwójnie; odmiana „wpis/wpisy/wpisów”
+- [x] Art. 2a (zaległość): wszędzie „blokuje do czasu spłaty” → prawo do zasiłku dopiero od dnia spłaty, za wcześniejsze dni przepada; „48.06 zł” z kropką → 48,06 zł
+- [x] Świadczenie rehabilitacyjne: formularz **ZUS Np-7** + zaświadczenie OL-9 (było nieistniejące „ZAS-14A”)
+- [x] Zasiłek pogrzebowy: 12 miesięcy od dnia **zgonu** (było „od pochówku”) – rejestr, kalendarz, kalkulatory
+- [x] Podstawa wymiaru: nowa podstawa po przerwie **≥ 3 miesięcy** kalendarzowych (art. 43; było „1 miesiąc”)
+- [x] Kod B: zwolnienie w ciąży otwiera nowy okres zasiłkowy (podpowiedź mówiła, że przerwa „może wyzerować”); „okres oczekiwania” → „okres wyczekiwania”
+- [x] Urlop rodzicielski: nie musi zaczynać się zaraz po macierzyńskim (do końca roku, w którym dziecko kończy 6 lat)
+- [x] „Za życiem” to zaświadczenie, nie oświadczenie; „Nie-pracownik: zawsze wypłaca ZUS” → przy zleceniu u płatnika > 20 osób wypłaca zleceniodawca
+- [x] Myślniki „-” → „–”, „r.ż.” → „roku życia”, „PESEL-u”, „Wniosek najpóźniej 21 dni przed rozpoczęciem”, odpis aktu (§ 13 ust. 2), Wsparcie (Centrum Wsparcia 800 70 2222)
+- [ ] ⚠️ **Do sprawdzenia:** druki W1 powołują się na **art. 179¹ k.p.** (wniosek o pełny wymiar do 21 dni) – wg części źródeł artykuł uchylony; potwierdzić aktualną podstawę (test `druki.test.js` sprawdza ten napis)
+
  (Claude, 22.11 nad ranem, bez commita)
 Sprawdzone: 334 testy (17 plików), build, API 44/44 w Dockerze, kalendarz w przeglądarce (komputer + telefon).
 

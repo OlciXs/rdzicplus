@@ -17,7 +17,7 @@ import { zapiszDokumentPdf } from "../engine/wnioski/pdfDokument.js";
    forma dokumentu. Nie ma podglądu na ekranie ani drukowania strony:
    dokument wnioskodawca pobiera jako PDF i składa.
    Treść i kontrole terminów: src/engine/wnioski/druki.js
-   Szablony LaTeX-a: latex/szablony/P01.tex … P16.tex
+   Szablony LaTeX-a: latex/szablony/P01.tex … P18.tex
    ===================================================================== */
 
 const POZIOM = { blad: "err", ostrzezenie: "warn", info: "warn" };

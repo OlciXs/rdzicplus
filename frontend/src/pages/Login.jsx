@@ -102,12 +102,12 @@ export default function Login() {
       {step === "start" && (
         <section className="card">
           <h1>Zaloguj się do RodzicPlus</h1>
-          <p className="lead">Dane i kalkulatory będą dostępne po zalogowaniu.</p>
+          <p className="lead">Po zalogowaniu zapiszesz swoje dane – kalkulatory, wnioski i kalendarz same je podstawią. Kalkulatory działają też bez logowania.</p>
           {error && <p className="error" role="alert">{error}</p>}
           <button className="btn btn-primary btn-big" onClick={start} disabled={busy}>
             {busy ? "Chwileczkę…" : "Zaloguj się mObywatelem"}
           </button>
-          <p className="hint">To wersja demonstracyjna – bez prawdziwego logowania.</p>
+          <p className="hint">To wersja demonstracyjna: logowanie mObywatelem jest symulowane, do wyboru są 4 przykładowe profile z fikcyjnymi danymi.</p>
         </section>
       )}
 

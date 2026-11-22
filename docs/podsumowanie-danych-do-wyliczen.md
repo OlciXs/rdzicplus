@@ -65,7 +65,7 @@ logowanie przez **mObywatela**, pobranie danych z systemów ZUS (ubezpieczenie/b
 | Stawka zasiłku chorobowego | **100%** w ciąży (kod B na e-ZLA); standard 80% | UZ art. 11 |
 | Zasiłek = 1/30 podstawy miesięcznej za każdy dzień niezdolności | | UZ art. 11 ust. 4–5, art. 36 ust. 3 |
 | Kody e-ZLA | A (ta sama choroba po przerwie ≤60 dni), **B (ciąża)**, C (alkohol, −5 dni), D (gruźlica), E (choroba o długim wylęganiu) | UZ art. 57 |
-| Świadczenie rehabilitacyjne (po wyczerpaniu 182/270 dni) | **90%** przez pierwsze 3 mies., **75%** dalej, **100% w ciąży**; max **12 mies.**; wniosek ZAS-14A najpóźniej 6 tyg. przed końcem okresu zasiłkowego | UZ art. 18–19, art. 28 |
+| Świadczenie rehabilitacyjne (po wyczerpaniu 182/270 dni) | **90%** przez pierwsze 3 mies., **75%** dalej, **100% w ciąży**; max **12 mies.**; wniosek ZUS Np-7 (z zaświadczeniem OL-9) najpóźniej 6 tyg. przed końcem okresu zasiłkowego | UZ art. 18–19, art. 28 |
 
 ### 2.3 Zasiłek w wysokości zasiłku macierzyńskiego (utrata pracy w ciąży)
 | Parametr | Wartość | Źródło |

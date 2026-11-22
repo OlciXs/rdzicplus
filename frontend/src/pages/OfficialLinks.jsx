@@ -62,8 +62,8 @@ export default function OfficialLinks() {
           <h2>Aktualne zasady formularzy</h2>
           <p className="note">
             Od 24.10.2026 formularz ZAM zastępuje ZUR i ZAO. Formularz Z-3b został zlikwidowany.
-            Dla działalności i osób bez pracowniczego tytułu kierunek złożenia zależy od konkretnego
-            uprawnienia i płatnika składek.
+            Przy działalności gospodarczej wnioski składasz bezpośrednio w ZUS (najwygodniej przez eZUS). Przy umowie zlecenia – u zleceniodawcy:
+            jeśli zgłasza do ubezpieczenia chorobowego ponad 20 osób, sam wypłaca zasiłek, a jeśli nie – przekazuje dokumenty do ZUS.
           </p>
         </section>
       </main>

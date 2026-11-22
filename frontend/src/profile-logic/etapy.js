@@ -33,7 +33,7 @@ export const ETAPY_DLA = (plec, rola) => {
 /** Podpowiedź pod polem „Etap”. */
 export const HINT_ETAPU = (plec, rola) =>
   ciazaPartnerki(plec, rola)
-    ? "Wybierz „Moja partnerka jest w ciąży” — chodzi o ciążę drugiego rodzica, nie o Twoją."
+    ? "Wybierz „Moja partnerka jest w ciąży” – chodzi o ciążę drugiego rodzica, nie o Twoją."
     : undefined;
 
 /** Role dostępne dla danej płci (kobieta nie jest ojcem, mężczyzna matką). */

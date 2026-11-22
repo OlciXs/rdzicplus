@@ -199,9 +199,9 @@ export function terminyWnioskow(profil, { dzis, params = DEFAULT_PARAMS } = {}) 
   /* ---------- W45: zasiłek pogrzebowy ---------- */
   if (aktywny("W45")) {
     const od = zgon || (k.martwe === true ? ur : "");
-    dodaj("W45", { id: "wniosek", typ: "termin", data: plusMies(od, 12), kto: "Osoba, która pokryła koszty pogrzebu", pewnosc: "szacunek",
+    dodaj("W45", { id: "wniosek", typ: "termin", data: plusMies(od, 12), kto: "Osoba, która pokryła koszty pogrzebu", pewnosc: "pewne",
       tytul: "Wniosek o zasiłek pogrzebowy (Z-12)",
-      opis: "12 miesięcy od dnia pochówku. Liczymy od dnia zgonu / urodzenia – pochówek jest później, więc to bezpieczna data. Dołącz rachunki za pogrzeb.",
+      opis: "12 miesięcy od dnia zgonu (przy martwym urodzeniu – od dnia porodu). Od dnia pogrzebu liczy się tylko wyjątkowo, gdy wniosku nie dało się złożyć z przyczyn niezależnych od Ciebie. Dołącz rachunki za pogrzeb.",
       podstawa: "ustawa o emeryturach i rentach z FUS (zasiłek pogrzebowy)", zrodlo: `${PORADNIK}, s. 35` });
   }
 
@@ -287,7 +287,7 @@ export function terminyWnioskow(profil, { dzis, params = DEFAULT_PARAMS } = {}) 
   const zlaDo = iso(profil?.zdrowie?.zlaDo);
   if (aktywny("W35") && zlaOd) {
     dodaj("W35", { id: "koniec", typ: "info", data: plus(zlaOd, 33 - 1), kto: "Mama", pewnosc: "szacunek",
-      tytul: "Koniec wynagrodzenia chorobowego (33 dni) – dalej zasiłek z ZUS",
+      tytul: "Koniec wynagrodzenia chorobowego (33 dni) – dalej zasiłek chorobowy",
       opis: "Liczone od początku zwolnienia, bez wcześniejszych zwolnień w tym roku (te skracają okres). Po 50. roku życia – 14 dni.",
       podstawa: "art. 92 § 1 i § 4 KP", zrodlo: `${KP}; Załącznik do zadania` });
   }
@@ -298,7 +298,7 @@ export function terminyWnioskow(profil, { dzis, params = DEFAULT_PARAMS } = {}) 
       podstawa: "art. 8 ustawy zasiłkowej", zrodlo: "Załącznik do zadania" });
     if (nieprac && zlaDo) {
       dodaj("W34", { id: "przedawnienie", typ: "koniec", data: plusMies(zlaDo, 6), kto: "Mama",
-        tytul: "Ostatni dzień na zgłoszenie zasiłku chorobowego za obecne zwolnienie",
+        tytul: "Ostatni dzień na upomnienie się o zasiłek chorobowy za obecne zwolnienie",
         opis: "Roszczenie o zasiłek chorobowy przedawnia się po 6 miesiącach od ostatniego dnia okresu, za który przysługuje.",
         podstawa: PRZEDAWNIENIE, zrodlo: `${PORADNIK}, s. 27` });
     }

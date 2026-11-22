@@ -62,7 +62,7 @@ const OSOBY = {
   // Marzena – działalność gospodarcza, dobrowolne chorobowe, ZALEGŁOŚĆ składkowa
   "87090371522": {
     statusUbezpieczenia: "dg",
-    opis: "Działalność gospodarcza, dobrowolne ubezpieczenie chorobowe; zaległość w składkach blokuje zasiłki.",
+    opis: "Działalność gospodarcza, dobrowolne ubezpieczenie chorobowe; zaległość w składkach – prawo do zasiłku dopiero od dnia spłaty.",
     ubezpieczenia: [
       { tytul: "Pozarolnicza działalność gospodarcza", platnik: "Marzena Wiśniewska Pracownia Grafiki (fikcyjna)", od: "2024-02-01", do: null, chorobowe: "dobrowolne od 2025-03-01" },
       { tytul: "Umowa o pracę", platnik: "Drukarnia Nowa Linia sp. j.", od: "2015-05-04", do: "2024-01-31", chorobowe: "obowiązkowe" },

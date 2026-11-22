@@ -79,13 +79,13 @@ export default function Support() {
       <main className="container">
         <h1>Wsparcie w sytuacjach szczególnych</h1>
         <p className="lead">
-          Nie jesteś sam/a. Poniżej znajdziesz organizacje oferujące wsparcie przedwcześnie urodzonym
-          dzieciom oraz rodzinom po stracie dziecka lub w ciężkiej sytuacji zdrowotnej.
+          Nie jesteś sam ani sama. Poniżej znajdziesz organizacje, które wspierają rodziców wcześniaków,
+          rodziny ciężko chorych dzieci oraz rodziców po stracie dziecka.
         </p>
 
         <section className="alert-inline" role="note">
           <span className="badge b-warn">W nagłym zagrożeniu życia</span>
-          Zadzwoń pod numer 112. W sytuacji kryzysowej psychicznej zadzwoń pod 112 lub Centrum Wsparcia 800 70 2222.
+          Zadzwoń pod numer 112. W kryzysie psychicznym możesz też zadzwonić do Centrum Wsparcia: 800 70 2222 (bezpłatnie, całą dobę).
         </section>
 
         <div className="support-filtry" role="group" aria-label="Wybierz sytuację">

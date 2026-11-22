@@ -103,7 +103,7 @@ export default function CalcLaczenie() {
           />
           <Bullets items={[
             <>Wniosek o łączenie ≥ {CFG.ochronaWkladDni.rodzicielski} dni przed rozpoczęciem (RWN § 16). Rezygnacja w każdym czasie za zgodą pracodawcy.</>,
-            <>Zasiłek za okres łączenia podlega składkom emerytalnemu i rentowemu ze stosunku pracy i z zasiłku (finansuje budżet państwa).</>,
+            <>W okresie łączenia składki emerytalne i rentowe opłaca się zarówno od wynagrodzenia, jak i od zasiłku (te od zasiłku finansuje budżet państwa).</>,
           ]} />
         </section>
 

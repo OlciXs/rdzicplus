@@ -97,7 +97,7 @@ const ubezpieczonyWDniuPorodu = (k) =>
   w("Podlegasz ubezpieczeniu chorobowemu w dniu porodu / przyjęcia dziecka", k.ubezpieczonyWDniuZdarzenia,
     ["ubezpieczony.statusUbezpieczenia", "ubezpieczony.ubezpieczenieUstalo", "ubezpieczony.dataUstania"]);
 const bezZadluzenia = (k) =>
-  w(`Brak zaległości w składkach powyżej ${k.P.progZaleglosci} zł (art. 2a)`, niePrawda(k.blokadaZadluzenia), ["ubezpieczony.zaleglosci"]);
+  w(`Brak zaległości w składkach powyżej ${String(k.P.progZaleglosci).replace(".", ",")} zł (art. 2a)`, niePrawda(k.blokadaZadluzenia), ["ubezpieczony.zaleglosci"]);
 const maChorobowe = (k) => w("Masz ubezpieczenie chorobowe", k.maChorobowe, ["ubezpieczony.statusUbezpieczenia"]);
 const jestPracownikiem = (k) =>
   w("Jesteś pracownikiem (umowa o pracę, powołanie, mianowanie)", k.pracownik, ["ubezpieczony.statusUbezpieczenia"]);
@@ -117,7 +117,7 @@ const matkaWykorzystala = (k, tyg) =>
 
 const ADRES_ZASILKU = (k) => {
   if (["dg", "wspolpraca", "duchowny", "marynarz"].includes(k.tytul)) return "ZUS (wniosek ZAM / eZUS)";
-  if (k.liczbaUbezpieczonych === "powyzej_20") return "Pracodawca – sam wypłaca zasiłek (zgłasza > 20 osób)";
+  if (k.liczbaUbezpieczonych === "powyzej_20") return "Pracodawca – sam wypłaca zasiłek (zgłasza ponad 20 ubezpieczonych)";
   if (k.liczbaUbezpieczonych === "do_20") return "Pracodawca – przekazuje dokumenty do ZUS w 7 dni, zasiłek wypłaca ZUS";
   return "Pracodawca albo ZUS – zależy od liczby ubezpieczonych u pracodawcy (próg 20 osób)";
 };
@@ -272,14 +272,14 @@ export const WARIANTY = [
     warunki: (k) => [
       maChorobowe(k),
       w("Wyczerpał się okres zasiłkowy (182 / 270 dni)", k.okresZasilkowyWyczerpany, ["zdrowie.okresZasilkowyWyczerpany"]),
-      w("Lekarz ocenia, że dalsze leczenie przywróci zdolność do pracy", k.rokowaniaPoprawy, ["zdrowie.rokowaniaPoprawy"]),
+      w("Lekarz orzecznik ZUS uznaje, że dalsze leczenie lub rehabilitacja przywróci zdolność do pracy", k.rokowaniaPoprawy, ["zdrowie.rokowaniaPoprawy"]),
     ],
     wymiar: () => "Do 12 miesięcy (orzeka lekarz orzecznik ZUS)",
     wysokosc: (k) => (k.etap === "ciaza" ? "100% w ciąży" : "90% przez 3 miesiące, potem 75%"),
     adresat: () => "ZUS",
-    formularz: "ZAS-14A (wniosek o świadczenie rehabilitacyjne)",
+    formularz: "ZUS Np-7 (wniosek o świadczenie rehabilitacyjne)",
     termin: "Najpóźniej 6 tygodni przed końcem okresu zasiłkowego",
-    dokumenty: ["Zaświadczenie o stanie zdrowia (nie starsze niż miesiąc)", "Wywiad zawodowy z miejsca pracy (pracownicy)"],
+    dokumenty: ["Zaświadczenie o stanie zdrowia OL-9 od lekarza prowadzącego (nie starsze niż miesiąc)", "Wywiad zawodowy z miejsca pracy (pracownicy)"],
     potrzebnePola: [...BAZA, ...PLATNIK],
     podstawa: "art. 18–22 ustawy zasiłkowej",
   },
@@ -657,7 +657,7 @@ export const WARIANTY = [
     wymiar: () => "14 dni kalendarzowych – jednorazowo albo w 2 częściach po min. 7 dni",
     wysokosc: () => "100% podstawy",
     adresat: ADRES_URLOPU,
-    formularz: "Wniosek o urlop ojcowski (§ 17 rozporządzenia o wnioskach); nie-pracownik: ZAM przed rozpoczęciem",
+    formularz: "Wniosek o urlop ojcowski (§ 17 rozporządzenia o wnioskach); osoba niebędąca pracownikiem: ZAM przed rozpoczęciem",
     termin: (k, konkretny = true) => (konkretny && k.dataUrodzenia && k.etap === "po_porodzie"
       ? `Wniosek min. 7 dni przed; wykorzystaj do ${fmtD(new Date(k.dataUrodzenia.getFullYear(), k.dataUrodzenia.getMonth() + k.P.deadlineOjcowskiMies, k.dataUrodzenia.getDate() - 1))}`
       : "Wniosek min. 7 dni przed; do 12. miesiąca życia dziecka"),
@@ -688,7 +688,7 @@ export const WARIANTY = [
     },
     wysokosc: () => "70% (albo 81,5%, jeśli matka złożyła wniosek do 21 dni po porodzie); 9 tygodni drugiego rodzica – 70%",
     adresat: ADRES_URLOPU,
-    formularz: "Wniosek o urlop rodzicielski lub jego część (§ 15 rozporządzenia o wnioskach); nie-pracownik: ZAM",
+    formularz: "Wniosek o urlop rodzicielski lub jego część (§ 15 rozporządzenia o wnioskach); osoba niebędąca pracownikiem: ZAM",
     termin: (k) => `Co najmniej ${k.P.ochronaWkladDni.rodzicielski} dni przed rozpoczęciem każdej części`,
     dokumenty: [AKT, "Oświadczenie drugiego rodzica, czy i kiedy korzysta z urlopu rodzicielskiego", "Przy 65/67 tyg.: kopia zaświadczenia „Za życiem”"],
     potrzebnePola: [...BAZA, ...PLATNIK, ...DZIECKO, "urlopy.rodzicielskieCzesci", "urlopy.rodzicielskiWykorzystanoTyg"],
@@ -807,7 +807,7 @@ export const WARIANTY = [
     wysokosc: (k) => `${k.P.zasilekPogrzebowy} zł (nawet jeśli koszty były niższe)`,
     adresat: () => "ZUS",
     formularz: "Z-12 – wniosek o zasiłek pogrzebowy (składa osoba, która pokryła koszty pogrzebu)",
-    termin: "12 miesięcy od dnia pochówku",
+    termin: "12 miesięcy od dnia zgonu (przy martwym urodzeniu – od dnia porodu)",
     dokumenty: ["Rachunki za pogrzeb", "Gdy brak aktu z adnotacją o martwym urodzeniu: karta zgonu albo zaświadczenie o martwym urodzeniu"],
     potrzebnePola: [...BAZA, "dziecko.dataZgonu"],
     podstawa: "ustawa o emeryturach i rentach z FUS (art. 77–81)",
@@ -861,7 +861,7 @@ const ZAM_NIEPRAC = (k) =>
     : k.tytul === "zlecenie"
       // Treść zadania ZUS, s. 6: przy zleceniu składa się ZAM; uprawniony płatnik (> 20 osób) wypłaca sam,
       // inny przesyła do ZUS zaświadczenie płatnika Z-3a.
-      ? "ZAM – wniosek o zasiłek macierzyński składasz u zleceniodawcy (przy > 20 ubezpieczonych wypłaca sam, inaczej przekazuje do ZUS z zaświadczeniem Z-3a)"
+      ? "ZAM – wniosek o zasiłek macierzyński składasz u zleceniodawcy (przy ponad 20 ubezpieczonych wypłaca sam, inaczej przekazuje wniosek do ZUS z zaświadczeniem Z-3a)"
       : "ZAM – wniosek o zasiłek macierzyński do ZUS";
 // Pracownik składa wniosek o urlop u pracodawcy, pozostali – wniosek o zasiłek (ZAM) do ZUS.
 const PRAC_ALBO_ZAM = (wniosekPracownika) => (k) =>
@@ -888,7 +888,7 @@ export const SKLADANIE = {
   W46: { dokument: "Karta wypadku w drodze do/z pracy – dołączasz do zwolnienia lekarskiego", skladanie: "dolacz" },
   W47: { dokument: "Wniosek o zasiłek chorobowy + oświadczenie o okolicznościach po ustaniu ubezpieczenia", skladanie: "wniosek" },
   W36b: { dokument: "Pisemna prośba do lekarza, żeby nie wpisywał kodu B", skladanie: "wniosek" },
-  W37: { dokument: "ZAS-14A – wniosek o świadczenie rehabilitacyjne (do ZUS)", skladanie: "wniosek" },
+  W37: { dokument: "ZUS Np-7 – wniosek o świadczenie rehabilitacyjne (do ZUS)", skladanie: "wniosek" },
   W38: { dokument: "Wniosek o zasiłek do dnia porodu (do ZUS) + dokumenty potwierdzające utratę pracy", skladanie: "wniosek" },
 
   // macierzyński

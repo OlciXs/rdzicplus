@@ -162,7 +162,7 @@ export default function CalcOboje() {
           <Bullets items={[
             <>Rodzice mogą korzystać z urlopu rodzicielskiego jednocześnie lub naprzemiennie (łącznie max {pool} tyg.).</>,
             <>Każdy wniosek o część urlopu: ≥ {CFG.ochronaWkladDni.rodzicielski} dni przed rozpoczęciem (pracodawca musi uwzględnić).</>,
-            <>Pierwsza część zaraz po urlopie macierzyńskim (lub uzupełniającym); dalsze w dowolnym momencie do terminu.</>,
+            <>Urlop rodzicielski można zacząć bezpośrednio po macierzyńskim (lub uzupełniającym) albo później – w maks. 5 częściach, do końca roku kalendarzowego, w którym dziecko kończy 6 lat.</>,
             <>Rezygnacja z rodzicielskiego w każdym czasie za zgodą pracodawcy (wniosek ≥ {CFG.ochronaWkladDni.rodzicielski} dni przed, KP art. 182¹d § 3).</>,
           ]} />
         </section>

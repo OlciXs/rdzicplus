@@ -23,15 +23,15 @@ function dokumenty(status, etap) {
     ciazaL4: [
       "e-ZLA trafia automatycznie do ZUS i na profil pracodawcy (PUE/eZUS) – nic nie nosisz.",
       status === "pracownik"
-        ? `Pracownica: zawiadom pracodawcę o nieobecności (Kodeks pracy). Pracodawca płaci wynagrodzenie chorobowe za ${CFG.wynagrodzenieChorobowe} dni (14 po 50 r.ż.), potem zasiłek 100% (kod B, okres zasiłkowy ${CFG.okresZasilkowyCiaza} dni).`
-        : "Nie-pracownik: zasiłek od pierwszego dnia, wniosek do ZUS.",
-      "Jeśli płatnik nie wypłaca (mały płatnik): wniosek o zasiłek chorobowy (ZAS-53 dla DG / zaświadczenie płatnika Z-3, Z-3a dla zatrudnionych).",
-      "Świadczenie rehabilitacyjne po 182/270 dniach: wniosek ZAS-14A najpóźniej 6 tyg. przed końcem okresu zasiłkowego + zaświadczenie lekarza prowadzącego (max 1 mies. przed złożeniem).",
+        ? `Pracownica: zawiadom pracodawcę o nieobecności (Kodeks pracy). Pracodawca płaci wynagrodzenie chorobowe za ${CFG.wynagrodzenieChorobowe} dni (14 po 50. roku życia), potem zasiłek 100% (kod B, okres zasiłkowy ${CFG.okresZasilkowyCiaza} dni).`
+        : "Zlecenie / działalność: zasiłek od pierwszego dnia niezdolności (bez wynagrodzenia chorobowego); e-ZLA trafia do ZUS.",
+      "Jeśli zasiłek wypłaca ZUS (płatnik zgłasza do 20 ubezpieczonych): płatnik przekazuje do ZUS zaświadczenie Z-3 (pracownik) albo Z-3a (zleceniobiorca); przy działalności – wniosek ZAS-53.",
+      "Świadczenie rehabilitacyjne po 182/270 dniach: wniosek ZUS Np-7 najpóźniej 6 tyg. przed końcem okresu zasiłkowego + zaświadczenie OL-9 od lekarza prowadzącego (wystawione max 1 mies. przed złożeniem).",
     ],
     przedPorodem: [
       status === "pracownik"
         ? `Wniosek o udzielenie urlopu macierzyńskiego (imię, nazwisko, data od której) do pracodawcy, ≥ ${CFG.ochronaWkladDni.macierzynski} dni przed; max ${CFG.przedPorodemMax} tyg. przed przewidywaną datą porodu (RWN § 2).`
-        : "Nie-pracownik: wniosek o zasiłek macierzyński ZAM z dołączonym zaświadczeniem lekarskim o przewidywanej dacie porodu (ZUS).",
+        : "Zlecenie / działalność: wniosek o zasiłek macierzyński ZAM z dołączonym zaświadczeniem lekarskim o przewidywanej dacie porodu (ZUS).",
       "Załącznik: kopia zaświadczenia lekarskiego o przewidywanej dacie porodu.",
       "Od dnia złożenia wniosku (w terminach 14/21/7 dni) zaczyna się ochrona zatrudnienia (KP art. 177 § 1¹).",
     ],
@@ -51,7 +51,7 @@ function dokumenty(status, etap) {
     rodzicielski: [
       `Pracownik: wniosek o urlop rodzicielski (lub jego część) ≥ ${CFG.ochronaWkladDni.rodzicielski} dni przed rozpoczęciem. Pierwsza część zaraz po macierzyńskim; max 5 części, do końca roku kalendarzowego, w którym dziecko kończy ${CFG.limitRokZycia} lat.`,
       "Załączniki: odpis aktu urodzenia (dla ZUS: dane z rejestru), oświadczenie drugiego rodzica, kopia zaświadczenia „Za życiem” (przy 65/67 tyg.).",
-      "Nie-pracownik: wniosek ZAM (od 24.10.2026 jeden formularz zamiast ZUR) do płatnika uprawnionego lub ZUS, przed rozpoczęciem korzystania.",
+      "Zlecenie / działalność: wniosek ZAM (od 24.10.2026 jeden formularz zamiast ZUR) do płatnika uprawnionego lub ZUS, przed rozpoczęciem korzystania.",
       "Praca w trakcie urlopu (≤ ½ etatu): wniosek ≥ 21 dni; pracodawca odmawia tylko przez organizację pracy (powiadomienie w 7 dni z przyczyną).",
     ],
     ojcowski: [
@@ -74,7 +74,7 @@ function dokumenty(status, etap) {
     martwe: [
       "Zasiłek macierzyński: 8 tygodni od porodu, nie krócej niż 7 dni od dnia zgonu; przy wielorodztwie wymiar wg dzieci pozostałych przy życiu.",
       "Dokumenty: odpis skrócony aktu urodzenia z adnotacją o martwym urodzeniu albo zaświadczenie o martwym urodzeniu – bez względu na czas trwania ciąży.",
-      "Zasiłek pogrzebowy: 7 000 zł, wniosek Z-12 do ZUS w 12 miesięcy od pochówku (osoba, która pokryła koszty).",
+      "Zasiłek pogrzebowy: 7 000 zł, wniosek Z-12 do ZUS w ciągu 12 miesięcy od dnia zgonu (składa osoba, która pokryła koszty pogrzebu).",
       "Wsparcie: hospicja perinatalne (np. HoPe Katowice, Wrocławskie Hospicjum dla Dzieci), fundacje rodzin po stracie.",
     ],
   };
@@ -87,7 +87,7 @@ const ZAGROZENIA = [
   <><b>Ulga na start</b> (6 mies.) = brak ubezpieczenia chorobowego = brak zasiłków macierzyńskiego/chorobowego.</>,
   <><b>Umowa lub podwyższenie podstawy dla pozoru</b> – ZUS wyda decyzję o niepodleganiu ubezpieczeniu albo ustali niższą podstawę.</>,
   <><b>Praca zarobkowa lub aktywność niezgodna z celem zwolnienia</b> – utrata zasiłku za cały okres + zwrot z odsetkami.</>,
-  <><b>Terminy bezpowrotne:</b> 21 dni (81,5%), 12 miesięcy (ojcowski), koniec roku kal. 6 r.ż. (rodzicielski), 6 miesięcy (przedawnienie roszczenia o zasiłek).</>,
+  <><b>Terminy bezpowrotne:</b> 21 dni (81,5%), 12 miesięcy (ojcowski), koniec roku, w którym dziecko kończy 6 lat (rodzicielski), 6 miesięcy (przedawnienie roszczenia o zasiłek).</>,
   <><b>Zasiłek nie przysługuje</b> za urlop bezpłatny i urlop wychowawczy.</>,
 ];
 
@@ -164,7 +164,7 @@ export default function CalcDokumenty() {
           {s.zaleglosc && (
             <p>
               <Badge tone="err">BLOKADA</Badge> Zaległość składkowa &gt; {zl(CFG.progZaleglosci)} (1% płacy
-              minimalnej) = brak zasiłków do czasu spłaty (art. 2a UZ).
+              minimalnej) – prawo do zasiłków powstaje dopiero od dnia spłaty, za wcześniejsze dni zasiłek przepada (art. 2a UZ).
               {DG ? " Zaświadczenie o zadłużeniu na dzień porodu: do pobrania na koncie eZUS." : ""}
             </p>
           )}

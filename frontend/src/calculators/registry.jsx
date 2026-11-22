@@ -37,7 +37,7 @@ export const CALCULATORS = [
     icon: "family",
     letter: "d",
     title: "Symulacja obojga rodziców",
-    short: "Wspólna pula urlopu, 9 tygodni wyłącznych na rodzica, max 5 części, do 6 roku życia.",
+    short: "Wspólna pula urlopu, 9 tygodni wyłącznych na rodzica, max 5 części, do końca roku, w którym dziecko kończy 6 lat.",
     Component: CalcOboje,
   },
   {
